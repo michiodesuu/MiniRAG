@@ -1,0 +1,12 @@
+เลือกสาขา	confidence=0.9756
+006-เพชรบูรณ์	confidence=0.9218
+ประเภทของรายการ	confidence=0.9719
+ทั้งหมด	confidence=0.9870
+V	confidence=0.7849
+รายเดือน	confidence=0.9709
+0 รายวัน	confidence=0.9321
+เมษายน	confidence=0.9942
+V	confidence=0.6114
+2567	confidence=1.0000
+V	confidence=0.7340
+เมี่ออกรายงาน	confidence=0.7849

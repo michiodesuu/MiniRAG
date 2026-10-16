@@ -1,0 +1,14 @@
+การกลับมาป	confidence=0.9988
+ฏิ	confidence=0.7984
+บัติงาน:	confidence=0.9570
+On	confidence=0.3003
+กลับมาปฏิบัติงานตามปกติ	confidence=0.9878
+O	confidence=0.7306
+MLAUBUMUOULN	confidence=0.4274
+re"*.	confidence=0.3607
+FO	confidence=0.7000
+MLLEMMU	confidence=0.8257
+O	confidence=0.7791
+WCgRg	confidence=0.5134
+"หมายเหตุ: ในกรณีบาดเจ็บถึงขั้นหยุดงาน หากยังไม่ทราบจำนวนวันที่หยุดงานแน่นอน สามารถเว้นว่างช่องจำนวน	confidence=0.9825
+วันไว้ได้	confidence=0.9631

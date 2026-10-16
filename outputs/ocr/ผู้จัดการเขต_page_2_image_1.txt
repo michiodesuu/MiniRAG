@@ -1,0 +1,4 @@
+นUก	confidence=0.3664
+2NLBEILGOGZ	confidence=0.4243
+CCNSLURLS'E	confidence=0.7151
+นELARLSUCC'7	confidence=0.5452

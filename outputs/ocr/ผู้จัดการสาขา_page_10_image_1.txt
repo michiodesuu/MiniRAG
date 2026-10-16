@@ -1,0 +1,4 @@
+ส่งคำขอลบ	confidence=0.9922
+ต้องการลบข้อมูลใช่หรือไม่?	confidence=0.9975
+ตกลง!	confidence=0.9741
+ยกเล็ก	confidence=0.9275

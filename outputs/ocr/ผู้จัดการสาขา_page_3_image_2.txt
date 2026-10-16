@@ -1,0 +1,11 @@
+ส่วนที่ 1: ข้อมูลส่วนตัวผู้ได้รับบาดเจ็บ (Personal Detail)	confidence=0.9755
+ชื่อ : -	confidence=0.8756
+ตำแหน่ง : -	confidence=0.8980
+สาขา : -	confidence=0.9475
+เขต : -	confidence=0.9259
+แผนก/ฝ้าย : -	confidence=0.8861
+ประวัติพนักงาน:	confidence=0.9993
+#เฉพาะพนักงานในสังกัด	confidence=0.9766
+รหัสพนักงานผู้ประสบอุบัติเหตุ :	confidence=0.9811
+จึกรอกรหัสพนักงาน	confidence=0.9281
+ถัดไป	confidence=0.9820
