@@ -1,0 +1,14 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_3_image_4.png",
+  "model": "qwen2.5vl:3b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "paddle_hint": true,
+    "tesseract_hint": true,
+    "upscale_min_side": 1000
+  },
+  "text": "บันทึกข้อมูลอุบัติเหตุ :\nขั้นตอนที่ 1 > ขั้นตอนที่ 2 > ขั้นตอนที่ 3\nค้นหาข้อมูลพนักงาน กรอกแบบฟอร์มอุบัติเหตุ ตรวจสอบความถูกต้อง\nส่วนที่ 1: ข้อมูลส่วนตัวผู้ได้รับบาดเจ็บ (Personal Detail)\nชื่อ : อิทธิฤทธิ์ มีชัย\nตำแหน่ง : พนักงานวิเคราะห์สินเชื่อ\nสาขา : บ้านโคก\nเขต : เขตพิษณุโลก\nแผนก/ฝ่าย : ฝ่ายกิจการสาขา",
+  "review_status": "pending"
+}

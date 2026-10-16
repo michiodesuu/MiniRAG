@@ -82,7 +82,7 @@ def make_handler(result_dir: Path):
                         "status": d.get("review_status"),
                     })
                 self.send(json.dumps(items, ensure_ascii=False).encode("utf-8"),
-                          "application/json")
+                        "application/json")
             elif self.path.startswith("/image/"):
                 img = image_path(read(unquote(self.path[7:])))
                 ctype = "image/png" if img.suffix.lower() == ".png" else "image/jpeg"

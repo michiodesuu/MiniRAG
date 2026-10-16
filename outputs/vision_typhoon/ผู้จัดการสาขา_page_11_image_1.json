@@ -1,0 +1,14 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_11_image_1.png",
+  "model": "typhoon-ai/typhoon-ocr1.5-2b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "backend": "api",
+    "temperature": 0,
+    "paddle_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "ข้อมูลผู้ใช้งาน\n00840 : นายชัยภูมิ จิตบำรุง\nตำแหน่งผู้จัดการสาย\nสายสาขาใหญ่ เพชรบูรณ์ (006)\n\nยอดคงเหลือตามทะเบียนคุม\n1.บันทึกยอดคงเหลือเงินสดรับชำระ[ผจก.] ประจำ\nวัน\n\nบันทึกอุบัติเหตุ\n1.บันทึกอุบัติเหตุ\n2.ติดตามสถานะ\n4.ออกรายงานอุบัติเหตุ\n\nเลือกสาขา\n006-เพชรบูรณ์\n\nประเภทของรายการ\nทั้งหมด\n\n☐ รายเดือน\n☐ รายวัน\n\nเมษายน\n2567\n\nเพื่อออกรายงาน",
+  "review_status": "pending"
+}

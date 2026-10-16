@@ -1,0 +1,14 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_10_image_1.png",
+  "model": "qwen2.5vl:3b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "paddle_hint": true,
+    "tesseract_hint": true,
+    "upscale_min_side": 1000
+  },
+  "text": "ส่งคำขอลบ\nต้องการลบข้อมูลใช่หรือไม่?\nตกลง!\nยกเลิก",
+  "review_status": "pending"
+}

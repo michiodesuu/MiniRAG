@@ -1,9 +1,12 @@
 from pathlib import Path
 import argparse
+import base64
 import io
 import json
+import os
 import sys
 
+import httpx
 import ollama
 from PIL import Image
 
@@ -14,8 +17,11 @@ PROMPT_PATH = ROOT / "prompts" / "thai_document_ocr.txt"
 IMAGE_DIR = ROOT / "outputs" / "images"
 OUTPUT_DIR = ROOT / "outputs" / "vision"
 MODEL = "qwen2.5vl:3b"
+# Ollama's default context (4096) is too small once images are upscaled.
+NUM_CTX = 8192
 
 PADDLE_DIR = ROOT / "outputs" / "ocr"
+TESSERACT_DIR = ROOT / "outputs" / "tesseract"
 HINT_MIN_CONFIDENCE = 0.8
 
 SUPPORTED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
@@ -26,11 +32,11 @@ def resolve(path_str: str) -> Path:
     return path if path.is_absolute() else ROOT / path
 
 
-def load_hint(image_path: Path) -> str | None:
-    """Confident PaddleOCR lines for this image, if a result file exists."""
-    hint_path = PADDLE_DIR / f"{image_path.stem}.txt"
+def confident_lines(hint_dir: Path, image_path: Path) -> list[str]:
+    """Lines from `<hint_dir>/<image>.txt` at or above HINT_MIN_CONFIDENCE."""
+    hint_path = hint_dir / f"{image_path.stem}.txt"
     if not hint_path.is_file():
-        return None
+        return []
 
     lines = []
     for raw in hint_path.read_text(encoding="utf-8").splitlines():
@@ -40,7 +46,29 @@ def load_hint(image_path: Path) -> str | None:
                 lines.append(text)
         except ValueError:
             continue
-    return "\n".join(lines) or None
+    return lines
+
+
+def load_hint(image_path: Path, source: str) -> tuple[str | None, list[str]]:
+    """Build the hint block for the chosen OCR source(s).
+
+    Returns (hint text or None, names of the sources that contributed).
+    """
+    sources = {"paddle": PADDLE_DIR, "tesseract": TESSERACT_DIR}
+    names = list(sources) if source == "both" else [source]
+
+    parts, used = [], []
+    for name in names:
+        lines = confident_lines(sources[name], image_path)
+        if lines:
+            used.append(name)
+            parts.append((name, "\n".join(lines)))
+
+    if not parts:
+        return None, []
+    if len(parts) == 1:
+        return parts[0][1], used
+    return "\n\n".join(f"[{name} OCR]\n{text}" for name, text in parts), used
 
 
 def prepare_image(image_path: Path, min_side: int) -> bytes | str:
@@ -63,34 +91,74 @@ def prepare_image(image_path: Path, min_side: int) -> bytes | str:
         return buffer.getvalue()
 
 
+def call_api(api: dict, prompt: str, image: bytes | str) -> str:
+    """OpenAI-compatible /v1/chat/completions call with a base64 image."""
+    raw = image if isinstance(image, bytes) else Path(image).read_bytes()
+    mime = "image/png" if raw[:4] == b"\x89PNG" else "image/jpeg"
+    b64 = base64.b64encode(raw).decode()
+
+    headers = {"Authorization": f"Bearer {api['key']}"} if api.get("key") else {}
+    response = httpx.post(
+        api["url"],
+        headers=headers,
+        timeout=300,
+        json={
+            "model": api["model"],
+            "temperature": 0,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:{mime};base64,{b64}"},
+                        },
+                    ],
+                }
+            ],
+        },
+    )
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"].strip()
+
+
 def transcribe(
     image_path: Path,
     prompt: str,
     output_dir: Path,
     use_hint: bool,
     upscale: int,
+    hint_source: str = "paddle",
+    api: dict | None = None,
 ) -> Path:
-    hint = load_hint(image_path) if use_hint else None
+    hint, hint_used = load_hint(image_path, hint_source) if use_hint else (None, [])
     full_prompt = prompt
     if hint:
         full_prompt += (
-            "\n\nREFERENCE (a separate OCR engine read these lines; it may be "
-            "wrong or incomplete, so trust the image over it):\n" + hint
+            "\n\nREFERENCE (separate OCR engines read these lines; they may be "
+            "wrong or incomplete, so trust the image over them):\n" + hint
         )
 
-    response = ollama.chat(
-        model=MODEL,
-        messages=[
-            {
-                "role": "user",
-                "content": full_prompt,
-                "images": [prepare_image(image_path, upscale)],
-            }
-        ],
-        options={"temperature": 0},
-    )
+    image = prepare_image(image_path, upscale)
 
-    text = response["message"]["content"].strip()
+    if api:
+        text = call_api(api, full_prompt, image)
+        model_name, settings = api["model"], {"backend": "api"}
+    else:
+        response = ollama.chat(
+            model=MODEL,
+            messages=[
+                {
+                    "role": "user",
+                    "content": full_prompt,
+                    "images": [image],
+                }
+            ],
+            options={"temperature": 0, "num_ctx": NUM_CTX},
+        )
+        text = response["message"]["content"].strip()
+        model_name, settings = MODEL, {"backend": "ollama", "num_ctx": NUM_CTX}
 
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"{image_path.stem}.json"
@@ -99,11 +167,13 @@ def transcribe(
         "image": str(image_path.relative_to(ROOT))
         if image_path.is_relative_to(ROOT)
         else str(image_path),
-        "model": MODEL,
+        "model": model_name,
         "prompt_file": str(PROMPT_PATH.relative_to(ROOT)),
         "settings": {
+            **settings,
             "temperature": 0,
-            "paddle_hint": bool(hint),
+            "paddle_hint": "paddle" in hint_used,
+            "tesseract_hint": "tesseract" in hint_used,
             "upscale_min_side": upscale,
         },
         "text": text,
@@ -144,7 +214,14 @@ def main():
     parser.add_argument(
         "--hint",
         action="store_true",
-        help="Add confident PaddleOCR lines from outputs/ocr/ to the prompt.",
+        help="Add confident OCR lines (see --hint-source) to the prompt.",
+    )
+    parser.add_argument(
+        "--hint-source",
+        choices=["paddle", "tesseract", "both"],
+        default="paddle",
+        help="Which OCR output feeds --hint: outputs/ocr (paddle), "
+        "outputs/tesseract, or both (default: paddle).",
     )
     parser.add_argument(
         "--upscale",
@@ -159,8 +236,35 @@ def main():
         help="Where to save result JSON (default: outputs/vision). "
         "Use a different folder to compare settings side by side.",
     )
+    parser.add_argument(
+        "--backend",
+        choices=["ollama", "api"],
+        default="ollama",
+        help="ollama = local model; api = OpenAI-compatible endpoint.",
+    )
+    parser.add_argument(
+        "--api-url",
+        default=os.environ.get("OCR_API_URL"),
+        help="Full /v1/chat/completions URL (or env OCR_API_URL).",
+    )
+    parser.add_argument(
+        "--api-model",
+        default=os.environ.get("OCR_API_MODEL"),
+        help="Model name sent to the API (or env OCR_API_MODEL).",
+    )
     args = parser.parse_args()
     output_dir = resolve(args.output_dir)
+
+    api = None
+    if args.backend == "api":
+        if not (args.api_url and args.api_model):
+            parser.error("--backend api needs --api-url and --api-model")
+        # Key is read from the environment only, never from the command line.
+        api = {
+            "url": args.api_url,
+            "model": args.api_model,
+            "key": os.environ.get("OCR_API_KEY"),
+        }
 
     if not PROMPT_PATH.exists():
         raise FileNotFoundError(f"Prompt not found: {PROMPT_PATH}")
@@ -173,7 +277,8 @@ def main():
             raise FileNotFoundError(f"Image not found: {image_path}")
 
         output_path = transcribe(
-            image_path, prompt, output_dir, args.hint, args.upscale
+            image_path, prompt, output_dir, args.hint, args.upscale,
+            args.hint_source, api,
         )
         print("\n=== OCR RESULT ===\n")
         print(json.loads(output_path.read_text(encoding="utf-8"))["text"])
@@ -202,7 +307,10 @@ def main():
             continue
 
         try:
-            transcribe(image_path, prompt, output_dir, args.hint, args.upscale)
+            transcribe(
+                image_path, prompt, output_dir, args.hint, args.upscale,
+                args.hint_source, api,
+            )
             print(f"{label} - ok")
             done += 1
         except Exception as error:
@@ -211,7 +319,7 @@ def main():
 
     print(
         f"\nDone: {done} | Skipped: {skipped} | Failed: {failed}"
-        f"\nResults in: {OUTPUT_DIR}"
+        f"\nResults in: {output_dir}"
     )
 
 

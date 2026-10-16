@@ -1,0 +1,14 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_4_image_3.png",
+  "model": "typhoon-ai/typhoon-ocr1.5-2b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "backend": "api",
+    "temperature": 0,
+    "paddle_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "ส่วนที่ 3: แนวทางการแก้ไขและป้องกันไม่ให้เกิดซ้ำ (Corrective and preventive action)\n\nแนวทางการแก้ไขและป้องกันไม่ให้เกิดซ้ำ\n\nตัวอย่าง แนวทางการแก้ไขและป้องกันไม่ให้เกิดซ้ำ:\n*   รณรงค์ให้สวมหมวกนิรภัยและคาดเข็มขัดนิรภัย\n*   ตักเตือนให้ระมัดระวังในการขับขี่มากยิ่งขึ้น\n*   ตรวจเช็คสภาพรถก่อนออกเดินทาง\n\nก่อนหน้า ถัดไป",
+  "review_status": "pending"
+}
