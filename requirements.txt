@@ -1,1 +1,3 @@
-PyMUPDF
+PyMuPDF
+ollama
+pillow

@@ -1,0 +1,7 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_10_image_1.png",
+  "model": "qwen2.5vl:3b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "text": "ส่งคำขอลบ\nต้องการลงบัมมูลใช่หรือไม่?\nตกลง!\nยกเลิก",
+  "review_status": "pending"
+}

@@ -1,0 +1,12 @@
+{
+  "image": "outputs\\images\\ผู้จัดการเขต_page_2_image_1.png",
+  "model": "qwen2.5vl:3b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "temperature": 0,
+    "paddle_hint": false,
+    "upscale_min_side": 1000
+  },
+  "text": "บันทึกอุบัติเหตุ\n2. ติดตามสถานะ\n3. รายงานการขออนุมัติ\n4. ออกรายงานอุบัติเหตุ",
+  "review_status": "pending"
+}

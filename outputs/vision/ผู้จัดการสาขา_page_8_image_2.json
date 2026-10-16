@@ -1,0 +1,7 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_8_image_2.png",
+  "model": "qwen2.5vl:3b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "text": "[อ่านไม่ชัด]",
+  "review_status": "pending"
+}
