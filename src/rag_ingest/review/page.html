@@ -1,0 +1,35 @@
+<!doctype html><meta charset="utf-8"><title>OCR review</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;display:flex;height:100vh}
+#list{width:260px;overflow:auto;border-right:1px solid #ccc;font-size:13px}
+#list div{padding:6px 8px;cursor:pointer;border-bottom:1px solid #eee}
+#list div.sel{background:#dde8ff}#list .corrected::before{content:"\2713 ";color:green}
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#panes{flex:1;display:flex;min-height:0}
+#img{flex:1;overflow:auto;padding:8px}#img img{max-width:100%}
+#edit{flex:1;display:flex;flex-direction:column;padding:8px}
+textarea{flex:1;font:16px/1.5 'Leelawadee UI',Tahoma,sans-serif}
+#bar{padding:8px;border-top:1px solid #ccc;display:flex;gap:8px;align-items:center}
+</style>
+<div id="list"></div>
+<div id="main"><div id="panes"><div id="img"></div>
+<div id="edit"><textarea id="t"></textarea></div></div>
+<div id="bar"><button id="save">Save &amp; next (Ctrl+Enter)</button>
+<button id="reset">Reset to model text</button><span id="msg"></span></div></div>
+<script>
+let items=[],cur=0;
+const $=id=>document.getElementById(id);
+async function load(){items=await (await fetch('/api/items')).json();render();show(0)}
+function render(){$('list').innerHTML='';items.forEach((it,i)=>{const d=document.createElement('div');
+d.textContent=it.name;d.className=(it.status=='corrected'?'corrected ':'')+(i==cur?'sel':'');
+d.onclick=()=>show(i);$('list').appendChild(d)})}
+function show(i){cur=i;const it=items[i];$('img').innerHTML='<img src="/image/'+encodeURIComponent(it.name)+'">';
+$('t').value=it.corrected_text??it.text;$('msg').textContent='';render()}
+async function save(){const it=items[cur];
+await fetch('/api/save/'+encodeURIComponent(it.name),{method:'POST',body:$('t').value});
+it.corrected_text=$('t').value;it.status='corrected';$('msg').textContent='saved';
+if(cur<items.length-1)show(cur+1);else render()}
+$('save').onclick=save;$('reset').onclick=()=>{$('t').value=items[cur].text};
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key=='Enter')save()});
+load();
+</script>

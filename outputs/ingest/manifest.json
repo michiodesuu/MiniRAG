@@ -1,0 +1,321 @@
+[
+  {
+    "image": "ผู้จัดการสาขา_page_2_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 2,
+    "size": [
+      173,
+      99
+    ],
+    "md5": "3847d9338ac59fc21800b12af215715f",
+    "status": "icon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_2_image_2",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 2,
+    "size": [
+      1609,
+      847
+    ],
+    "md5": "c484d348fde1088b859c47a156278329",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_3_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 3,
+    "size": [
+      164,
+      65
+    ],
+    "md5": "801d88b89fa8b3e873d056b89c347c64",
+    "status": "icon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_3_image_2",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 3,
+    "size": [
+      1170,
+      386
+    ],
+    "md5": "0f0c617a9de675cddadc22cd1e3be598",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_3_image_3",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 3,
+    "size": [
+      166,
+      72
+    ],
+    "md5": "99c3b5e49ba125b2d92f28dbc5d557fa",
+    "status": "icon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_3_image_4",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 3,
+    "size": [
+      1213,
+      451
+    ],
+    "md5": "f20f4ef02c2bfa6f8aaeb7dc0e7afd45",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_4_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 4,
+    "size": [
+      1188,
+      845
+    ],
+    "md5": "a827a0666b0a32c46fa8f087cfacfff2",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_4_image_2",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 4,
+    "size": [
+      1180,
+      250
+    ],
+    "md5": "048f0ba65f5b70bdccaf595afab61e63",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_4_image_3",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 4,
+    "size": [
+      1195,
+      437
+    ],
+    "md5": "5cb364a41555cf0e52a83657678c467d",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_5_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 5,
+    "size": [
+      1232,
+      1556
+    ],
+    "md5": "7f1554d0c52f5ad8e56c7043ec5fd5e0",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_6_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 6,
+    "size": [
+      1150,
+      419
+    ],
+    "md5": "d6b096a57179aa14c4e09fd2b4cd2294",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_7_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 7,
+    "size": [
+      1165,
+      436
+    ],
+    "md5": "5bb2ad3539c5b0282ea4a110732c5438",
+    "status": "ocr",
+    "source": "vision_hint"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_7_image_2",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 7,
+    "size": [
+      32,
+      29
+    ],
+    "md5": "ce9d0acb20cff0d0df20e6330964ae65",
+    "status": "icon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_7_image_3",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 7,
+    "size": [
+      1400,
+      777
+    ],
+    "md5": "1a66c3e3da80a0deaa6d85358ff4aa9b",
+    "status": "ocr",
+    "source": "vision_hint"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_8_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 8,
+    "size": [
+      1165,
+      436
+    ],
+    "md5": "5bb2ad3539c5b0282ea4a110732c5438",
+    "status": "duplicate",
+    "duplicate_of": "ผู้จัดการสาขา_page_7_image_1",
+    "source": "vision_hint"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_8_image_2",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 8,
+    "size": [
+      36,
+      40
+    ],
+    "md5": "089c21e48039a14934d7d02ec6ed6581",
+    "status": "icon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_8_image_3",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 8,
+    "size": [
+      826,
+      554
+    ],
+    "md5": "e35717291faff0708e83a77b7a844fd3",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_9_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 9,
+    "size": [
+      1165,
+      436
+    ],
+    "md5": "5bb2ad3539c5b0282ea4a110732c5438",
+    "status": "duplicate",
+    "duplicate_of": "ผู้จัดการสาขา_page_7_image_1",
+    "source": "vision_hint"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_9_image_2",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 9,
+    "size": [
+      655,
+      443
+    ],
+    "md5": "852fa4d54304a0fa2e88a7f4f03b82ac",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_10_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 10,
+    "size": [
+      530,
+      359
+    ],
+    "md5": "5dc204357c89b040a3b7d62e138fee2d",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการสาขา_page_11_image_1",
+    "pdf": "ผู้จัดการสาขา.pdf",
+    "page": 11,
+    "size": [
+      1165,
+      349
+    ],
+    "md5": "1506406e852f4f7d43cc0a7d98d614f3",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการเขต_page_2_image_1",
+    "pdf": "ผู้จัดการเขต.pdf",
+    "page": 2,
+    "size": [
+      411,
+      150
+    ],
+    "md5": "7ef45f90833ec6affad14c0a0b7350fb",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการเขต_page_3_image_1",
+    "pdf": "ผู้จัดการเขต.pdf",
+    "page": 3,
+    "size": [
+      1218,
+      617
+    ],
+    "md5": "505e3956c5259b5fcce4eea68d3cb7f1",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการเขต_page_4_image_1",
+    "pdf": "ผู้จัดการเขต.pdf",
+    "page": 4,
+    "size": [
+      1268,
+      820
+    ],
+    "md5": "91b785c1c11b7ab7dcc702f21ada25af",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  },
+  {
+    "image": "ผู้จัดการเขต_page_4_image_2",
+    "pdf": "ผู้จัดการเขต.pdf",
+    "page": 4,
+    "size": [
+      70,
+      63
+    ],
+    "md5": "ac584999148f1a665b655319165eb6d6",
+    "status": "icon"
+  },
+  {
+    "image": "ผู้จัดการเขต_page_4_image_3",
+    "pdf": "ผู้จัดการเขต.pdf",
+    "page": 4,
+    "size": [
+      62,
+      61
+    ],
+    "md5": "98d4a604c31465bcf6df664973d7e38d",
+    "status": "icon"
+  },
+  {
+    "image": "ผู้จัดการเขต_page_5_image_1",
+    "pdf": "ผู้จัดการเขต.pdf",
+    "page": 5,
+    "size": [
+      874,
+      349
+    ],
+    "md5": "bfde011b9883de0761275a8a03a4edb2",
+    "status": "ocr",
+    "source": "vision_typhoon"
+  }
+]

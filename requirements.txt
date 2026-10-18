@@ -1,4 +1,4 @@
-PyMuPDF
-ollama
-pillow
-pytesseract
+# Dependencies live in pyproject.toml. Install the package plus the engines you need:
+#   uv pip install -e ".[tesseract,api,dev]"            # light: no PaddleOCR / Ollama
+#   uv pip install -e ".[tesseract,paddle,ollama,api,dev]"
+-e .[tesseract,paddle,ollama,api,dev]
