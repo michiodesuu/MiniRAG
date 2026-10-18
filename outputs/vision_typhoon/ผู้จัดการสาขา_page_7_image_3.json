@@ -1,0 +1,14 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_7_image_3.png",
+  "model": "typhoon-ai/typhoon-ocr1.5-2b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "backend": "api",
+    "temperature": 0,
+    "paddle_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "[ไม่พบข้อความที่อ่านได้]",
+  "review_status": "pending"
+}

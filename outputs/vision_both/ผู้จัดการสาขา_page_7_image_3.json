@@ -1,0 +1,14 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_7_image_3.png",
+  "model": "qwen2.5vl:3b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "paddle_hint": true,
+    "tesseract_hint": true,
+    "upscale_min_side": 1000
+  },
+  "text": "1\n3\n>\nขั้นตอนที่ 1\nขั้นตอนที่ 2\nขั้นตอนที่ 3\nค้นหาข้อมูลพนักงาน\nเขต : -\nแผนก/ฝ่าย : -\nประวัติพนักงาน:\n04656\n*กรอกรหัสพนักงาน\nรหัสพนักงานผู้ประสบอุบัติเหตุ :\nถัดไป",
+  "review_status": "pending"
+}

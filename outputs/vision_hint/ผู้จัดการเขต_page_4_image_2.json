@@ -1,0 +1,12 @@
+{
+  "image": "outputs\\images\\ผู้จัดการเขต_page_4_image_2.png",
+  "model": "qwen2.5vl:3b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "temperature": 0,
+    "paddle_hint": false,
+    "upscale_min_side": 1000
+  },
+  "text": "[ไม่พบข้อความที่อ่านได้]",
+  "review_status": "pending"
+}

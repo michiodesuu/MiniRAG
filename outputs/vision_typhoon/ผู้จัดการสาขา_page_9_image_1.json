@@ -1,0 +1,14 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_9_image_1.png",
+  "model": "typhoon-ai/typhoon-ocr1.5-2b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "backend": "api",
+    "temperature": 0,
+    "paddle_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Extract all text from the image.\n\nInstructions:\n- Only return the clean Markdown.\n- Do not include any explanation or extra text.\n- You must include all information on the page.\n\nFormatting Rules:\n- Tables: Render tables using <table>...</table> in clean HTML format.\n- Equations: Render equations using LaTeX syntax with inline ($...$) and block ($$...$$).\n- Images/Charts/Diagrams: Wrap any clearly defined visual areas (e.g. charts, diagrams, pictures) in:\n\n<figure>\nDescribe the image’s main elements (people, objects, text), note any contextual clues (place, event, culture), mention visible text and its meaning, provide deeper analysis when relevant (especially for financial charts, graphs, or documents), comment on style or architecture if relevant, then give a concise overall summary. Describe in Thai.\n</figure>\n\n\n- Page Numbers: Wrap page numbers in <page_number>...</page_number> (e.g., <page_number>14</page_number>).\n- Checkboxes: Use ☐ for unchecked and ☑ for checked boxes.",
+  "review_status": "pending"
+}

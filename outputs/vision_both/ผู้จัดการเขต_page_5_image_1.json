@@ -1,0 +1,14 @@
+{
+  "image": "outputs\\images\\ผู้จัดการเขต_page_5_image_1.png",
+  "model": "qwen2.5vl:3b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "settings": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "paddle_hint": true,
+    "tesseract_hint": true,
+    "upscale_min_side": 1000
+  },
+  "text": "เลือกสาขา\n006-เพชรบูรณ์\nประเภทของรายการ\nทั้งหมด\nรายเดือน\n0 รายวัน\nเมษายน\n2567",
+  "review_status": "pending"
+}

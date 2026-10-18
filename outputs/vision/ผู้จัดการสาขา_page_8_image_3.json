@@ -1,0 +1,8 @@
+{
+  "image": "outputs\\images\\ผู้จัดการสาขา_page_8_image_3.png",
+  "model": "qwen2.5vl:3b",
+  "prompt_file": "prompts\\thai_document_ocr.txt",
+  "text": "ลบรายการอุบัติเหตุ\nต้องการลบข้อมูลใช่หรือไม่\nคลิก!\nยกเลิก",
+  "review_status": "corrected",
+  "corrected_text": "ลบรายการอุบัติเหตุ\nต้องการลบข้อมูลใช่หรือไม่\nตกลง!\nยกเลิก"
+}

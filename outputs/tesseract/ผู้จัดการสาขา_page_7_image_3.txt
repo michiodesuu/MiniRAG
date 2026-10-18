@@ -1,0 +1,13 @@
+๑	confidence=0.9500
+ขันตอนที่ 1 ขั้นตอนที 2	confidence=0.9194
+ค้นหาข้อมูลพนักงานกรอกแบบฟอร์มอุบัติเหตุ	confidence=0.9421
+ส่วนที 1: ข้อมูลส่วนตัวผู้ได้รับบาดเจ็บ (Personal Detail)	confidence=0.9421
+ตําแหน่ง : -	confidence=0.9211
+แผนก / ฝ่าย : -	confidence=0.9180
+ประวัติพนักงาน :	confidence=0.9367
+04656	confidence=0.9100
+รหัสพนักงานผู้ประสบอุบัติเหตุ :	confidence=0.9407
+3	confidence=0.9600
+ขั้นตอนที 3	confidence=0.9156
+ตรวจสอบความถูกต้อง	confidence=0.9524
+* กรอกรหัสพนักงาน	confidence=0.9375
