@@ -53,6 +53,15 @@ rag-ingest benchmark                        # CER per method -> outputs/benchmar
 rag-ingest compare --a outputs/vision --b outputs/vision_hint --diff
 rag-ingest ingest                           # final RAG text -> outputs/ingest/<pdf>.md
 ```
+### OCR prompts
+| file | tokens* | use |
+|---|---|---|
+| `prompts/thai_document_ocr.txt` | 212 | default; all existing results were made with it |
+| `prompts/thai_document_ocr_compact.txt` | 536 | stricter Thai/number/layout rules, explains the REFERENCE hints |
+| `prompts/thai_document_ocr_full.txt` | 9,147 | full specification; only for models with a large context (too long for `qwen2.5vl:3b`, num_ctx 8192) |
+
+\*Qwen2.5-VL tokenizer. Pick one with `rag-ingest ocr --engine ollama --prompt prompts/thai_document_ocr_compact.txt --output-dir outputs/vision_compact`; each result records its `prompt_file`. Compare against the default with `rag-ingest benchmark` (add the new folder to `METHODS` in `config.py`) on hand-corrected images before switching.
+
 `python -m rag_ingest ...` works the same. Every command has `--help`; `--docs-dir`
 (alias `--pdf-dir`) points at another folder of documents.
 

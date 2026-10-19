@@ -47,7 +47,7 @@ class VisionStore:
         record = {
             "image": self.paths.relative(image),
             "model": result.model,
-            "prompt_file": self.paths.relative(self.paths.prompt),
+            "prompt_file": self.paths.relative(result.prompt_file or self.paths.prompt),
             "settings": result.settings,
             "text": result.text,
             "review_status": "pending",

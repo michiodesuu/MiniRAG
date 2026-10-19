@@ -147,6 +147,12 @@ Model-free (low memory). Run: `python src/ingest_pdf.py` -> `outputs/ingest/<pdf
 - Converter logic moved from the root script into `src/rag_ingest/convert/` (preflight, layout, docx_fixes, verify, report, cli); `pdf_to_docx.py` is now a short wrapper, and `rag-ingest convert` takes the same options. Both produce a DOCX identical to the current one (all 52 parts).
 - 79 tests; max cognitive complexity 9; no repeated literals.
 
+### 2.16 Prompt variants and `--prompt` (2026-10-19)
+- Proposed long prompt saved as `prompts/thai_document_ocr_full.txt` (9,147 tokens, Qwen2.5-VL tokenizer). It exceeds `qwen2.5vl:3b`'s num_ctx 8192 on its own (plus image tokens and hints), so it cannot run locally as-is; Typhoon OCR is trained around its own fixed prompt, so a long custom prompt is not expected to help there either.
+- `prompts/thai_document_ocr_compact.txt` (536 tokens): its key rules plus how to treat the REFERENCE hint block. The default prompt (212 tokens) is unchanged.
+- `rag-ingest ocr --prompt FILE` (vision engines); each result's `prompt_file` now records the prompt actually used (before, it always named the default file).
+- **Not yet tested:** compare compact vs default with `rag-ingest benchmark` on the corrected images (needs Ollama + the model, or the Typhoon API, on the Windows machine).
+
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.
