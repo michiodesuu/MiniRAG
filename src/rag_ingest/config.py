@@ -3,7 +3,11 @@ from dataclasses import dataclass
 from pathlib import Path
 import os
 
-SUPPORTED_IMAGE_EXTENSIONS = frozenset({".png", ".jpg", ".jpeg", ".webp"})
+ENCODING = "utf-8"  # every text file this project reads or writes
+
+# Images the OCR engines accept. Word files can also embed GIF/BMP/TIFF.
+SUPPORTED_IMAGE_EXTENSIONS = frozenset({".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp",
+                                        ".tif", ".tiff"})
 
 
 def _default_root() -> Path:
@@ -29,7 +33,9 @@ class Paths:
         return (path.relative_to(self.root) if path.is_relative_to(self.root) else path).as_posix()
 
     @property
-    def pdfs(self) -> Path:
+    def documents(self) -> Path:
+        """Source documents, sorted by type into sub-folders: pdf/, docx/, txt/, md/.
+        Every sub-folder is searched; the file extension picks the reader."""
         return self.root / "data" / "raw"
 
     @property

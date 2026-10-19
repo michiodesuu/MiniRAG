@@ -126,3 +126,16 @@ def test_tesseract_engine_reads_text(make_image):
     img.save(path)
     result = engine.recognize(path)
     assert "HELLO" in result.text and result.lines and 0 <= result.lines[0].confidence <= 1
+
+
+def test_formats_vision_models_may_reject_are_sent_as_png(paths, make_image):
+    from rag_ingest.imaging import image_bytes
+    from rag_ingest.readers.builder import pixel_size
+
+    gif = paths.images / "shot.gif"
+    Image.new("RGB", (300, 200), "white").save(gif)
+    sent = image_bytes(gif)
+    assert sent[:4] == b"\x89PNG" and pixel_size(sent) == (300, 200)
+    png = make_image("shot.png", size=(300, 200))
+    assert image_bytes(png) == png.read_bytes()  # PNG/JPEG go as-is
+    assert pixel_size(b"not an image") == (0, 0)  # e.g. EMF: reported, not crashed

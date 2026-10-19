@@ -45,37 +45,49 @@ def compare(a: VisionStore, b: VisionStore) -> tuple[list[Row], list[str]]:
     return rows, only
 
 
-def render(rows: list[Row], only: list[str], label_a: str, label_b: str, diff: bool) -> str:
-    if not rows:
-        raise ValueError("No images in common between the two folders.")
-    fmt = lambda x: "-" if x is None else f"{x:.2f}"
-    lines = [f"# Vision OCR comparison\n\nA = `{label_a}`  |  B = `{label_b}`\n",
-            "| image | A~B similarity | len A | len B | CER A | CER B | hint A | hint B |",
-            "|---|---|---|---|---|---|---|---|"]
-    for r in rows:
-        lines.append(f"| {r.stem} | {r.similarity:.2f} | {len(r.text_a)} | {len(r.text_b)} "
-                    f"| {fmt(r.cer_a)} | {fmt(r.cer_b)} | {r.hint_a} | {r.hint_b} |")
+def _fmt(value: float | None) -> str:
+    return "-" if value is None else f"{value:.2f}"
 
+
+def _table(rows: list[Row], label_a: str, label_b: str) -> list[str]:
+    lines = [f"# Vision OCR comparison\n\nA = `{label_a}`  |  B = `{label_b}`\n",
+             "| image | A~B similarity | len A | len B | CER A | CER B | hint A | hint B |",
+             "|---|---|---|---|---|---|---|---|"]
+    lines += [f"| {r.stem} | {r.similarity:.2f} | {len(r.text_a)} | {len(r.text_b)} "
+              f"| {_fmt(r.cer_a)} | {_fmt(r.cer_b)} | {r.hint_a} | {r.hint_b} |" for r in rows]
     lines.append("\nHint columns: P = PaddleOCR, T = Tesseract reached the prompt; - = none.")
+    return lines
+
+
+def _summary(rows: list[Row], only: list[str]) -> list[str]:
     identical = sum(r.text_a == r.text_b for r in rows)
-    lines.append(f"\n{len(rows)} images compared, {identical} identical, "
-                f"mean similarity {sum(r.similarity for r in rows) / len(rows):.2f}.")
+    lines = [f"\n{len(rows)} images compared, {identical} identical, "
+             f"mean similarity {sum(r.similarity for r in rows) / len(rows):.2f}."]
     scored = [r for r in rows if r.cer_a is not None]
     if scored:
         lines.append(f"Ground truth available for {len(scored)} images: "
-                    f"mean CER A {sum(r.cer_a for r in scored) / len(scored):.3f} vs "
-                    f"B {sum(r.cer_b for r in scored) / len(scored):.3f} (lower is better).")
+                     f"mean CER A {sum(r.cer_a for r in scored) / len(scored):.3f} vs "
+                     f"B {sum(r.cer_b for r in scored) / len(scored):.3f} (lower is better).")
     else:
         lines.append("No corrected_text yet, so no accuracy score. Review some "
-                    "results with `rag-ingest review`, then rerun this.")
+                     "results with `rag-ingest review`, then rerun this.")
     if only:
         lines.append(f"Only in one folder (skipped): {', '.join(only)}")
+    return lines
 
-    if diff:
-        for r in rows:
-            if r.text_a != r.text_b:
-                lines.append(f"\n## {r.stem}\n```diff")
-                lines.extend(unified_diff(r.text_a.splitlines(), r.text_b.splitlines(),
-                                        "A", "B", lineterm="", n=0))
-                lines.append("```")
-    return "\n".join(lines)
+
+def _diffs(rows: list[Row]) -> list[str]:
+    lines = []
+    for r in (r for r in rows if r.text_a != r.text_b):
+        lines.append(f"\n## {r.stem}\n```diff")
+        lines.extend(unified_diff(r.text_a.splitlines(), r.text_b.splitlines(),
+                                  "A", "B", lineterm="", n=0))
+        lines.append("```")
+    return lines
+
+
+def render(rows: list[Row], only: list[str], label_a: str, label_b: str, diff: bool) -> str:
+    if not rows:
+        raise ValueError("No images in common between the two folders.")
+    lines = _table(rows, label_a, label_b) + _summary(rows, only)
+    return "\n".join(lines + (_diffs(rows) if diff else []))

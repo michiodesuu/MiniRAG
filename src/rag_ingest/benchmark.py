@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import csv
 
-from rag_ingest.config import METHODS
+from rag_ingest.config import ENCODING, METHODS
 from rag_ingest.metrics import edit_distance
 from rag_ingest.stores import ResultStore, VisionStore
 from rag_ingest.textproc import normalize_for_scoring
@@ -38,7 +38,7 @@ def load_ground_truth(stores: list[ResultStore], gt_dir: Path) -> dict[str, str]
             for stem, text in store.corrections().items():
                 truth.setdefault(stem, text)
     for path in sorted(gt_dir.glob("*.txt")):
-        truth[path.stem] = path.read_text(encoding="utf-8")
+        truth[path.stem] = path.read_text(encoding=ENCODING)
     normalized = {k: normalize_for_scoring(v) for k, v in truth.items()}
     return {k: v for k, v in normalized.items() if v}
 
@@ -103,7 +103,7 @@ def render(rows: list[ImageScores], names: list[str]) -> str:
 
 
 def write_csv(path: Path, rows: list[ImageScores], names: list[str]) -> None:
-    with open(path, "w", encoding="utf-8", newline="") as f:
+    with open(path, "w", encoding=ENCODING, newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["image", "ref_chars"] + names)
         for r in rows:

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Protocol
 import base64
 
-from rag_ingest.config import HINT_FOLDERS, Paths
+from rag_ingest.config import ENCODING, HINT_FOLDERS, Paths
 from rag_ingest.imaging import image_bytes
 from rag_ingest.models import Recognition
 from rag_ingest.stores import LineStore
@@ -132,7 +132,7 @@ def _vision_engine(transport: Transport, paths: Paths, hint_source: str | None,
                    upscale: int) -> VisionEngine:
     if not paths.prompt.exists():
         raise FileNotFoundError(f"Prompt not found: {paths.prompt}")
-    return VisionEngine(transport, paths.prompt.read_text(encoding="utf-8"),
+    return VisionEngine(transport, paths.prompt.read_text(encoding=ENCODING),
                         _hint_provider(paths, hint_source), upscale)
 
 

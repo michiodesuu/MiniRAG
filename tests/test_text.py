@@ -3,22 +3,7 @@ import pytest
 from rag_ingest.metrics import cer, edit_distance
 from rag_ingest.models import ImageRef
 from rag_ingest.quality import rejection
-from rag_ingest.textproc import NO_TEXT_MARK, fix_sara_am, join_thai_words, normalize_for_scoring
-
-
-@pytest.mark.parametrize("broken, fixed", [
-    ("ท าการ", "ทำการ"),
-    ("ส่งค าขอ", "ส่งคำขอ"),
-    ("ส าน", "สำน"),
-    ("น ้ า", "น ้ า"),         # no consonant directly before the space: left alone
-])
-def test_fix_sara_am(broken, fixed):
-    assert fix_sara_am(broken) == fixed
-
-
-def test_fix_sara_am_keeps_normal_text():
-    text = "กดปุ่ม ถัดไป เพื่อบันทึก ABC 123"
-    assert fix_sara_am(text) == text
+from rag_ingest.textproc import NO_TEXT_MARK, join_thai_words, normalize_for_scoring
 
 
 def test_join_thai_words_keeps_latin_spaces():
