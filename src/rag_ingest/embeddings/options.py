@@ -17,6 +17,10 @@ def add_embedder_arguments(parser: argparse.ArgumentParser) -> None:
                         help="Passages per forward pass (local).")
     parser.add_argument("--max-seq-length", type=int,
                         help="Tokens kept per input; longer inputs are truncated (default per model).")
+    parser.add_argument("--api-url", help="api: full /v1/embeddings URL (or env EMBED_API_URL).")
+    parser.add_argument("--api-model", help="api: model name sent to the server (or env EMBED_API_MODEL).")
+    parser.add_argument("--tokenizer", help="api: Hugging Face tokenizer matching the served model, "
+                                            "for exact token counts (default: approximate).")
 
 
 def embedder_options(args: argparse.Namespace) -> dict:

@@ -96,3 +96,53 @@ def test_chunk_command_stops_on_personal_data(tmp_path, project_root):
         main(args)
     main(args + ["--allow-pii"])  # finishes, but the chunk still stays out
     assert good not in (tmp_path / "chunks" / "chunks.jsonl").read_text(encoding="utf-8")
+
+
+class FakeResponse:
+    def __init__(self, payload):
+        self.payload = payload
+
+    def raise_for_status(self):
+        pass
+
+    def json(self):
+        return self.payload
+
+
+def test_api_embedder_request_order_key_and_settings(monkeypatch, capsys):
+    httpx = pytest.importorskip("httpx")
+    from rag_ingest.embeddings.api import ApiEmbedder
+
+    sent = []
+    def fake_post(url, json, headers, timeout):
+        sent.append((url, json, headers))
+        rows = [{"index": i, "embedding": [float(i + 1), 0.0, 1.0]} for i in range(len(json["input"]))]
+        return FakeResponse({"data": list(reversed(rows))})  # out of order on purpose
+    monkeypatch.setattr(httpx, "post", fake_post)
+    e = ApiEmbedder("http://embed.internal/v1/embeddings", "intfloat/multilingual-e5-small", key="secret-key")
+    assert "unencrypted" in capsys.readouterr().err
+    vectors = e.embed_passages(["ก", "ข"])
+    assert sent[0][1] == {"model": "intfloat/multilingual-e5-small", "input": ["passage: ก", "passage: ข"]}
+    assert sent[0][2] == {"Authorization": "Bearer secret-key"}
+    assert np.allclose(np.linalg.norm(vectors, axis=1), 1.0) and vectors[0][0] < vectors[1][0]  # order restored
+    e.embed_query("ค")
+    assert sent[-1][1]["input"] == ["query: ค"]
+    settings = e.settings()
+    assert "secret-key" not in json.dumps(settings) and settings["endpoint"] == "embed.internal"
+    assert settings["token_counter"] == "approximate"
+
+
+def test_api_options_need_url_and_model(monkeypatch):
+    import argparse
+    from rag_ingest.embeddings.api import api_options
+
+    for name in ("EMBED_API_URL", "EMBED_API_MODEL", "EMBED_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    args = argparse.Namespace(api_url=None, api_model=None, tokenizer=None)
+    with pytest.raises(SystemExit, match="needs --api-url"):
+        api_options(args)
+    monkeypatch.setenv("EMBED_API_URL", "https://embed.internal/v1/embeddings")
+    monkeypatch.setenv("EMBED_API_MODEL", "m")
+    monkeypatch.setenv("EMBED_API_KEY", "k")
+    options = api_options(args)
+    assert (options["url"], options["model"], options["key"]) == ("https://embed.internal/v1/embeddings", "m", "k")
