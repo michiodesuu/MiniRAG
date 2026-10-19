@@ -248,11 +248,16 @@ def test_name_matching_ignores_case_and_invisible_characters():
     assert exclusion_reason("Report\u200b ", images, set(), {"report.PDF": "x"}) == "x"
 
 
-@pytest.mark.parametrize("text", ["{id}, 0812345678", "{id} 25", "25 {grouped}", "{grouped} 081-234-5678"])
+@pytest.mark.parametrize("text", ["{id}, 0812345678", "{id} 25", "25 {grouped}", "{grouped} 081-234-5678",
+                                  "{fours}", "| {cells} |", "{spaced}"])
 def test_id_next_to_other_numbers_is_found(text):
     good = thai_id()
     grouped = f"{good[0]}-{good[1:5]}-{good[5:10]}-{good[10:12]}-{good[12]}"
-    rules = [f.rule for f in scan({"t": text.format(id=good, grouped=grouped)})]
+    fours = f"{good[:4]} {good[4:8]} {good[8:12]} {good[12]}"          # 4-4-4-1, not the printed layout
+    cells = " | ".join([good[:3], good[3:7], good[7:10], good[10:]])     # split across Markdown cells
+    spaced = " ".join(good)
+    rules = [f.rule for f in scan({"t": text.format(id=good, grouped=grouped, fours=fours,
+                                                    cells=cells, spaced=spaced)})]
     assert rules.count("thai_national_id") == 1
 
 

@@ -16,11 +16,18 @@ How numbers are found, so the way a number is written cannot hide it:
      rule's length, so an ID stuck to another number ("<ID>, 0812345678",
      "<ID> 25") is still found; one unbroken run longer than the rule
      (e.g. ECPS202000212) is a code, not a match
-  4. an ID candidate must be laid out like an ID: at most 3 groups split
-     anywhere (a line wrap, a cell split), groups that follow the 1-4-5-2-1
-     printed layout (or merge parts of it), or one digit per group
-     (spaced-out typing); then its check digit must be valid. The layout
-     limit keeps tables of small numbers from producing false matches.
+  4. an ID candidate is either
+       a) a whole chain of exactly 13 digits, grouped any way
+          ("3101 7001 2345 9", one digit per group, split across cells), or
+       b) whole consecutive groups inside a longer chain that total 13 and
+          are laid out like an ID: up to 3 groups split anywhere, the printed
+          1-4-5-2-1 layout (or merged parts of it), or one digit per group,
+          so an ID next to another number ("<ID>, 081-234-5678") is found;
+     then its check digit must be valid. (a) and (b) together catch
+     everything earlier versions of this rule caught. Without the layout
+     limit in (b), rows of dates and amounts ("12/3/2565 | 1,234.50")
+     produced false IDs in ~40% of rows. Known gap: an ID in an unusual
+     grouping of 4+ parts directly next to another number.
 The pipeline scans each whole document before chunking, so a number that a
 chunk split would cut in two is still caught (pipeline.mark_pii_units), and
 scans every chunk again afterwards.
@@ -47,8 +54,6 @@ MAX_GAP = 5
 _TAG = re.compile(r"<[^<>]{0,200}>")
 TAG_FILL = "\x00"  # a removed tag: a separator that does not count towards the gap
 ID_LENGTH = 13
-ID_GROUP_BOUNDARIES = frozenset({1, 5, 10, 12})  # after digit 1, 5, 10, 12 in "1-2345-67890-12-3"
-ID_FREE_SPLIT_GROUPS = 3  # up to this many groups may split an ID anywhere
 PHONE_LENGTHS = (9, 10)
 
 Group = tuple[str, int, int]  # (ASCII digits, start, end) of unbroken digits
@@ -121,15 +126,6 @@ def candidates(chain: list[Group], lengths: tuple[int, ...]) -> list[tuple[list[
     return out
 
 
-def id_layout(groups: list[Group]) -> bool:
-    """Up to 3 groups split anywhere, the printed 1-4-5-2-1 layout (or merged parts
-    of it), or one digit per group."""
-    sizes = [len(g[0]) for g in groups]
-    boundaries = {sum(sizes[:k]) for k in range(1, len(sizes))}
-    return (len(sizes) <= ID_FREE_SPLIT_GROUPS or boundaries <= ID_GROUP_BOUNDARIES
-            or all(size == 1 for size in sizes))
-
-
 def valid_thai_id(text: str) -> bool:
     """Thai national ID check digit: (11 - sum(digit_i * (13 - i)) mod 11) mod 10."""
     digits = [int(unicodedata.digit(d)) for d in text if d.isdigit()]
@@ -139,8 +135,25 @@ def valid_thai_id(text: str) -> bool:
     return (11 - total % 11) % 10 == digits[12]
 
 
-def _is_id(groups: list[Group]) -> bool:
-    return id_layout(groups) and valid_thai_id("".join(g[0] for g in groups))
+ID_GROUP_BOUNDARIES = frozenset({1, 5, 10, 12})  # after digit 1, 5, 10, 12 in "1-2345-67890-12-3"
+ID_FREE_SPLIT_GROUPS = 3  # up to this many groups may split an ID anywhere
+
+
+def id_layout(groups: list[Group]) -> bool:
+    """Up to 3 groups split anywhere, the printed 1-4-5-2-1 layout (or merged parts
+    of it), or one digit per group."""
+    sizes = [len(g[0]) for g in groups]
+    boundaries = {sum(sizes[:k]) for k in range(1, len(sizes))}
+    return (len(sizes) <= ID_FREE_SPLIT_GROUPS or boundaries <= ID_GROUP_BOUNDARIES
+            or all(size == 1 for size in sizes))
+
+
+def _is_id(groups: list[Group], whole_chain: bool) -> bool:
+    return (whole_chain or id_layout(groups)) and valid_thai_id("".join(g[0] for g in groups))
+
+
+def _is_phone_candidate(groups: list[Group], _whole_chain: bool) -> bool:
+    return _is_phone(groups)
 
 
 def _is_phone(groups: list[Group]) -> bool:
@@ -164,12 +177,12 @@ class ContentRule:
     name: str
     action: str
     lengths: tuple[int, ...]
-    matches: Callable[[list[Group]], bool]
+    matches: Callable[[list[Group], bool], bool]  # (groups, they are the whole chain)
 
 
 CONTENT_RULES = (
     ContentRule(THAI_ID, REJECT, (ID_LENGTH,), _is_id),
-    ContentRule(PHONE, FLAG, PHONE_LENGTHS, _is_phone),
+    ContentRule(PHONE, FLAG, PHONE_LENGTHS, _is_phone_candidate),
 )
 
 
@@ -177,7 +190,8 @@ def spans(text: str) -> list[tuple[str, str, int, int]]:
     """(rule, action, start, end) of every finding in one text."""
     return [(rule.name, rule.action, start, end)
             for chain in digit_chains(text) for rule in CONTENT_RULES
-            for groups, start, end in candidates(chain, rule.lengths) if rule.matches(groups)]
+            for groups, start, end in candidates(chain, rule.lengths)
+            if rule.matches(groups, len(groups) == len(chain))]
 
 
 def scan(texts: dict[str, str]) -> list[Finding]:
