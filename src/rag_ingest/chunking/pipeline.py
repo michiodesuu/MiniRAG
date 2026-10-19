@@ -1,0 +1,268 @@
+"""Turn outputs/ingest/*.md into chunks (spec 3), one document after another.
+
+Per document:
+  1. exclusion check (before the file is read)
+  2. parse into units; drop table-of-contents pages
+  3. sections (Word: "#" headings; PDF: numbered headings from the contents page)
+  4. screenshots get their image md5 and OCR source; one already embedded
+     elsewhere in the corpus is kept for display but not embedded again
+  5. pack each section into chunks (builder.py) within the token budget
+  6. guards (guards.py): empty, PII, duplicates
+chunk_id = "<document>#p<first page>#c<nn>", numbered in document order before
+the guards run, so ids are stable for unchanged input and settings.
+"""
+from dataclasses import asdict, dataclass, field
+from itertools import groupby
+from pathlib import Path
+import json
+from typing import Callable
+
+from rag_ingest.chunking import guards
+from rag_ingest.chunking.builder import Draft, SectionPacker, make_blocks
+from rag_ingest.chunking.sections import assign_sections, find_table_of_contents, strategy_for
+from rag_ingest.chunking.sources import IngestOutput, find_doc_type, sha256_file
+from rag_ingest.chunking.tables import KEEP
+from rag_ingest.chunking.text import context_header, nfc
+from rag_ingest.chunking.units import Kind, Unit, parse_markdown
+from rag_ingest.config import ENCODING
+
+TEXT_KINDS = (Kind.TEXT, Kind.HEADING, Kind.TABLE)
+CLI_EXCLUSION = "excluded on the command line (--exclude)"
+
+
+@dataclass(frozen=True)
+class ChunkSettings:
+    max_tokens: int = 400
+    overlap: int = 50
+    tables: str = KEEP
+    context_header: bool = True
+
+
+@dataclass
+class DocumentCounts:
+    chunks: int = 0
+    toc_pages_dropped: list[int] = field(default_factory=list)
+    duplicates: int = 0
+    duplicate_screenshots: int = 0
+    pii_rejections: int = 0
+    phone_flags: int = 0
+    missing_ocr: int = 0
+    empty: int = 0
+    oversize: int = 0
+
+
+@dataclass
+class ChunkRun:
+    settings: ChunkSettings
+    chunks: list[dict] = field(default_factory=list)
+    rejected: list[dict] = field(default_factory=list)  # rule + position, never the value
+    flagged: list[dict] = field(default_factory=list)
+    dropped: list[dict] = field(default_factory=list)   # duplicates / empty, with pointers
+    excluded: list[dict] = field(default_factory=list)
+    documents: dict[str, DocumentCounts] = field(default_factory=dict)
+    sources: dict[str, str] = field(default_factory=dict)  # document -> sha256 of its .md
+
+    @property
+    def pii_found(self) -> bool:
+        return bool(self.rejected)
+
+
+def exclusion_reason(stem: str, doc_type: str, cli_stems: set[str],
+                     excluded_files: dict[str, str]) -> str | None:
+    if stem in cli_stems:
+        return CLI_EXCLUSION
+    for name, reason in excluded_files.items():
+        path = Path(name)
+        same_type = doc_type in (path.suffix.lstrip(".").lower(), "unknown")
+        if path.stem == stem and same_type:
+            return reason
+    return None
+
+
+@dataclass
+class Corpus:
+    """State shared across documents: what was already embedded."""
+    seen_md5: set[str] = field(default_factory=set)
+    seen_text: dict[str, str] = field(default_factory=dict)        # embed_text -> chunk_id
+    seen_shot_sets: dict[frozenset, str] = field(default_factory=dict)
+
+
+def link_screenshots(units: list[Unit], images, corpus: Corpus) -> list[Unit]:
+    out = []
+    for unit in units:
+        if unit.kind == Kind.SCREENSHOT:
+            md5, source = images.match(unit.page, unit.text)
+            repeat = md5 is not None and md5 in corpus.seen_md5
+            if md5:
+                corpus.seen_md5.add(md5)
+            unit = unit.with_(md5=md5, ocr_source=source, duplicate_of_md5=repeat)
+        out.append(unit)
+    return out
+
+
+def chunk_kind(units: list[Unit]) -> str:
+    has_text = any(u.kind in TEXT_KINDS for u in units)
+    has_ocr = any(u.kind == Kind.SCREENSHOT for u in units)
+    return "mixed" if has_text and has_ocr else ("ocr" if has_ocr else "text")
+
+
+@dataclass
+class DocumentContext:
+    stem: str
+    doc_type: str
+    role: str | None
+    sha256: str
+
+
+def make_chunk(draft: Draft, header: str, index: int, doc: DocumentContext,
+               count: Callable[[str], int]) -> dict:
+    units = draft.units
+    body = nfc(draft.body)
+    embed_text = f"{header}\n{body}" if header and body else body
+    shots = [u for u in units if u.kind == Kind.SCREENSHOT]
+    pages = [u.page for u in units]
+    return {
+        "chunk_id": f"{doc.stem}#p{min(pages)}#c{index:02d}",
+        "document": doc.stem, "doc_type": doc.doc_type, "role": doc.role,
+        "section": units[0].section,
+        "page_start": min(pages), "page_end": max(pages),
+        "kind": chunk_kind(units),
+        "ocr_sources": sorted({u.ocr_source for u in shots if u.ocr_source}),
+        "screenshot_md5": [u.md5 for u in shots if u.md5],
+        "missing_ocr": sum(1 for u in units if u.kind == Kind.PLACEHOLDER),
+        "duplicate_screenshots": sum(1 for u in shots if u.duplicate_of_md5),
+        "tokens": count(embed_text),
+        "embed_text": embed_text, "display_text": draft.display,
+        "source_sha256": doc.sha256,
+        "char_start": min(u.start for u in units), "char_end": max(u.end for u in units),
+    }
+
+
+class Chunker:
+    def __init__(self, settings: ChunkSettings, count: Callable[[str], int]):
+        self.settings, self.count = settings, count
+
+    def header(self, stem: str, section: str) -> str:
+        return context_header(stem, section) if self.settings.context_header else ""
+
+    def room_for(self, header: str) -> Callable[[str], int]:
+        """Tokens left in the budget for a chunk body under this header."""
+        def room(body: str) -> int:
+            text = f"{header}\n{body}" if header else body
+            return self.settings.max_tokens - self.count(text)
+        return room
+
+    def document_drafts(self, units: list[Unit], stem: str,
+                        counts: DocumentCounts) -> list[tuple[Draft, str]]:
+        drafts = []
+        for section, group in groupby(units, key=lambda u: u.section):
+            header = self.header(stem, section)
+            packer = SectionPacker(self.room_for(header), self.count, self.settings.overlap,
+                                   self.settings.tables)
+            drafts += [(d, header) for d in packer.pack(make_blocks(list(group), self.settings.tables))]
+            counts.oversize += packer.oversize
+        return drafts
+
+
+def apply_guards(chunk: dict, run: ChunkRun, corpus: Corpus, counts: DocumentCounts) -> bool:
+    """True if the chunk is kept."""
+    findings = guards.scan({"embed_text": chunk["embed_text"], "display_text": chunk["display_text"]})
+    base = {"chunk_id": chunk["chunk_id"], "document": chunk["document"]}
+    run.flagged += [{**base, **asdict(f)} for f in findings if f.action == guards.FLAG]
+    counts.phone_flags += sum(1 for f in findings if f.action == guards.FLAG)
+    rejected = [f for f in findings if f.action == guards.REJECT]
+    if rejected:
+        run.rejected += [{**base, **asdict(f)} for f in rejected]
+        counts.pii_rejections += 1
+        return False
+    reason, pointer = drop_reason(chunk, corpus)
+    if reason:
+        run.dropped.append({**base, "rule": reason, "duplicate_of": pointer})
+        if reason == guards.EMPTY:
+            counts.empty += 1
+        else:
+            counts.duplicates += 1
+        return False
+    corpus.seen_text[chunk["embed_text"]] = chunk["chunk_id"]
+    if chunk["kind"] == "ocr":
+        corpus.seen_shot_sets[frozenset(chunk["screenshot_md5"])] = chunk["chunk_id"]
+    return True
+
+
+def drop_reason(chunk: dict, corpus: Corpus) -> tuple[str | None, str | None]:
+    if not chunk["embed_text"].strip():  # make_chunk adds no header to an empty body
+        return guards.EMPTY, None
+    if chunk["embed_text"] in corpus.seen_text:
+        return guards.DUPLICATE_TEXT, corpus.seen_text[chunk["embed_text"]]
+    shots = frozenset(chunk["screenshot_md5"])
+    if chunk["kind"] == "ocr" and shots in corpus.seen_shot_sets:
+        return guards.DUPLICATE_SCREENSHOTS, corpus.seen_shot_sets[shots]
+    return None, None
+
+
+@dataclass(frozen=True)
+class CorpusConfig:
+    ingest_dir: Path
+    documents_dir: Path
+    excluded_files: dict[str, str]
+    cli_excluded: frozenset[str]
+    roles: dict[str, str]
+
+
+def chunk_corpus(config: CorpusConfig, settings: ChunkSettings,
+                 count: Callable[[str], int]) -> ChunkRun:
+    output, run, corpus = IngestOutput.load(config.ingest_dir), ChunkRun(settings), Corpus()
+    chunker = Chunker(settings, count)
+    for path in output.markdown_files():
+        images = output.images(path.stem)
+        doc_type = find_doc_type(path.stem, images, config.documents_dir)
+        reason = exclusion_reason(path.stem, doc_type, set(config.cli_excluded), config.excluded_files)
+        if reason:
+            run.excluded.append({"document": path.stem, "doc_type": doc_type, "reason": reason})
+            continue
+        doc = DocumentContext(path.stem, doc_type, config.roles.get(path.stem), sha256_file(path))
+        chunk_document(path, images, doc, chunker, run, corpus)
+    return run
+
+
+def chunk_document(path: Path, images, doc: DocumentContext, chunker: Chunker,
+                   run: ChunkRun, corpus: Corpus) -> None:
+    counts = run.documents.setdefault(doc.stem, DocumentCounts())
+    run.sources[doc.stem] = doc.sha256
+    units = parse_markdown(path.read_text(encoding=ENCODING)).units
+    toc = find_table_of_contents(units)
+    counts.toc_pages_dropped = sorted(toc.pages)
+    units = assign_sections([u for u in units if u.page not in toc.pages], strategy_for(doc.doc_type, toc))
+    units = link_screenshots(units, images, corpus)
+    for index, (draft, header) in enumerate(chunker.document_drafts(units, doc.stem, counts)):
+        chunk = make_chunk(draft, header, index, doc, chunker.count)
+        counts.missing_ocr += chunk["missing_ocr"]
+        counts.duplicate_screenshots += chunk["duplicate_screenshots"]
+        if apply_guards(chunk, run, corpus, counts):
+            run.chunks.append(chunk)
+            counts.chunks += 1
+
+
+def write_jsonl(path: Path, rows: list[dict]) -> None:
+    path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding=ENCODING)
+
+
+def write_run(run: ChunkRun, out_dir: Path, tokenizer: dict) -> Path:
+    """chunks.jsonl, rejected.jsonl (rule + position only) and manifest.json."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    chunks_path = out_dir / "chunks.jsonl"
+    write_jsonl(chunks_path, run.chunks)
+    write_jsonl(out_dir / "rejected.jsonl", run.rejected)
+    manifest = {
+        "settings": {**asdict(run.settings), "tokenizer": tokenizer},
+        "chunks": len(run.chunks),
+        "chunks_sha256": sha256_file(chunks_path),
+        "documents": {doc: asdict(counts) for doc, counts in run.documents.items()},
+        "excluded": run.excluded,
+        "dropped": run.dropped,
+        "flagged": run.flagged,
+        "sources": run.sources,
+    }
+    (out_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2),
+                                           encoding=ENCODING)
+    return chunks_path
