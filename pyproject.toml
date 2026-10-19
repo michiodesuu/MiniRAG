@@ -14,7 +14,9 @@ tesseract = ["pytesseract"]
 paddle = ["paddleocr"]
 ollama = ["ollama"]
 api = ["httpx"]
-dev = ["pytest"]
+docx = ["python-docx"]   # Word (.docx) input; small, pure Python + lxml
+convert = ["pdf2docx"]  # pdf_to_docx.py; pulls in OpenCV (~100 MB)
+dev = ["pytest", "python-docx"]
 
 [project.scripts]
 rag-ingest = "rag_ingest.cli:main"
@@ -31,4 +33,4 @@ rag_ingest = ["review/*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]  # "." for the root-level pdf_to_docx.py

@@ -19,11 +19,16 @@ import json
 import secrets
 import webbrowser
 
+from rag_ingest.config import ENCODING
 from rag_ingest.stores import VisionStore
 
 LOOPBACK = "127.0.0.1"
-PAGE = files(__package__).joinpath("page.html").read_text(encoding="utf-8")
-IMAGE_TYPES = {".png": "image/png", ".webp": "image/webp"}
+PAGE = files(__package__).joinpath("page.html").read_text(encoding=ENCODING)
+TEXT_PLAIN = "text/plain"
+HTML = "text/html; charset=utf-8"
+JSON = "application/json"
+IMAGE_TYPES = {".png": "image/png", ".webp": "image/webp", ".gif": "image/gif",
+               ".bmp": "image/bmp"}
 
 
 def items_json(store: VisionStore) -> bytes:
@@ -33,7 +38,7 @@ def items_json(store: VisionStore) -> bytes:
         items.append({"name": f"{stem}.json", "text": record["text"],
                       "corrected_text": record.get("corrected_text"),
                       "status": record.get("review_status")})
-    return json.dumps(items, ensure_ascii=False).encode("utf-8")
+    return json.dumps(items, ensure_ascii=False).encode(ENCODING)
 
 
 def image_file(store: VisionStore, stem: str) -> Path | None:
@@ -63,10 +68,10 @@ class ReviewHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def not_found(self):
-        self.send(b"not found", "text/plain", 404)
+        self.send(b"not found", TEXT_PLAIN, 404)
 
     def forbidden(self):
-        self.send(b"forbidden", "text/plain", 403)
+        self.send(b"forbidden", TEXT_PLAIN, 403)
 
     def same_host(self) -> bool:
         return self.headers.get("Host") in self.hosts
@@ -84,9 +89,9 @@ class ReviewHandler(BaseHTTPRequestHandler):
         if not self.same_host():
             return self.forbidden()
         if self.path == "/":
-            return self.send(self.page, "text/html; charset=utf-8")
+            return self.send(self.page, HTML)
         if self.path == "/api/items":
-            return self.send(items_json(self.store), "application/json")
+            return self.send(items_json(self.store), JSON)
         if self.path.startswith("/image/"):
             return self.send_image(self.stem("/image/"))
         self.not_found()
@@ -106,8 +111,8 @@ class ReviewHandler(BaseHTTPRequestHandler):
         if not self.store.has(stem):
             return self.not_found()
         length = int(self.headers.get("Content-Length", 0))
-        self.store.save_correction(stem, self.rfile.read(length).decode("utf-8"))
-        self.send(b"ok", "text/plain")
+        self.store.save_correction(stem, self.rfile.read(length).decode(ENCODING))
+        self.send(b"ok", TEXT_PLAIN)
 
 
 def make_handler(store: VisionStore, port: int, token: str) -> type[ReviewHandler]:
@@ -117,7 +122,7 @@ def make_handler(store: VisionStore, port: int, token: str) -> type[ReviewHandle
         "hosts": hosts,
         "origins": frozenset(f"http://{h}" for h in hosts),  # NOSONAR loopback only, see module doc
         "token": token,
-        "page": PAGE.replace("__TOKEN__", token).encode("utf-8"),
+        "page": PAGE.replace("__TOKEN__", token).encode(ENCODING),
     })
 
 
@@ -129,4 +134,4 @@ def serve(store: VisionStore, port: int = 8765, open_browser: bool = True) -> No
     if open_browser:
         webbrowser.open(url)
     handler = make_handler(store, port, secrets.token_urlsafe(32))
-    ThreadingHTTPServer((LOOPBACK, port), handler).serve_forever()
+    ThreadingHTTPServer((LOOPBACK, port), handler).serve_forever()  # NOSONAR loopback only

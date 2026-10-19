@@ -1,4 +1,5 @@
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -7,7 +8,7 @@ from rag_ingest.benchmark import render, score_all, summarize
 from rag_ingest.compare import hint_label
 from rag_ingest.ingest import Ingestor, OcrCache, OcrSourceChain, run_ingest
 from rag_ingest.models import ImageRef
-from rag_ingest.pdf import EmbeddedImage, Page, TextBlock
+from rag_ingest.models import EmbeddedImage, Page, TextBlock
 from rag_ingest.stores import VisionStore
 from rag_ingest.textproc import NO_TEXT_MARK
 
@@ -72,6 +73,14 @@ def test_missing_ocr_is_marked_not_dropped(paths, tmp_path):
     assert [e["status"] for e in ingestor.result.manifest] == ["needs_ocr", "duplicate"]
 
 
+def test_undecodable_image_is_reported_not_ocrd(paths, tmp_path):
+    ingestor = make_ingestor(paths, tmp_path, {"good": {"doc_page_1_image_1": "ไม่ควรใช้"}})
+    text = ingestor.page_text(Page(1, 800.0, "", [], [image(1, b"emf", size=(0, 0))]))
+    assert "ไม่ควรใช้" not in text and "ภาพหน้าจอ" not in text
+    assert ingestor.result.manifest[0]["status"] == "unsupported_format"
+    assert ingestor.result.needs_ocr == []
+
+
 def test_unplaced_image_goes_to_page_end(paths, tmp_path):
     ingestor = make_ingestor(paths, tmp_path, {"good": {"doc_page_1_image_1": "ท้าย"}})
     page = Page(1, 800.0, "", [TextBlock(700, 0, "ล่างสุด")], [image(1, b"a", pos=(None, None))])
@@ -86,9 +95,16 @@ def test_cache_drops_unusable_entries(tmp_path):
     assert list(OcrCache(path).entries) == ["a"]
 
 
-@pytest.mark.skipif(not (ROOT / "data" / "raw").is_dir(), reason="sample PDFs not present")
-def test_real_pdfs_end_to_end(paths, tmp_path):
-    result = run_ingest(ROOT / "data" / "raw", tmp_path / "out", stores=[])
+SAMPLE_PDFS = [ROOT / "data" / "raw" / "pdf" / f"{name}.pdf" for name in ("ผู้จัดการสาขา", "ผู้จัดการเขต")]
+
+
+@pytest.mark.skipif(not all(p.exists() for p in SAMPLE_PDFS), reason="sample PDFs not present")
+def test_real_pdfs_end_to_end(tmp_path):
+    docs = tmp_path / "docs"  # only the two known manuals, whatever else is in data/raw
+    docs.mkdir()
+    for pdf in SAMPLE_PDFS:
+        shutil.copy(pdf, docs / pdf.name)
+    result = run_ingest(docs, tmp_path / "out", stores=[])
     assert (result.count("icon"), result.count("duplicate"), len(result.unique)) == (7, 2, 18)
     text = (tmp_path / "out" / "ผู้จัดการสาขา.md").read_text(encoding="utf-8")
     assert "ส่งคำขอแก้ไขและลบ" in text and "ท าการ" not in text

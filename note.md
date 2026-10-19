@@ -117,6 +117,36 @@ Model-free (low memory). Run: `python src/ingest_pdf.py` -> `outputs/ingest/<pdf
 - Intended changes: `ingest` manifest `rejected` now records the reason (`{"source", "reason"}`); new results store image paths with `/` (old `\` paths still read correctly, which also fixes the review UI on macOS); review UI no longer serves files outside the reviewed folder via `/image/../x`; PaddleOCR now writes per-image `.txt` (the old batch wrote an unused `ocr_results.jsonl`).
 - Tests: `python -m pytest` (36 tests, about 2 s, no model or network).
 
+### 2.12 Word (.docx) input (2026-10-19, branch `feature/docx-ingestion`)
+- Every command now reads `.pdf` and `.docx` from `data/raw/` (`--docs-dir`, alias `--pdf-dir`). Readers are chosen by extension (`readers/__init__.py`); everything after reading is unchanged.
+- Word reader (`readers/word/`, python-docx + lxml, extra `docx`): headings -> `#`; list numbers recomputed from numbering.xml (decimal, letters, roman, Thai digits/letters, start overrides, nested `%1.%2`); tables -> markdown with merged cells aligned and `|` escaped, screenshots in cells placed after the table; text boxes kept after their paragraph; drawings stored twice (modern + fallback) read once; tracked deletions and field codes dropped; content controls (e.g. TOC) unwrapped.
+- Page numbers: from Word's saved layout breaks (`w:lastRenderedPageBreak`) if present, else hard page breaks / "page break before" / next-page section breaks. Approximate either way.
+- Images: GIF/BMP/TIFF accepted by the OCR batch; formats vision models may reject are sent as PNG (also fixes WebP being labelled JPEG for the API). EMF/WMF cannot be decoded -> manifest status `unsupported_format`.
+- Manifest: new `document` key (file name) per image; the old `pdf` key is gone. `source` still means the OCR folder used.
+- Structure: Strategy + registry (readers), Builder (`PageBuilder`, directed by `WordReader`), dispatch table (XML walker), Strategy (page-break policy), memoized style lookups, table parsing separated from markdown rendering. Max cognitive complexity in the package: 9.
+- Verified: all PDF outputs byte-identical to the pre-refactor baseline (manifest differs only by `pdf` -> `document`). Word reader tested on generated Thai documents (64 tests in total); **not yet run on a real company .docx**.
+
+### 2.13 `data/raw/` split by type (2026-10-19)
+- Layout: `data/raw/pdf/`, `docx/`, `txt/`, `md/` (empty folders kept with `.gitkeep`). All PDFs moved into `pdf/`: the 2 original manuals (tracked, moved with `git mv`) and 3 new, untracked PDFs added by the user.
+- `list_documents` now searches sub-folders; `.gitkeep`, `.DS_Store`, hidden files and Word lock files are ignored; files with no reader (`.txt`, `.md` for now) are reported on stderr and skipped; names must stay unique across folders.
+- The 2 original manuals give byte-identical ingest output from the new location. `outputs/ingest/` has not been regenerated with the 3 new PDFs.
+
+### 2.14 PDF -> DOCX converter (2026-10-19)
+- `pdf_to_docx.py` at the repo root (pdf2docx + Thai post-processing + verification report; extra `convert`). 78 tests.
+- Converted `data/raw/pdf/1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน.pdf` -> `data/raw/docx/` (PDF untouched): 20/20 pages, page 13 is a scan (picture only), font TH SarabunPSK, 108 runs given Thai complex-script font/size/bold. 58 PDF image placements -> 36 DOCX pictures: 122x122 blur patches stacked on screenshots are flattened into one picture each.
+- **The PDF's text layer is wrong for Thai vowels**, so the first DOCX had ~350 wrong words ("เจ้ำหน้ำที่", "สถำนพยำบำล", "ส ำนัก"). Cause, from the glyphs: Word draws "ำ" as a circle glyph (286) + the "า" glyph (263); the PDF labels the circle as a space and, in the regular font only, glyph 263 as "ำ" (the bold font labels it "า"). Only glyph 263 differs between the two fonts; no other glyph is mislabelled. Truth: circle + 263 = "ำ" (44), 263 alone = "า" (381).
+- The converter now detects this from any PDF (a space-labelled glyph drawn right before an "ำ"-labelled glyph, which real Thai never has) and restores 44 "ำ" and 307 "า".
+- Checked every word of the DOCX: (1) text equals the PDF's text except page-number position; (2) no invalid Thai sequence in 4,312 Thai characters; (3) 782 Thai words, 2 not in the PyThaiNLP dictionary, both correct (`กท.16`/`กท.44`, `ฯ`); (4) Tesseract OCR of the rendered pages (independent of the text layer): every disagreement reviewed: OCR dropping tone marks, "ํา" for "ำ" (confirms each restored "ำ"), garbled English, or lines next to screenshots, all checked by eye against the rendered page.
+- **Privacy: the PDF's blur is fake redaction.** The full screenshots under the blur patches are still in the PDF, with readable full names and 13-digit national ID numbers (27 screenshots). `extract-images` / `ingest` on the PDF would OCR them into RAG text. The DOCX contains none of those originals (md5-checked).
+- `rag_ingest`'s PDF reader has the same vowel problem for this PDF (it only repairs the "ท าการ" form); not fixed yet.
+- The PDF and DOCX share a name, so `rag-ingest` stops ("Documents share a name") until one is moved, renamed or removed.
+
+### 2.15 Shared Thai vowel repair; converter moved into the package (2026-10-19)
+- `src/rag_ingest/thai_glyphs.py` is the one Thai vowel repair, used by the PDF reader (ingest) and the converter. The old partial repair (`textproc.fix_sara_am`, "ท าการ" only) is removed. A split "ำ" now also needs the circle to follow a consonant (with its marks), so stray marks are never joined.
+- Effect: `ingest` of `1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน.pdf` now gives the correct words (44 "ำ", 381 "า"; no "เจ้ำ"/"สถำน"/"ส ำ"). The 2 original manuals give byte-identical ingest output.
+- Converter logic moved from the root script into `src/rag_ingest/convert/` (preflight, layout, docx_fixes, verify, report, cli); `pdf_to_docx.py` is now a short wrapper, and `rag-ingest convert` takes the same options. Both produce a DOCX identical to the current one (all 52 parts).
+- 79 tests; max cognitive complexity 9; no repeated literals.
+
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.

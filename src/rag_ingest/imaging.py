@@ -21,14 +21,19 @@ def load_rgb(path: Path, min_side: int = 0) -> Image.Image:
         return upscaled(img.convert("RGB"), min_side)
 
 
+# Formats vision models and image APIs reliably accept as-is.
+SENDABLE_SUFFIXES = frozenset({".png", ".jpg", ".jpeg"})
+
+
 def image_bytes(path: Path, min_side: int = 0) -> bytes:
-    """The original file's bytes, or a PNG re-encode if it had to be upscaled."""
-    if min_side:
-        with Image.open(path) as img:
-            if min(img.size) < min_side:
-                buffer = io.BytesIO()
-                upscaled(img.convert("RGB"), min_side).save(buffer, format="PNG")
-                return buffer.getvalue()
+    """The original file's bytes, or a PNG re-encode if it must be upscaled or is
+    in a format vision models may reject (GIF, BMP, TIFF, WebP)."""
+    with Image.open(path) as img:
+        needs_upscale = bool(min_side) and min(img.size) < min_side
+        if needs_upscale or path.suffix.lower() not in SENDABLE_SUFFIXES:
+            buffer = io.BytesIO()
+            upscaled(img.convert("RGB"), min_side).save(buffer, format="PNG")
+            return buffer.getvalue()
     return path.read_bytes()
 
 

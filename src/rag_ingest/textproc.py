@@ -4,16 +4,8 @@ import unicodedata
 
 NO_TEXT_MARK = "[ไม่พบข้อความที่อ่านได้]"  # the OCR prompt's "nothing readable" answer
 
-# Some Thai PDFs extract the vowel "ำ" as a space plus "า" ("ท าการ" for "ทำการ").
-# No Thai word starts with "า", so a consonant (+ tone mark) then " า" is always this case.
-_BROKEN_SARA_AM = re.compile(r"([ก-ฮ][่-๋]?)ํ? า")
-
 # Tesseract puts spaces between Thai words/characters; Thai is written without them.
 _THAI_GAP = re.compile(r"(?<=[฀-๿]) (?=[฀-๿])")
-
-
-def fix_sara_am(text: str) -> str:
-    return _BROKEN_SARA_AM.sub(r"\1ำ", text)
 
 
 def join_thai_words(text: str) -> str:

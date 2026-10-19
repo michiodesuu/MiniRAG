@@ -7,7 +7,7 @@ from pathlib import Path, PureWindowsPath
 import json
 import math
 
-from rag_ingest.config import METHODS_BY_NAME, Paths
+from rag_ingest.config import ENCODING, METHODS_BY_NAME, Paths
 from rag_ingest.models import OcrLine, Recognition
 
 _CONF_SEP = "\tconfidence="
@@ -35,12 +35,12 @@ class VisionStore:
         return [p.stem for p in sorted(self.folder.glob("*.json"))]
 
     def load(self, stem: str) -> dict:
-        return json.loads(self.path(stem).read_text(encoding="utf-8"))
+        return json.loads(self.path(stem).read_text(encoding=ENCODING))
 
     def write(self, stem: str, record: dict) -> Path:
         self.folder.mkdir(parents=True, exist_ok=True)
         out = self.path(stem)
-        out.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
+        out.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding=ENCODING)
         return out
 
     def save(self, image: Path, result: Recognition) -> Path:
@@ -112,7 +112,7 @@ class LineStore:
         if not path.is_file():
             return []
         out = []
-        for raw in path.read_text(encoding="utf-8").splitlines():
+        for raw in path.read_text(encoding=ENCODING).splitlines():
             text, sep, conf = raw.rpartition(_CONF_SEP)
             if not sep:
                 out.append(OcrLine(raw, math.nan))
@@ -134,7 +134,7 @@ class LineStore:
         self.folder.mkdir(parents=True, exist_ok=True)
         out = self.path(image.stem)
         out.write_text("".join(f"{l.text}{_CONF_SEP}{l.confidence:.4f}\n"
-                               for l in result.lines or []), encoding="utf-8")
+                               for l in result.lines or []), encoding=ENCODING)
         return out
 
     def texts(self) -> dict[str, str]:
@@ -147,18 +147,24 @@ class LineStore:
 ResultStore = VisionStore | LineStore
 
 
-def open_store(paths: Paths, folder: str | Path, kind: str | None = None) -> ResultStore:
-    """Factory: pick the repository for a result folder by known method or by its files.
-
-    A bare name ("vision_hint") means outputs/<name>; anything else is a path.
-    """
+def _folder(paths: Paths, folder: str | Path) -> Path:
+    """A bare name ("vision_hint") means outputs/<name>; anything else is a path."""
     folder = Path(folder)
-    folder = (paths.method(folder.name) if not folder.is_absolute() and len(folder.parts) == 1
-              else paths.resolve(folder))
-    if kind is None:
-        known = METHODS_BY_NAME.get(folder.name)
-        if known:
-            kind = known.kind
-        else:
-            kind = "lines" if any(folder.glob("*.txt")) and not any(folder.glob("*.json")) else "vision"
+    if not folder.is_absolute() and len(folder.parts) == 1:
+        return paths.method(folder.name)
+    return paths.resolve(folder)
+
+
+def _detect_kind(folder: Path) -> str:
+    known = METHODS_BY_NAME.get(folder.name)
+    if known:
+        return known.kind
+    only_text = any(folder.glob("*.txt")) and not any(folder.glob("*.json"))
+    return "lines" if only_text else "vision"
+
+
+def open_store(paths: Paths, folder: str | Path, kind: str | None = None) -> ResultStore:
+    """Factory: the repository for a result folder, by known method or by its files."""
+    folder = _folder(paths, folder)
+    kind = kind or _detect_kind(folder)
     return VisionStore(folder, paths) if kind == "vision" else LineStore(folder)
