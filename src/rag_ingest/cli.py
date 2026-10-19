@@ -43,13 +43,15 @@ def api_options(args) -> dict:
 
 
 def engine_options(args, paths: Paths) -> dict:
-    if args.hint and args.engine not in VISION_ENGINES:
-        sys.exit("--hint only applies to the vision engines (ollama, api)")
+    for flag in ("hint", "prompt"):
+        if getattr(args, flag) and args.engine not in VISION_ENGINES:
+            sys.exit(f"--{flag} only applies to the vision engines (ollama, api)")
     if args.engine == "tesseract":
         return {"upscale": args.upscale, "psm": args.psm}
     if args.engine == "paddle":
         return {}
-    vision = {"paths": paths, "hint_source": args.hint, "upscale": args.upscale}
+    vision = {"paths": paths, "hint_source": args.hint, "upscale": args.upscale,
+              "prompt": paths.resolve(args.prompt) if args.prompt else None}
     if args.engine == "ollama":
         return {**vision, "model": args.model or "qwen2.5vl:3b", "num_ctx": args.num_ctx}
     return {**vision, **api_options(args)}
@@ -208,6 +210,10 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
     p.add_argument("--hint", nargs="?", const="paddle", choices=["paddle", "tesseract", "both"],
                 help="Vision engines: add confident line-OCR results to the prompt "
                         "(default source: paddle).")
+    p.add_argument("--prompt", metavar="FILE",
+                   help="Vision engines: prompt file (default prompts/thai_document_ocr.txt). "
+                        "Also: prompts/thai_document_ocr_compact.txt, or _full.txt (9k tokens, "
+                        "too long for qwen2.5vl:3b's 8k context). Recorded in each result.")
     p.add_argument("--model", help="Ollama model (default qwen2.5vl:3b).")
     p.add_argument("--num-ctx", type=int, default=8192, help="Ollama context size.")
     p.add_argument("--api-url", default=os.environ.get("OCR_API_URL"),

@@ -39,6 +39,7 @@ class Recognition:
     lines: list[OcrLine] | None = None  # line engines (Tesseract, PaddleOCR) only
     model: str = ""
     settings: dict = field(default_factory=dict)
+    prompt_file: Path | None = None  # vision engines: the prompt actually sent
 
 
 @dataclass(frozen=True)
