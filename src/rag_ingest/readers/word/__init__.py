@@ -42,11 +42,20 @@ def body_elements(container) -> Iterator:
             yield from body_elements(child)
 
 
+def numbering_element(document):
+    """numbering.xml of the document, or None for a file without any lists
+    (python-docx raises instead of returning nothing)."""
+    try:
+        return document.part.numbering_part.element
+    except (NotImplementedError, KeyError):
+        return None
+
+
 class WordReader:
     def __init__(self, document, stem: str):
         self.document = document
         self.styles = StyleResolver(document)
-        self.numbering = Numbering(document.part.numbering_part.element)
+        self.numbering = Numbering(numbering_element(document))
         self.breaks = choose_policy(document.element.body, self.styles)
         self.pages = PageBuilder(stem)
         self.handlers = {x.P: self.paragraph, x.TBL: self.table}
