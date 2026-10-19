@@ -243,8 +243,9 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
 
     # Later stages register their own commands (argument wiring lives with each stage).
     from rag_ingest.chunking.commands import register as register_chunking
+    from rag_ingest.eval_commands import register as register_eval
     from rag_ingest.index_commands import register as register_index
-    for register in (register_chunking, register_index):
+    for register in (register_chunking, register_index, register_eval):
         register(add, paths)
     return parser
 
