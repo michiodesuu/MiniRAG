@@ -11,7 +11,7 @@ def inspect(pdf_dir: Path) -> None:
         print(f"Pages: {len(pages)}")
         for page in pages:
             print(f"Page {page.number}: {len(page.raw_text.strip())} text characters, "
-                  f"{len(page.images)} embedded image(s)")
+                f"{len(page.images)} embedded image(s)")
 
 
 def extract_images(pdf_dir: Path, out_dir: Path) -> None:

@@ -98,10 +98,11 @@ def test_benchmark_scores_and_summary():
     truth = {"a": "abcd", "b": "xyz"}
     methods = {"m1": {"a": "abcd", "b": "xyq"}, "m2": {"a": ""}}
     rows = score_all(truth, methods)
-    assert rows[0].scores["m1"].cer == 0 and rows[0].scores["m2"].cer == 1.0
+    assert rows[0].scores["m1"].cer == pytest.approx(0)
+    assert rows[0].scores["m2"].cer == pytest.approx(1)
     stats = summarize(rows, ["m1", "m2"])
     assert stats["m1"] == (pytest.approx(1 / 6), pytest.approx(1 / 7), 0, 2)
-    assert stats["m2"] == (1.0, 1.0, 0, 1)
+    assert stats["m2"] == (pytest.approx(1), pytest.approx(1), 0, 1)
     assert "| m1 | 0.167 |" in render(rows, ["m1", "m2"])
 
 

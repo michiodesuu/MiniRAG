@@ -2,6 +2,7 @@
 import argparse
 import os
 import sys
+from urllib.parse import urlsplit
 
 from rag_ingest.config import SUPPORTED_IMAGE_EXTENSIONS, Paths
 
@@ -21,50 +22,71 @@ def cmd_extract_text(args, paths: Paths):
     extract_text(paths.resolve(args.pdf_dir), paths.resolve(args.output_dir))
 
 
-def cmd_ocr(args, paths: Paths):
-    from rag_ingest.batch import run_batch
-    from rag_ingest.engines import create_engine
-    from rag_ingest.imaging import list_images
-    from rag_ingest.stores import open_store
+VISION_ENGINES = ("ollama", "api")
+LOOPBACK_HOSTS = ("localhost", "127.0.0.1", "::1")
 
-    options = {"upscale": args.upscale}
-    if args.engine == "tesseract":
-        options["psm"] = args.psm
-    elif args.engine == "paddle":
-        options = {}
-    else:
-        options.update(paths=paths, hint_source=args.hint)
-        if args.engine == "ollama":
-            options.update(model=args.model or "qwen2.5vl:3b", num_ctx=args.num_ctx)
-        else:
-            if not (args.api_url and args.api_model):
-                sys.exit("--engine api needs --api-url and --api-model (or OCR_API_URL / OCR_API_MODEL)")
-            # The key comes from the environment only, never the command line.
-            options.update(url=args.api_url, model=args.api_model, key=os.environ.get("OCR_API_KEY"))
-    if args.hint and args.engine not in ("ollama", "api"):
+
+def warn_if_clear_text(url: str):
+    """Images (and any API key) would cross the network unencrypted."""
+    parts = urlsplit(url)
+    if parts.scheme != "https" and parts.hostname not in LOOPBACK_HOSTS:
+        print(f"WARNING: {parts.scheme}:// sends images unencrypted to {parts.hostname}; "
+              "use https if the server supports it.", file=sys.stderr)
+
+
+def api_options(args) -> dict:
+    if not (args.api_url and args.api_model):
+        sys.exit("--engine api needs --api-url and --api-model (or OCR_API_URL / OCR_API_MODEL)")
+    warn_if_clear_text(args.api_url)
+    # The key comes from the environment only, never the command line.
+    return {"url": args.api_url, "model": args.api_model, "key": os.environ.get("OCR_API_KEY")}
+
+
+def engine_options(args, paths: Paths) -> dict:
+    if args.hint and args.engine not in VISION_ENGINES:
         sys.exit("--hint only applies to the vision engines (ollama, api)")
+    if args.engine == "tesseract":
+        return {"upscale": args.upscale, "psm": args.psm}
+    if args.engine == "paddle":
+        return {}
+    vision = {"paths": paths, "hint_source": args.hint, "upscale": args.upscale}
+    if args.engine == "ollama":
+        return {**vision, "model": args.model or "qwen2.5vl:3b", "num_ctx": args.num_ctx}
+    return {**vision, **api_options(args)}
 
-    engine = create_engine(args.engine, **options)
-    store = open_store(paths, paths.resolve(args.output_dir or paths.method(engine.default_output)),
-                       kind=engine.store_kind)
 
-    if args.image:
-        image = paths.resolve(args.image)
-        if not image.is_file():
-            sys.exit(f"Image not found: {image}")
-        result = engine.recognize(image)
-        out = store.save(image, result)
-        print(f"\n=== OCR RESULT ===\n\n{result.text}\n\nSaved to: {out}")
-        return
+def ocr_one(engine, store, image):
+    if not image.is_file():
+        sys.exit(f"Image not found: {image}")
+    result = engine.recognize(image)
+    out = store.save(image, result)
+    print(f"\n=== OCR RESULT ===\n\n{result.text}\n\nSaved to: {out}")
 
-    folder = paths.resolve(args.images_dir)
+
+def ocr_folder(engine, store, folder, skip_existing: bool):
+    from rag_ingest.batch import run_batch
+    from rag_ingest.imaging import list_images
+
     if not folder.is_dir():
         sys.exit(f"Image directory not found: {folder}")
     images = list_images(folder, SUPPORTED_IMAGE_EXTENSIONS)
     if not images:
         sys.exit(f"No supported images found in {folder}")
-    summary = run_batch(engine, store, images, args.skip_existing)
+    summary = run_batch(engine, store, images, skip_existing)
     print(f"\n{summary}\nResults in: {store.folder}", flush=True)
+
+
+def cmd_ocr(args, paths: Paths):
+    from rag_ingest.engines import create_engine
+    from rag_ingest.stores import open_store
+
+    engine = create_engine(args.engine, **engine_options(args, paths))
+    store = open_store(paths, paths.resolve(args.output_dir or paths.method(engine.default_output)),
+                       kind=engine.store_kind)
+    if args.image:
+        ocr_one(engine, store, paths.resolve(args.image))
+    else:
+        ocr_folder(engine, store, paths.resolve(args.images_dir), args.skip_existing)
 
 
 def cmd_review(args, paths: Paths):

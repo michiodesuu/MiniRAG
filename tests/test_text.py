@@ -33,9 +33,9 @@ def test_normalize_drops_layout():
 def test_edit_distance_and_cer():
     assert edit_distance("kitten", "sitting") == 3
     assert edit_distance("", "abc") == 3
-    assert cer("abc", "abc") == 0
+    assert cer("abc", "abc") == pytest.approx(0)
     assert cer("abd", "abc") == pytest.approx(1 / 3)
-    assert cer("x", "") == 1  # empty reference does not divide by zero
+    assert cer("x", "") == pytest.approx(1)  # empty reference does not divide by zero
 
 
 def test_image_ref_round_trip():
