@@ -290,7 +290,7 @@ def write_jsonl(path: Path, rows: list[dict]) -> None:
     path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding=ENCODING)
 
 
-def write_run(run: ChunkRun, out_dir: Path, tokenizer: dict) -> Path:
+def write_run(run: ChunkRun, out_dir: Path, tokenizer: dict, extra: dict | None = None) -> Path:
     """chunks.jsonl, rejected.jsonl (rule + position only) and manifest.json."""
     out_dir.mkdir(parents=True, exist_ok=True)
     chunks_path = out_dir / "chunks.jsonl"
@@ -305,7 +305,22 @@ def write_run(run: ChunkRun, out_dir: Path, tokenizer: dict) -> Path:
         "dropped": run.dropped,
         "flagged": run.flagged,
         "sources": run.sources,
+        **(extra or {}),
     }
     (out_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2),
                                            encoding=ENCODING)
     return chunks_path
+
+
+def summary(run: ChunkRun) -> str:
+    """Console summary: counts only, never chunk text or matched values."""
+    lines = [f"Chunks: {len(run.chunks)} from {len(run.documents)} document(s)"]
+    for doc, c in run.documents.items():
+        lines.append(f"  {doc}: {c.chunks} chunks, contents pages dropped {c.toc_pages_dropped or '-'}, "
+                     f"duplicates {c.duplicates}, repeated screenshots {c.duplicate_screenshots}, "
+                     f"missing OCR {c.missing_ocr}, PII rejected {c.pii_rejections}, "
+                     f"phone flags {c.phone_flags}, oversize {c.oversize}")
+    lines += [f"Excluded: {e['document']} ({e['reason']})" for e in run.excluded]
+    lines += [f"Rejected: {r['chunk_id']} [{r['rule']}] {r['field']} @{r['start']}+{r['length']}"
+              for r in run.rejected]
+    return "\n".join(lines)

@@ -251,6 +251,11 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
     p = add("convert", cmd_convert, "Convert PDF to Word (.docx) keeping layout; Thai-aware.")
     p.epilog, p.formatter_class = USAGE_EXAMPLES, argparse.RawDescriptionHelpFormatter
     add_convert_arguments(p, paths)
+
+    # Later stages register their own commands (argument wiring lives with each stage).
+    from rag_ingest.chunking.commands import register as register_chunking
+    for register in (register_chunking,):
+        register(add, paths)
     return parser
 
 

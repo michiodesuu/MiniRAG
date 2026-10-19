@@ -3,3 +3,4 @@ __pycache__/
 *.log
 *.egg-info/
 .pytest_cache/
+outputs/index/
