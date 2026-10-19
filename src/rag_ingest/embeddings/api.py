@@ -30,6 +30,12 @@ DEFAULT_API_BATCH = 32
 DEFAULT_TIMEOUT = 120
 
 
+def endpoint(url: str) -> str:
+    """Host and port only: never user:password@, path or query string, which can hold secrets."""
+    parts = urlsplit(url)
+    return f"{parts.hostname}:{parts.port}" if parts.port else (parts.hostname or "")
+
+
 class ApiEmbedder:
     def __init__(self, url: str, model: str, key: str | None = None, tokenizer: str | None = None,
                  batch_size: int = DEFAULT_API_BATCH, revision: str | None = None):
@@ -49,7 +55,9 @@ class ApiEmbedder:
         headers = {"Authorization": f"Bearer {self._key}"} if self._key else {}
         response = self._httpx.post(self.url, json={"model": self.model, "input": texts},
                                     headers=headers, timeout=DEFAULT_TIMEOUT)
-        response.raise_for_status()
+        if response.status_code >= 400:
+            # httpx's own message quotes the full URL, which may carry credentials
+            raise RuntimeError(f"Embedding API at {endpoint(self.url)} answered HTTP {response.status_code}")
         rows = sorted(response.json()["data"], key=lambda row: row["index"])
         return np.asarray([row["embedding"] for row in rows], dtype=np.float32)
 
@@ -78,7 +86,7 @@ class ApiEmbedder:
         return {"model": self.model, "revision": self.revision, "dim": self.dim,
                 "pooling": "server", "normalise": True, "max_len": None,
                 "query_prefix": self.query_prefix, "passage_prefix": self.passage_prefix,
-                "endpoint": urlsplit(self.url).netloc,  # host only: no path, query or key
+                "endpoint": endpoint(self.url),
                 "token_counter": self.tokenizer_name or "approximate"}
 
 

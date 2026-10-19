@@ -99,6 +99,8 @@ def test_chunk_command_stops_on_personal_data(tmp_path, project_root):
 
 
 class FakeResponse:
+    status_code = 200
+
     def __init__(self, payload):
         self.payload = payload
 
@@ -146,3 +148,18 @@ def test_api_options_need_url_and_model(monkeypatch):
     monkeypatch.setenv("EMBED_API_KEY", "k")
     options = api_options(args)
     assert (options["url"], options["model"], options["key"]) == ("https://embed.internal/v1/embeddings", "m", "k")
+
+
+def test_api_never_exposes_url_secrets(monkeypatch):
+    httpx = pytest.importorskip("httpx")
+    from rag_ingest.embeddings.api import ApiEmbedder
+
+    class Failing(FakeResponse):
+        status_code = 401
+    monkeypatch.setattr(httpx, "post", lambda *a, **k: Failing({}))
+    e = ApiEmbedder("https://user:pa55word@embed.internal:8443/v1/embeddings?api_key=s3cret", "m")
+    assert e.settings()["endpoint"] == "embed.internal:8443"
+    with pytest.raises(RuntimeError) as error:
+        e.embed_passages(["ก"])
+    message = str(error.value)
+    assert "pa55word" not in message and "s3cret" not in message and "embed.internal:8443" in message
