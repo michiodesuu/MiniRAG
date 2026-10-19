@@ -139,23 +139,3 @@ def test_formats_vision_models_may_reject_are_sent_as_png(paths, make_image):
     png = make_image("shot.png", size=(300, 200))
     assert image_bytes(png) == png.read_bytes()  # PNG/JPEG go as-is
     assert pixel_size(b"not an image") == (0, 0)  # e.g. EMF: reported, not crashed
-
-
-def test_results_record_the_prompt_actually_used(paths, make_image):
-    from rag_ingest.engines.vision import _vision_engine
-
-    image = make_image("img.png")
-    store = VisionStore(paths.method("vision"), paths)
-    custom = paths.root / "prompts" / "compact.txt"
-    custom.write_text("SHORT PROMPT", encoding="utf-8")
-
-    transport = FakeTransport()
-    store.save(image, _vision_engine(transport, paths, None, 0, custom).recognize(image))
-    assert transport.calls[0][0] == "SHORT PROMPT"
-    assert store.load("img")["prompt_file"] == "prompts/compact.txt"
-
-    store.save(image, _vision_engine(FakeTransport(), paths, None, 0, None).recognize(image))
-    assert store.load("img")["prompt_file"] == "prompts/thai_document_ocr.txt"  # default unchanged
-
-    with pytest.raises(FileNotFoundError, match="Prompt not found"):
-        _vision_engine(FakeTransport(), paths, None, 0, paths.root / "missing.txt")

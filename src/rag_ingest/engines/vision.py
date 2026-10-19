@@ -101,10 +101,8 @@ class VisionEngine:
     default_output = "vision"
 
     def __init__(self, transport: Transport, prompt: str,
-                 hints: HintProvider | None = None, upscale: int = 0,
-                 prompt_file: Path | None = None):
+                 hints: HintProvider | None = None, upscale: int = 0):
         self.transport, self.prompt, self.hints, self.upscale = transport, prompt, hints, upscale
-        self.prompt_file = prompt_file
 
     def recognize(self, image: Path) -> Recognition:
         hint, used = self.hints.hint(image.stem) if self.hints else (None, [])
@@ -120,7 +118,6 @@ class VisionEngine:
                 "tesseract_hint": "tesseract" in used,
                 "upscale_min_side": self.upscale,
             },
-            prompt_file=self.prompt_file,
         )
 
 
@@ -132,22 +129,18 @@ def _hint_provider(paths: Paths, hint_source: str | None) -> HintProvider | None
 
 
 def _vision_engine(transport: Transport, paths: Paths, hint_source: str | None,
-                   upscale: int, prompt: Path | None) -> VisionEngine:
-    prompt_file = prompt or paths.prompt
-    if not prompt_file.exists():
-        raise FileNotFoundError(f"Prompt not found: {prompt_file}")
-    return VisionEngine(transport, prompt_file.read_text(encoding=ENCODING),
-                        _hint_provider(paths, hint_source), upscale, prompt_file)
+                   upscale: int) -> VisionEngine:
+    if not paths.prompt.exists():
+        raise FileNotFoundError(f"Prompt not found: {paths.prompt}")
+    return VisionEngine(transport, paths.prompt.read_text(encoding=ENCODING),
+                        _hint_provider(paths, hint_source), upscale)
 
 
 def ollama_engine(paths: Paths, hint_source: str | None = None, upscale: int = 0,
-                  model: str = "qwen2.5vl:3b", num_ctx: int = 8192,
-                  prompt: Path | None = None) -> VisionEngine:
-    return _vision_engine(OllamaTransport(model, num_ctx), paths, hint_source, upscale, prompt)
+                  model: str = "qwen2.5vl:3b", num_ctx: int = 8192) -> VisionEngine:
+    return _vision_engine(OllamaTransport(model, num_ctx), paths, hint_source, upscale)
 
 
 def api_engine(paths: Paths, url: str, model: str, key: str | None = None,
-               hint_source: str | None = None, upscale: int = 0,
-               prompt: Path | None = None) -> VisionEngine:
-    return _vision_engine(OpenAICompatibleTransport(url, model, key), paths, hint_source,
-                          upscale, prompt)
+               hint_source: str | None = None, upscale: int = 0) -> VisionEngine:
+    return _vision_engine(OpenAICompatibleTransport(url, model, key), paths, hint_source, upscale)

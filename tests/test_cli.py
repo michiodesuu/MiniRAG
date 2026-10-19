@@ -35,12 +35,3 @@ def test_engine_options_rejects_bad_combinations(paths):
         engine_options(parse(paths, "--engine", "tesseract", "--hint"), paths)
     with pytest.raises(SystemExit, match="needs --api-url"):
         engine_options(parse(paths, "--engine", "api", "--api-url", "", "--api-model", ""), paths)
-
-
-def test_prompt_option(paths):
-    options = engine_options(parse(paths, "--engine", "ollama", "--prompt",
-                                   "prompts/thai_document_ocr_compact.txt"), paths)
-    assert options["prompt"] == paths.root / "prompts" / "thai_document_ocr_compact.txt"
-    assert engine_options(parse(paths, "--engine", "ollama"), paths)["prompt"] is None
-    with pytest.raises(SystemExit, match="--prompt only applies"):
-        engine_options(parse(paths, "--engine", "tesseract", "--prompt", "p.txt"), paths)
