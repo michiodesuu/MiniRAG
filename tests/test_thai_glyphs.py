@@ -6,7 +6,7 @@ import pytest
 from rag_ingest.thai_glyphs import FontKey, font_key, line_text, repair_thai_vowels
 
 ROOT = Path(__file__).resolve().parents[1]
-MANUAL = ROOT / "data" / "raw" / "pdf" / "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน.pdf"
+MANUAL = ROOT / "data" / "excluded" / "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน.pdf"
 
 
 @pytest.mark.parametrize("pieces, bad_font, expected, restored", [
