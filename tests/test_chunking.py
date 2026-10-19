@@ -225,10 +225,48 @@ def test_excluded_documents_skipped_and_reported(corpus):
         ("คู่มือสาขา", "ข้อมูลส่วนบุคคล"), ("คู่มือเขต", "excluded on the command line (--exclude)")}
 
 
-@pytest.mark.parametrize("doc_type, excluded", [("pdf", True), ("docx", False), ("unknown", True)])
-def test_exclusion_is_by_file_and_fails_closed(doc_type, excluded):
-    reason = exclusion_reason("คู่มือ", doc_type, set(), {"คู่มือ.pdf": "unredacted"})
+@pytest.mark.parametrize("evidence, excluded", [
+    ({"pdf"}, True),            # the manifest says it came from the excluded PDF
+    ({"docx"}, False),          # proven to come from another file type
+    (set(), True),              # no evidence: fail closed
+    ({"pdf", "docx"}, True),    # mixed evidence: fail closed
+])
+def test_exclusion_is_by_file_and_fails_closed(evidence, excluded):
+    reason = exclusion_reason("คู่มือ", evidence, set(), {"คู่มือ.pdf": "unredacted"})
     assert (reason is not None) == excluded
+
+
+def thai_id() -> str:
+    base = "310170012345"
+    return base + str((11 - sum(int(d) * (13 - i) for i, d in enumerate(base)) % 11) % 10)
+
+
+def test_id_cut_by_a_chunk_split_is_still_rejected(tmp_path):
+    """A long unit is split by lines; the ID's two halves land in different chunks."""
+    good = thai_id()
+    lines = [f"บรรทัดที่ {i} อธิบายขั้นตอนการใช้งานระบบอย่างละเอียด" for i in range(12)]
+    lines[5] += f" เลขบัตร {good[:6]}-"
+    lines[6] = f"{good[6:]} " + lines[6]
+    ingest = tmp_path / "split"
+    ingest.mkdir()
+    (ingest / "แยก.md").write_text("<!-- page 1 -->\n" + "\n".join(lines) + "\n", encoding="utf-8")
+    result = run(CorpusConfig(ingest, tmp_path / "none", {}, frozenset(), {}), max_tokens=60, overlap=20)
+    assert result.pii_found
+    kept = "".join(c["embed_text"] + c["display_text"] for c in result.chunks)
+    assert good[:6] not in kept and good[6:] not in kept   # neither half survives
+    write_run(result, tmp_path / "out", {})
+    assert good[6:] not in (tmp_path / "out" / "rejected.jsonl").read_text(encoding="utf-8")
+
+
+def test_id_split_across_table_cells_is_rejected(tmp_path):
+    good = thai_id()
+    cells = "".join(f"<td>{p}</td>" for p in (good[0], good[1:5], good[5:10], good[10:12], good[12]))
+    ingest = tmp_path / "cells"
+    ingest.mkdir()
+    (ingest / "ตาราง.md").write_text(f"<!-- page 1 -->\n[ภาพหน้าจอ]\n<table><tr>{cells}</tr></table>\n[/ภาพหน้าจอ]\n",
+                                    encoding="utf-8")
+    result = run(CorpusConfig(ingest, tmp_path / "none", {}, frozenset(), {}))
+    assert result.pii_found and result.chunks == []
 
 
 def test_outputs_written(corpus, tmp_path):

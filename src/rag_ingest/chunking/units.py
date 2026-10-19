@@ -44,6 +44,7 @@ class Unit:
     ocr_source: str | None = None
     image: str | None = None  # placeholders: the image stem waiting for OCR
     duplicate_of_md5: bool = False  # screenshot already embedded earlier in the corpus
+    pii: bool = False               # a rejected personal number overlaps this unit
 
     def with_(self, **changes) -> "Unit":
         return replace(self, **changes)

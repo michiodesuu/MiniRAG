@@ -20,7 +20,7 @@ from typing import Callable
 from rag_ingest.chunking import guards
 from rag_ingest.chunking.builder import Draft, SectionPacker, make_blocks
 from rag_ingest.chunking.sections import assign_sections, find_table_of_contents, strategy_for
-from rag_ingest.chunking.sources import IngestOutput, find_doc_type, sha256_file
+from rag_ingest.chunking.sources import IngestOutput, find_doc_type, nfc_name, sha256_file
 from rag_ingest.chunking.tables import KEEP
 from rag_ingest.chunking.text import context_header, nfc
 from rag_ingest.chunking.units import Kind, Unit, parse_markdown
@@ -67,16 +67,31 @@ class ChunkRun:
         return bool(self.rejected)
 
 
-def exclusion_reason(stem: str, doc_type: str, cli_stems: set[str],
+def exclusion_reason(stem: str, source_types: set[str], cli_stems: set[str],
                      excluded_files: dict[str, str]) -> str | None:
-    if stem in cli_stems:
+    """Why a document is excluded, or None. Fails closed: a stem that matches an
+    excluded file is excluded unless the ingest manifest shows only other,
+    non-excluded source types for it. A missing manifest, mixed evidence or a
+    file found elsewhere (e.g. data/raw) never clears an exclusion."""
+    stem = nfc_name(stem)
+    if stem in {nfc_name(s) for s in cli_stems}:
         return CLI_EXCLUSION
     for name, reason in excluded_files.items():
-        path = Path(name)
-        same_type = doc_type in (path.suffix.lstrip(".").lower(), "unknown")
-        if path.stem == stem and same_type:
+        path = Path(nfc_name(name))
+        excluded_type = path.suffix.lstrip(".").lower()
+        proven_other = bool(source_types) and excluded_type not in source_types
+        if path.stem == stem and not proven_other:
             return reason
     return None
+
+
+def mark_pii_units(text: str, units: list[Unit]) -> tuple[list[Unit], list[tuple[int, int]]]:
+    """Scan the whole document before chunking, so an ID that a chunk split would cut
+    in two is still caught; every unit the ID overlaps is marked."""
+    spans = [(start, end) for rule, action, start, end in guards.spans(text) if action == guards.REJECT]
+    marked = [u.with_(pii=True) if any(u.start < end and start < u.end for start, end in spans) else u
+              for u in units]
+    return marked, spans
 
 
 @dataclass
@@ -164,9 +179,14 @@ class Chunker:
         return drafts
 
 
-def apply_guards(chunk: dict, run: ChunkRun, corpus: Corpus, counts: DocumentCounts) -> bool:
+def apply_guards(chunk: dict, run: ChunkRun, corpus: Corpus, counts: DocumentCounts,
+                 has_pii_unit: bool = False) -> bool:
     """True if the chunk is kept."""
     findings = guards.scan({"embed_text": chunk["embed_text"], "display_text": chunk["display_text"]})
+    if has_pii_unit and not any(f.action == guards.REJECT for f in findings):
+        # caught by the whole-document scan only (e.g. the ID spans a chunk split)
+        findings.append(guards.Finding(guards.THAI_ID, guards.REJECT, "source_markdown",
+                                       chunk["char_start"], chunk["char_end"] - chunk["char_start"]))
     base = {"chunk_id": chunk["chunk_id"], "document": chunk["document"]}
     run.flagged += [{**base, **asdict(f)} for f in findings if f.action == guards.FLAG]
     counts.phone_flags += sum(1 for f in findings if f.action == guards.FLAG)
@@ -216,7 +236,8 @@ def chunk_corpus(config: CorpusConfig, settings: ChunkSettings,
     for path in output.markdown_files():
         images = output.images(path.stem)
         doc_type = find_doc_type(path.stem, images, config.documents_dir)
-        reason = exclusion_reason(path.stem, doc_type, set(config.cli_excluded), config.excluded_files)
+        reason = exclusion_reason(path.stem, images.source_types, set(config.cli_excluded),
+                                  config.excluded_files)
         if reason:
             run.excluded.append({"document": path.stem, "doc_type": doc_type, "reason": reason})
             continue
@@ -229,7 +250,8 @@ def chunk_document(path: Path, images, doc: DocumentContext, chunker: Chunker,
                    run: ChunkRun, corpus: Corpus) -> None:
     counts = run.documents.setdefault(doc.stem, DocumentCounts())
     run.sources[doc.stem] = doc.sha256
-    units = parse_markdown(path.read_text(encoding=ENCODING)).units
+    text = path.read_text(encoding=ENCODING)
+    units, _ = mark_pii_units(text, parse_markdown(text).units)
     toc = find_table_of_contents(units)
     counts.toc_pages_dropped = sorted(toc.pages)
     units = assign_sections([u for u in units if u.page not in toc.pages], strategy_for(doc.doc_type, toc))
@@ -238,7 +260,7 @@ def chunk_document(path: Path, images, doc: DocumentContext, chunker: Chunker,
         chunk = make_chunk(draft, header, index, doc, chunker.count)
         counts.missing_ocr += chunk["missing_ocr"]
         counts.duplicate_screenshots += chunk["duplicate_screenshots"]
-        if apply_guards(chunk, run, corpus, counts):
+        if apply_guards(chunk, run, corpus, counts, any(u.pii for u in draft.units)):
             run.chunks.append(chunk)
             counts.chunks += 1
 

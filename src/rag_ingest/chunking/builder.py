@@ -13,8 +13,8 @@ Rules (spec 3.2):
     and reported as oversize.
   - Overlap: a new chunk starts with the last lines of the previous chunk's
     final text block, up to --overlap tokens; whole lines, or whole
-    space-separated phrases of one long line, never half a word. Screenshots
-    and tables are never used as overlap.
+    space-separated phrases of one long line, never half a word. Screenshots,
+    tables and units holding a rejected personal number are never used as overlap.
   - One packer per section: nothing crosses a section or document boundary.
 """
 from dataclasses import dataclass, field
@@ -148,8 +148,9 @@ class SectionPacker:
         self._current = []
 
     def _overlap_from(self, block: Block) -> str:
-        if not self.overlap_tokens or not all(u.kind in OVERLAP_KINDS for u in block.units):
-            return ""
+        if not self.overlap_tokens or not all(u.kind in OVERLAP_KINDS and not u.pii
+                                               for u in block.units):
+            return ""  # never screenshots/tables, never text holding personal data
         lines = [s.text for s in block.segments]
         taken = trailing(lines, "\n", self.count, self.overlap_tokens)
         if not taken and lines:  # one long line: whole space-separated phrases instead

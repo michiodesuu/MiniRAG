@@ -8,10 +8,16 @@ from dataclasses import dataclass, field
 from pathlib import Path
 import hashlib
 import json
+import unicodedata
 
 from rag_ingest.config import ENCODING
 
 SCREENSHOT_STATUSES = ("ocr", "duplicate")
+
+
+def nfc_name(name: str) -> str:
+    """File names compared in one Unicode form (macOS can return decomposed names)."""
+    return unicodedata.normalize("NFC", name)
 
 
 def sha256_file(path: Path) -> str:
@@ -22,7 +28,12 @@ def sha256_file(path: Path) -> str:
 class DocumentImages:
     """Screenshots of one document: page -> [(ocr text, md5, source)]."""
     by_page: dict[int, list[tuple[str, str, str | None]]] = field(default_factory=dict)
-    doc_type: str | None = None
+    source_types: set[str] = field(default_factory=set)  # every suffix the manifest shows
+
+    @property
+    def doc_type(self) -> str | None:
+        """The source type, when the manifest agrees on exactly one."""
+        return next(iter(self.source_types)) if len(self.source_types) == 1 else None
 
     def match(self, page: int, text: str) -> tuple[str | None, str | None]:
         """(md5, ocr source) of the screenshot on this page with exactly this text."""
@@ -50,9 +61,9 @@ class IngestOutput:
         images = DocumentImages()
         for entry in self.manifest:
             source_file = entry.get("document") or entry.get("pdf") or ""  # "pdf": older manifests
-            if Path(source_file).stem != document_stem:
+            if nfc_name(Path(source_file).stem) != nfc_name(document_stem):
                 continue
-            images.doc_type = Path(source_file).suffix.lstrip(".").lower() or None
+            images.source_types.add(Path(source_file).suffix.lstrip(".").lower() or "unknown")
             cached = self.cache.get(entry.get("md5", ""))
             if entry.get("status") in SCREENSHOT_STATUSES and cached:
                 images.by_page.setdefault(entry["page"], []).append(
@@ -61,7 +72,8 @@ class IngestOutput:
 
 
 def find_doc_type(stem: str, images: DocumentImages, documents_dir: Path) -> str:
-    """pdf / docx from the manifest, else from the source file in data/raw, else "unknown"."""
+    """pdf / docx from the manifest, else from the source file in data/raw, else "unknown".
+    For metadata only: exclusion never relies on the data/raw lookup."""
     if images.doc_type:
         return images.doc_type
     found = sorted(documents_dir.rglob(f"{stem}.*")) if documents_dir.exists() else []
