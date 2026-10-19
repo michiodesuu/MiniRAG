@@ -6,6 +6,13 @@ outputs/index/<run>/
                              settings(), chunk settings, chunks.jsonl sha256,
                              sha256 of every source .md, created time, count
 
+Trust: a manifest may come from someone else (a shared or edited index). The
+embedder is rebuilt from it only through an allow-list: known options per
+kind, local models only from profiles.py at their pinned revision, and for the
+API the URL and key only from the environment, never from the manifest, so a
+manifest cannot send the key or the queries to another host, or make search
+load arbitrary model weights.
+
 Staleness check: `search` and `eval-retrieval` refuse an index whose recorded
 source hashes no longer match the current ingest .md files (or whose
 chunks.jsonl changed), and name what changed. The query is always embedded by
@@ -23,6 +30,7 @@ from rag_ingest.chunking.sources import sha256_file
 from rag_ingest.config import ENCODING
 from rag_ingest.embeddings import create_embedder
 from rag_ingest.embeddings.cache import EmbeddingCache, embed_with_cache
+from rag_ingest.embeddings.profiles import profile
 from rag_ingest.vectorstore import Hit, NumpyVectorStore
 
 MANIFEST, CHUNKS_FILE, CACHE_DIR = "manifest.json", "chunks.jsonl", "cache"
@@ -30,6 +38,10 @@ MANIFEST, CHUNKS_FILE, CACHE_DIR = "manifest.json", "chunks.jsonl", "cache"
 
 class StaleIndexError(RuntimeError):
     """The index was built from files that have since changed."""
+
+
+class UntrustedIndexError(RuntimeError):
+    """The index manifest asks for an embedder this project does not allow."""
 
 
 def read_jsonl(path: Path) -> list[dict]:
@@ -49,6 +61,11 @@ def run_name(embedder_settings: dict, chunk_settings: dict) -> str:
 
 SECRET_OPTIONS = ("key", "url")  # never written to a manifest; read from the environment again
 API_ENV = {"url": "EMBED_API_URL", "key": "EMBED_API_KEY"}
+MANIFEST_OPTIONS = {  # what may be taken from a manifest, per embedder kind
+    "fake": set(),
+    "local": {"model", "revision", "batch_size", "max_seq_length"},
+    "api": {"model", "tokenizer", "revision", "batch_size"},
+}
 
 
 @dataclass
@@ -62,9 +79,24 @@ class EmbedderSpec:
 
     def create(self):
         options = dict(self.options)
-        if self.kind == "api":  # the URL and key are not in the manifest
-            options.update({k: options.get(k) or os.environ.get(env) for k, env in API_ENV.items()})
+        if self.kind == "api":  # from_manifest never passes these: they come from the environment
+            options.update({k: os.environ.get(env) for k, env in API_ENV.items() if not options.get(k)})
         return create_embedder(self.kind, **options)
+
+    @classmethod
+    def from_manifest(cls, embedder: dict) -> "EmbedderSpec":
+        """The allow-listed embedder of an index manifest (see the module docstring)."""
+        kind = embedder.get("kind")
+        if kind not in MANIFEST_OPTIONS:
+            raise UntrustedIndexError(f"Index asks for an unknown embedder {kind!r}")
+        options = {k: v for k, v in embedder.get("options", {}).items() if k in MANIFEST_OPTIONS[kind]}
+        if kind == "local":
+            known = profile(options.get("model", ""))
+            if known is None or options.get("revision") not in (None, known.revision):
+                raise UntrustedIndexError(
+                    f"Index asks for model {options.get('model')!r} at revision {options.get('revision')!r}, "
+                    "which is not a profiled model at its pinned revision (embeddings/profiles.py)")
+        return cls(kind, options)
 
 
 @dataclass
@@ -129,8 +161,7 @@ class LoadedIndex:
     texts: dict[str, str]  # chunk_id -> display_text
 
     def embedder_spec(self) -> EmbedderSpec:
-        e = self.manifest["embedder"]
-        return EmbedderSpec(e["kind"], e["options"])
+        return EmbedderSpec.from_manifest(self.manifest["embedder"])
 
     def search(self, query_vector, k: int, filters: dict | None = None) -> list[Hit]:
         return self.store.search(query_vector, k, filters)

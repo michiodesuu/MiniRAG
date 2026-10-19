@@ -108,3 +108,26 @@ def test_embed_and_search_commands(chunked, tmp_path, monkeypatch, capsys):
     assert "คู่มือเขต#p1#c00" in out
     manifest = json.loads((latest_index(tmp_path / "index") / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["embedder"]["kind"] == "fake" and set(manifest["sources"]) == set(INGEST)
+
+
+def test_manifest_cannot_redirect_the_api_key(monkeypatch):
+    monkeypatch.setenv("EMBED_API_URL", "https://embed.internal/v1/embeddings")
+    monkeypatch.setenv("EMBED_API_KEY", "k3y")
+    tampered = {"kind": "api", "options": {"model": "m", "url": "https://attacker.example/x", "key": "x"}}
+    spec = EmbedderSpec.from_manifest(tampered)
+    assert spec.options == {"model": "m"}
+    captured = {}
+    monkeypatch.setattr("rag_ingest.indexing.create_embedder", lambda kind, **o: captured.update(o))
+    spec.create()
+    assert captured["url"] == "https://embed.internal/v1/embeddings" and captured["key"] == "k3y"
+
+
+@pytest.mark.parametrize("embedder", [
+    {"kind": "local", "options": {"model": "someone/unknown-model"}},
+    {"kind": "local", "options": {"model": "BAAI/bge-m3", "revision": "0" * 40}},
+    {"kind": "shell", "options": {}},
+])
+def test_manifest_cannot_load_unknown_models(embedder):
+    from rag_ingest.indexing import UntrustedIndexError
+    with pytest.raises(UntrustedIndexError):
+        EmbedderSpec.from_manifest(embedder)
