@@ -67,18 +67,38 @@ class ChunkRun:
         return bool(self.rejected)
 
 
-def exclusion_reason(stem: str, source_types: set[str], cli_stems: set[str],
-                     excluded_files: dict[str, str]) -> str | None:
-    """Why a document is excluded, or None. Fails closed: a stem that matches an
-    excluded file is excluded unless the ingest manifest shows only other,
-    non-excluded source types for it. A missing manifest, mixed evidence or a
-    file found elsewhere (e.g. data/raw) never clears an exclusion."""
+def image_fingerprints(excluded_files: dict[str, str], search_root: Path) -> tuple[dict[str, str], list[str]]:
+    """md5 of every image embedded in each excluded file found under search_root
+    (e.g. data/), so a renamed copy is still recognised: (md5 -> file name, names not found)."""
+    from rag_ingest.readers import read_pages
+
+    prints, missing = {}, []
+    for name in excluded_files:
+        found = [p for p in search_root.rglob("*") if p.is_file() and nfc_name(p.name) == nfc_name(name)]
+        if not found:
+            missing.append(name)
+        for path in found:
+            prints.update({image.md5: name for page in read_pages(path) for image in page.images})
+    return prints, missing
+
+
+def exclusion_reason(stem: str, images, cli_stems: set[str], excluded_files: dict[str, str],
+                     fingerprints: dict[str, str] | None = None) -> str | None:
+    """Why a document is excluded, or None. Fails closed:
+      - its manifest lists an image of an excluded file (any name: a renamed copy)
+      - its stem matches an excluded file, unless the ingest manifest shows only
+        other, non-excluded source types for it; a missing manifest, mixed
+        evidence or a file found elsewhere (e.g. data/raw) never clears this."""
+    copied = sorted({fingerprints[m] for m in images.md5s & set(fingerprints or {})})
+    if copied:
+        return f"contains images of excluded file {', '.join(copied)}"
     stem = nfc_name(stem)
     if stem in {nfc_name(s) for s in cli_stems}:
         return CLI_EXCLUSION
+    source_types = images.source_types
     for name, reason in excluded_files.items():
         path = Path(nfc_name(name))
-        excluded_type = path.suffix.lstrip(".").lower()
+        excluded_type = path.suffix.lstrip(".")
         proven_other = bool(source_types) and excluded_type not in source_types
         if path.stem == stem and not proven_other:
             return reason
@@ -227,6 +247,7 @@ class CorpusConfig:
     excluded_files: dict[str, str]
     cli_excluded: frozenset[str]
     roles: dict[str, str]
+    fingerprints: dict[str, str] = field(default_factory=dict)  # image md5 -> excluded file
 
 
 def chunk_corpus(config: CorpusConfig, settings: ChunkSettings,
@@ -236,8 +257,8 @@ def chunk_corpus(config: CorpusConfig, settings: ChunkSettings,
     for path in output.markdown_files():
         images = output.images(path.stem)
         doc_type = find_doc_type(path.stem, images, config.documents_dir)
-        reason = exclusion_reason(path.stem, images.source_types, set(config.cli_excluded),
-                                  config.excluded_files)
+        reason = exclusion_reason(path.stem, images, set(config.cli_excluded),
+                                  config.excluded_files, config.fingerprints)
         if reason:
             run.excluded.append({"document": path.stem, "doc_type": doc_type, "reason": reason})
             continue

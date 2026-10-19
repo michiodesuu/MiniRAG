@@ -5,8 +5,9 @@ from pathlib import Path
 import pytest
 
 from rag_ingest.chunking import ChunkSettings, CorpusConfig, chunk_corpus, write_run
-from rag_ingest.chunking.guards import valid_thai_id
+from rag_ingest.chunking.guards import scan, valid_thai_id
 from rag_ingest.chunking.pipeline import exclusion_reason
+from rag_ingest.chunking.sources import DocumentImages
 from rag_ingest.tokens import approximate_tokens
 
 MD5_A, MD5_B = "a" * 32, "b" * 32
@@ -232,8 +233,27 @@ def test_excluded_documents_skipped_and_reported(corpus):
     ({"pdf", "docx"}, True),    # mixed evidence: fail closed
 ])
 def test_exclusion_is_by_file_and_fails_closed(evidence, excluded):
-    reason = exclusion_reason("คู่มือ", evidence, set(), {"คู่มือ.pdf": "unredacted"})
+    reason = exclusion_reason("คู่มือ", DocumentImages(source_types=evidence), set(), {"คู่มือ.pdf": "unredacted"})
     assert (reason is not None) == excluded
+
+
+def test_renamed_copy_excluded_by_image_fingerprint():
+    images = DocumentImages(source_types={"pdf"}, md5s={"f" * 32, "a" * 32})
+    reason = exclusion_reason("ชื่อใหม่", images, set(), {"คู่มือ.pdf": "unredacted"}, {"f" * 32: "คู่มือ.pdf"})
+    assert reason == "contains images of excluded file คู่มือ.pdf"
+
+
+def test_name_matching_ignores_case_and_invisible_characters():
+    images = DocumentImages()
+    assert exclusion_reason("Report\u200b ", images, set(), {"report.PDF": "x"}) == "x"
+
+
+@pytest.mark.parametrize("text", ["{id}, 0812345678", "{id} 25", "25 {grouped}", "{grouped} 081-234-5678"])
+def test_id_next_to_other_numbers_is_found(text):
+    good = thai_id()
+    grouped = f"{good[0]}-{good[1:5]}-{good[5:10]}-{good[10:12]}-{good[12]}"
+    rules = [f.rule for f in scan({"t": text.format(id=good, grouped=grouped)})]
+    assert rules.count("thai_national_id") == 1
 
 
 def thai_id() -> str:

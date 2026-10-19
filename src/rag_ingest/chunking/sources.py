@@ -16,8 +16,10 @@ SCREENSHOT_STATUSES = ("ocr", "duplicate")
 
 
 def nfc_name(name: str) -> str:
-    """File names compared in one Unicode form (macOS can return decomposed names)."""
-    return unicodedata.normalize("NFC", name)
+    """A file name as compared for exclusion: one Unicode form (macOS can return
+    decomposed names), invisible format characters removed, case folded."""
+    name = unicodedata.normalize("NFC", name)
+    return "".join(ch for ch in name if unicodedata.category(ch) != "Cf").strip().casefold()
 
 
 def sha256_file(path: Path) -> str:
@@ -29,6 +31,7 @@ class DocumentImages:
     """Screenshots of one document: page -> [(ocr text, md5, source)]."""
     by_page: dict[int, list[tuple[str, str, str | None]]] = field(default_factory=dict)
     source_types: set[str] = field(default_factory=set)  # every suffix the manifest shows
+    md5s: set[str] = field(default_factory=set)          # every embedded image, any status
 
     @property
     def doc_type(self) -> str | None:
@@ -61,14 +64,18 @@ class IngestOutput:
         images = DocumentImages()
         for entry in self.manifest:
             source_file = entry.get("document") or entry.get("pdf") or ""  # "pdf": older manifests
-            if nfc_name(Path(source_file).stem) != nfc_name(document_stem):
-                continue
-            images.source_types.add(Path(source_file).suffix.lstrip(".").lower() or "unknown")
-            cached = self.cache.get(entry.get("md5", ""))
-            if entry.get("status") in SCREENSHOT_STATUSES and cached:
-                images.by_page.setdefault(entry["page"], []).append(
-                    (cached["text"], entry["md5"], entry.get("source")))
+            if nfc_name(Path(source_file).stem) == nfc_name(document_stem):
+                self._add(images, entry, source_file)
         return images
+
+    def _add(self, images: DocumentImages, entry: dict, source_file: str) -> None:
+        images.source_types.add(Path(source_file).suffix.lstrip(".").lower() or "unknown")
+        if entry.get("md5"):
+            images.md5s.add(entry["md5"])
+        cached = self.cache.get(entry.get("md5", ""))
+        if entry.get("status") in SCREENSHOT_STATUSES and cached:
+            images.by_page.setdefault(entry["page"], []).append(
+                (cached["text"], entry["md5"], entry.get("source")))
 
 
 def find_doc_type(stem: str, images: DocumentImages, documents_dir: Path) -> str:
