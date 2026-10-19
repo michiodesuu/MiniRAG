@@ -1,0 +1,128 @@
+import subprocess
+import sys
+
+import pytest
+from PIL import Image
+
+from rag_ingest.batch import run_batch
+from rag_ingest.engines import create_engine
+from rag_ingest.engines.vision import HINT_INTRO, HintProvider, VisionEngine, _hint_provider
+from rag_ingest.models import OcrLine, Recognition
+from rag_ingest.stores import LineStore, VisionStore
+
+
+class FakeTransport:
+    model = "fake-model"
+
+    def __init__(self):
+        self.calls = []
+
+    def complete(self, prompt, image):
+        self.calls.append((prompt, image))
+        return "อ่านได้"
+
+    def settings(self):
+        return {"backend": "fake"}
+
+
+def write_lines(paths, folder, stem, lines):
+    store = LineStore(paths.method(folder))
+    store.folder.mkdir(exist_ok=True)
+    store.path(stem).write_text("".join(f"{t}\tconfidence={c}\n" for t, c in lines),
+                                encoding="utf-8")
+
+
+def test_unknown_engine():
+    with pytest.raises(ValueError, match="Unknown engine"):
+        create_engine("nope")
+
+
+def test_registry_does_not_import_heavy_libraries():
+    code = ("import sys, rag_ingest.engines, rag_ingest.cli; "
+            "print([m for m in ('paddleocr', 'ollama', 'httpx', 'pytesseract') if m in sys.modules])")
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
+    assert out.stdout.strip() == "[]"
+
+
+def test_hints_single_source_unlabelled_both_labelled(paths):
+    write_lines(paths, "ocr", "img", [("paddle line", 0.9), ("low", 0.3)])
+    write_lines(paths, "tesseract", "img", [("tess line", 0.85)])
+
+    assert _hint_provider(paths, "paddle").hint("img") == ("paddle line", ["paddle"])
+    assert _hint_provider(paths, "both").hint("img") == (
+        "[paddle OCR]\npaddle line\n\n[tesseract OCR]\ntess line", ["paddle", "tesseract"])
+    assert HintProvider({}).hint("img") == (None, [])
+    # Only one source has confident lines -> no label, like a single source.
+    write_lines(paths, "tesseract", "img", [("tess line", 0.1)])
+    assert _hint_provider(paths, "both").hint("img") == ("paddle line", ["paddle"])
+
+
+def test_vision_engine_prompt_settings_and_upscale(paths, make_image):
+    image = make_image("img.png", size=(100, 50))
+    write_lines(paths, "ocr", "img", [("hint", 0.95)])
+    transport = FakeTransport()
+    engine = VisionEngine(transport, "PROMPT", _hint_provider(paths, "paddle"), upscale=200)
+
+    result = engine.recognize(image)
+
+    prompt, sent = transport.calls[0]
+    assert prompt == "PROMPT" + HINT_INTRO + "hint"
+    assert sent[:4] == b"\x89PNG"
+    assert result.text == "อ่านได้" and result.model == "fake-model"
+    assert result.settings == {"backend": "fake", "temperature": 0, "paddle_hint": True,
+                               "tesseract_hint": False, "upscale_min_side": 200}
+
+
+def test_vision_engine_without_hint_sends_original_bytes(paths, make_image):
+    image = make_image("img.png", size=(1200, 1100))
+    transport = FakeTransport()
+    VisionEngine(transport, "PROMPT", None, upscale=1000).recognize(image)
+    prompt, sent = transport.calls[0]
+    assert prompt == "PROMPT"
+    assert sent == image.read_bytes()  # already big enough: not re-encoded
+
+
+class FlakyEngine:
+    store_kind = "lines"
+    default_output = "x"
+
+    def recognize(self, image):
+        if "bad" in image.name:
+            raise RuntimeError("boom")
+        return Recognition("t", [OcrLine("t", 1.0)])
+
+
+def test_batch_isolates_failures_and_skips_existing(paths, make_image, capsys):
+    images = [make_image(n) for n in ("a.png", "bad.png", "c.png")]
+    store = LineStore(paths.method("x"))
+
+    first = run_batch(FlakyEngine(), store, images)
+    assert (first.done, first.skipped, first.failed) == (2, 0, 1)
+    assert "[2/3] bad.png - FAILED: boom" in capsys.readouterr().out
+
+    again = run_batch(FlakyEngine(), store, images, skip_existing=True)
+    assert (again.done, again.skipped, again.failed) == (0, 2, 1)
+
+
+def test_vision_store_accepts_engine_output(paths, make_image):
+    image = make_image("img.png")
+    result = VisionEngine(FakeTransport(), "P").recognize(image)
+    VisionStore(paths.method("vision"), paths).save(image, result)
+    assert VisionStore(paths.method("vision"), paths).texts() == {"img": "อ่านได้"}
+
+
+def test_tesseract_engine_reads_text(make_image):
+    pytest.importorskip("pytesseract")
+    try:
+        engine = create_engine("tesseract", lang="eng")
+        engine._tesseract.get_tesseract_version()
+    except Exception:
+        pytest.skip("tesseract binary not available")
+    from PIL import ImageDraw, ImageFont
+    img = Image.new("RGB", (600, 120), "white")
+    ImageDraw.Draw(img).text((20, 30), "HELLO WORLD", fill="black",
+                             font=ImageFont.load_default(size=48))
+    path = make_image("t.png")
+    img.save(path)
+    result = engine.recognize(path)
+    assert "HELLO" in result.text and result.lines and 0 <= result.lines[0].confidence <= 1

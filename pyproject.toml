@@ -1,0 +1,34 @@
+[project]
+name = "rag-ingest"
+version = "0.2.0"
+description = "Thai PDF -> RAG-ready text: text layer plus OCR of embedded screenshots."
+requires-python = ">=3.11"
+dependencies = [
+    "pymupdf",
+    "pillow",
+]
+
+[project.optional-dependencies]
+# Install only the engines you use; PaddleOCR alone pulls in ~1 GB.
+tesseract = ["pytesseract"]
+paddle = ["paddleocr"]
+ollama = ["ollama"]
+api = ["httpx"]
+dev = ["pytest"]
+
+[project.scripts]
+rag-ingest = "rag_ingest.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+rag_ingest = ["review/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -4,6 +4,9 @@ Last updated: 2026-10-16 (Tesseract, both-hint run 27/27, Typhoon API 27/27, ben
 
 Goal: extract text from Thai PDFs (embedded images) accurately enough for RAG ingestion, using only local tools.
 
+> **2026-10-18: code refactored into the `rag_ingest` package** (see README). Sections below are history and name the old scripts; they map to:
+> `run_vision_ocr.py` -> `rag-ingest ocr --engine ollama|api` (`--hint` = old `--hint`, `--hint both` = old `--hint --hint-source both`) · `tesseract_batch.py` -> `ocr --engine tesseract` · `ocr_batch.py`/`ocr_image.py` -> `ocr --engine paddle` (writes `outputs/ocr/*.txt`, the format hints and the benchmark read) · `review_vision.py` -> `review` · `compare_vision.py` -> `compare` · `benchmark.py` -> `benchmark` · `ingest_pdf.py` -> `ingest` · `check_pdf.py` -> `inspect` · `extract_image.py` -> `extract-images` · `extract_pdf.py` -> `extract-text`.
+
 ---
 
 ## 1. Tech stack
@@ -88,6 +91,31 @@ Compares two result folders (default `outputs/vision` vs `outputs/vision_hint`):
 ### 2.8 `src/benchmark.py` (evaluation)
 Scores every method against hand-corrected text: vision, vision_hint, vision_both, vision_typhoon, PaddleOCR (`outputs/ocr`), Tesseract. Ground truth = `corrected_text` saved by `review_vision.py` in any `outputs/vision*` folder, or `outputs/ground_truth/<image>.txt`. Normalizes (strips HTML/markdown, ignores whitespace), character error rate capped at 1.0 per image, mean + pooled CER, empty-output count, split into short (<=60 chars) and long references. Writes `outputs/benchmark_report.md` and `outputs/benchmark.csv`. Run: `python src/benchmark.py`.
 - **First real result, only 4 corrected images** (`สาขา_page_10_image_1`, `11_image_1`, `2_image_1`, `8_image_3`; just 1 long): mean CER typhoon 0.075, vision 0.100, vision_hint 0.137, vision_both 0.153, PaddleOCR 0.433, Tesseract 0.529. **Not a verdict**: tiny sample; on the one long image the hint runs scored worse than baseline (0.55-0.61 vs 0.24); and the corrections were saved in `outputs/vision/` (edited from the baseline model's text), which can bias the ground truth toward the baseline.
+
+### 2.9 Tesseract settings test + comparison hint column (2026-10-18, macOS)
+- `src/tesseract_batch.py` now also takes `--upscale PX` and `--output-dir`, and uses the Windows exe path only if it exists (works with Homebrew Tesseract on macOS). pytesseract installed into `.venv`.
+- Tested on the 7 empty crops (psm 3, 6, 6 + upscale 1000, 11 + upscale 1000): **no setting recovers real text**; at best 1-2 stray characters of noise (`|`, `of`, `x`). Overall output size barely changes (10.3k-11.1k chars over 27 images). Conclusion: tiny crops stay with the vision model; no change to the default `--psm 3`.
+- `src/compare_vision.py` now shows which hints reached each prompt (columns `hint A` / `hint B`: P = PaddleOCR, T = Tesseract). Reads the flags from each JSON's `settings`.
+- Observed in `vision_both`: `สาขา_page_7/8/9_image_1` are 4,462 chars each (vs 873 in `vision_hint`) and identical to each other. **Confirmed repetition loop**: 231 lines but only 6 unique (the same 3-4 menu lines repeated). That run is unusable for those 3 images; rerun with a repetition penalty / `num_predict` cap or exclude them from comparisons.
+
+### 2.10 `src/ingest_pdf.py` — text layer + filtered OCR, merged in place (2026-10-18)
+Model-free (low memory). Run: `python src/ingest_pdf.py` -> `outputs/ingest/<pdf>.md`, `manifest.json`, `needs_ocr.txt`, `ocr_cache.json`.
+- **The PDFs have a clean Thai text layer** (66-1,199 chars per page), so the body text needs no OCR at all. Only screenshots are OCR'd.
+- Repairs a text-layer defect: `ำ` extracted as space + `า` (`ท าการ` -> `ทำการ`) on 5 pages of `สาขา`. Safe because no Thai word starts with `า`.
+- Skips icons (shorter side < 120 px, `--min-side`): the 7 "tiny crops" are icons (32x29 to 173x99). **Correction to 2.6:** the vision model's 24-char answer on them was `[ไม่พบข้อความที่อ่านได้]` (the no-text marker), not real text; Typhoon says the same. Nothing to read there; drop them from the benchmark.
+- Dedups by md5: `สาขา_page_7/8/9_image_1` are the same file -> 18 unique images to OCR instead of 27.
+- Takes OCR text from existing folders (`--ocr-dir`, repeatable; default `vision_typhoon` then `vision_hint`) and inserts it at the image's position on the page as `[ภาพหน้าจอ] ... [/ภาพหน้าจอ]`.
+- **Typhoon failed on 2 of 18 unique screenshots**, now auto-rejected and replaced from `vision_hint`:
+  - `สาขา_page_7_image_1` (also 8/9): returned its own built-in instructions ("Extract all text from the image ... Formatting Rules ...") instead of a transcription.
+  - `สาขา_page_7_image_3`: returned `[ไม่พบข้อความที่อ่านได้]` on a 1400x777 form full of readable text.
+  - Typhoon's benchmark lead (2.8) is on 4 images that don't include these; its failure rate needs to be counted when choosing the main OCR.
+
+### 2.11 Refactor (2026-10-18)
+- One package `src/rag_ingest/` + `pyproject.toml` (optional extras per engine, so a low-memory machine can skip PaddleOCR) + one CLI `rag-ingest`. Old `src/*.py` scripts removed.
+- Structure: repositories own the two result formats (before, 5 scripts parsed them separately); OCR engines share one interface and are created by name with heavy imports deferred; the vision engine is split into prompt/hint/image prep and a swappable transport (Ollama / OpenAI-compatible API); one batch runner (resume, failure isolation) instead of three copies; OCR quality checks are named rules; ingestion is cache -> source chain -> page assembly.
+- **Verified unchanged** against outputs captured before the refactor: `compare` (2 runs), `benchmark` report + CSV, `inspect`, `extract-images` (27 files), `extract-text`, Tesseract `ocr` (27 files), `ingest` markdown + cache + needs_ocr: all byte-identical. Vision engines could not be run here (no Typhoon access, model not pulled); their prompt, hint text, image bytes and hint flags were checked equal to the old code on 162 cases with a fake transport.
+- Intended changes: `ingest` manifest `rejected` now records the reason (`{"source", "reason"}`); new results store image paths with `/` (old `\` paths still read correctly, which also fixes the review UI on macOS); review UI no longer serves files outside the reviewed folder via `/image/../x`; PaddleOCR now writes per-image `.txt` (the old batch wrote an unused `ocr_results.jsonl`).
+- Tests: `python -m pytest` (36 tests, about 2 s, no model or network).
 
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
