@@ -91,6 +91,7 @@ def run_eval(args: argparse.Namespace, paths: Paths) -> None:
     # The grid report is the comparison deliverable; a single-index check must not overwrite it.
     default = paths.retrieval_report if args.grid else paths.retrieval_report.with_name("retrieval_report_index.md")
     report = paths.resolve(args.report) if args.report else default
+    report.parent.mkdir(parents=True, exist_ok=True)
     report.write_text(render(configs, documents), encoding=ENCODING)
     write_csv(report.with_suffix(".csv"), configs)
     print(f"Saved: {report}\nSaved: {report.with_suffix('.csv')}")
@@ -105,4 +106,4 @@ def register(add, paths: Paths) -> None:
     p.add_argument("--index", help="Index to evaluate without --grid (default: newest).")
     p.add_argument("--ingest", default=paths.relative(paths.ingest), help="Ingest folder.")
     p.add_argument("--report", help="Report path, .csv written beside it (default: "
-                                    "outputs/retrieval_report.md with --grid, else outputs/retrieval_report_index.md).")
+                                    "outputs/reports/retrieval_report.md with --grid, else retrieval_report_index.md beside it).")

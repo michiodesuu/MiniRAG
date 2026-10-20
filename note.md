@@ -48,7 +48,7 @@ Local web page (`127.0.0.1:8765`): image on the left, editable model text on the
 Usage: `python src/review_vision.py --dir outputs/vision_hint`
 
 ### 2.3 `src/compare_vision.py` (A/B comparison)
-Compares two result folders (default `outputs/vision` vs `outputs/vision_hint`): per-image similarity, text lengths, optional line diff (`--diff`), report saved to `outputs/compare_report.md`. If `corrected_text` exists it also reports character error rate (CER) for both runs.
+Compares two result folders (default `outputs/vision` vs `outputs/vision_hint`): per-image similarity, text lengths, optional line diff (`--diff`), report saved to `outputs/reports/compare_report.md`. If `corrected_text` exists it also reports character error rate (CER) for both runs.
 
 ### 2.4 Runs
 - **Baseline `outputs/vision`**: complete, 27/27 images, 0 failures. Settings: no hint, no upscale. (Started before temperature 0 was added, so it used Ollama's default temperature.)
@@ -58,7 +58,7 @@ Compares two result folders (default `outputs/vision` vs `outputs/vision_hint`):
   - **Fix applied**: `NUM_CTX = 8192` in `src/run_vision_ocr.py` (passed as `options.num_ctx`, recorded in each JSON's `settings`). Rerun succeeded for 4 of the failed images (`สาขา_page_11_image_1`, `page_3_image_2`, `page_4_image_2`, `page_6_image_1`); that rerun was then stopped again for low memory. (The 4 `ผู้จัดการเขต` page_4/5 images had succeeded in the resume run itself.)
   - Final rerun: `สาขา_page_7_image_1`, `page_8_image_1`, `page_9_image_1` completed OK with the 8192 context.
   - Note: results from before the fix used the default context (4096), the later ones 8192; the mix is unlikely to change transcription much but is not controlled.
-- **Comparison** (`src/compare_vision.py --diff`, saved to `outputs/compare_report.md`), latest on **all 27 images**: 8/27 identical (the short ones), mean A~B similarity 0.58.
+- **Comparison** (`src/compare_vision.py --diff`, saved to `outputs/reports/compare_report.md`), latest on **all 27 images**: 8/27 identical (the short ones), mean A~B similarity 0.58.
   - B (hint + upscale + temp 0) looked better by reading the diffs:
     - removed a 3,298-char repetition loop on `ผู้จัดการเขต_page_3_image_1` (503 chars clean in B);
     - fewer invented words (A "ลงบัมมูล" vs B "ลบข้อมูล");
@@ -86,10 +86,10 @@ Compares two result folders (default `outputs/vision` vs `outputs/vision_hint`):
 - **`outputs/vision_both`** (`--hint --hint-source both --upscale 1000`, temp 0, ctx 8192, Ollama `qwen2.5vl:3b`): **27/27 saved, 0 failures.** Slow images took ~15 min (e.g. `สาขา_page_7_image_1`).
 - **Typhoon OCR API** (company internal, OpenAI-compatible): `POST http://ocr-api.sustainportal.muangthaicap.local/v1/chat/completions`, model `typhoon-ai/typhoon-ocr1.5-2b`. Reachable from this PC (resolves to 10.0.1.11), no API key needed. Added `--backend api --api-url ... --api-model ...` to `run_vision_ocr.py` (key only via env `OCR_API_KEY`; URL/model also via `OCR_API_URL` / `OCR_API_MODEL`; internal URL intentionally not hardcoded). Batch of 27 finished in a few minutes -> `outputs/vision_typhoon/` (plain prompt, no hint, no upscale), 0 failures.
   - Looks fuller/more accurate on big screens (e.g. `เขต_page_3_image_1`: 1805 chars vs 503; correct place names) and on clean prose; still weak on tiny crops (`เขต_page_4_image_2` returned 1 char; `สาขา_page_8_image_2` gave `[ถังขยะรีไซเคิล]`).
-  - Output contains HTML tables (`<table><tr><td>`) and markdown (`# `, `* `): decide whether to keep (structure) or strip to plain text before chunking. Comparison with hint run: `outputs/compare_hint_vs_typhoon.md` (mean similarity 0.63).
+  - Output contains HTML tables (`<table><tr><td>`) and markdown (`# `, `* `): decide whether to keep (structure) or strip to plain text before chunking. Comparison with hint run: `outputs/reports/compare_hint_vs_typhoon.md` (mean similarity 0.63).
 
 ### 2.8 `src/benchmark.py` (evaluation)
-Scores every method against hand-corrected text: vision, vision_hint, vision_both, vision_typhoon, PaddleOCR (`outputs/ocr`), Tesseract. Ground truth = `corrected_text` saved by `review_vision.py` in any `outputs/vision*` folder, or `outputs/ground_truth/<image>.txt`. Normalizes (strips HTML/markdown, ignores whitespace), character error rate capped at 1.0 per image, mean + pooled CER, empty-output count, split into short (<=60 chars) and long references. Writes `outputs/benchmark_report.md` and `outputs/benchmark.csv`. Run: `python src/benchmark.py`.
+Scores every method against hand-corrected text: vision, vision_hint, vision_both, vision_typhoon, PaddleOCR (`outputs/ocr`), Tesseract. Ground truth = `corrected_text` saved by `review_vision.py` in any `outputs/vision*` folder, or `outputs/ground_truth/<image>.txt`. Normalizes (strips HTML/markdown, ignores whitespace), character error rate capped at 1.0 per image, mean + pooled CER, empty-output count, split into short (<=60 chars) and long references. Writes `outputs/reports/benchmark_report.md` and `outputs/reports/benchmark.csv`. Run: `python src/benchmark.py`.
 - **First real result, only 4 corrected images** (`สาขา_page_10_image_1`, `11_image_1`, `2_image_1`, `8_image_3`; just 1 long): mean CER typhoon 0.075, vision 0.100, vision_hint 0.137, vision_both 0.153, PaddleOCR 0.433, Tesseract 0.529. **Not a verdict**: tiny sample; on the one long image the hint runs scored worse than baseline (0.55-0.61 vs 0.24); and the corrections were saved in `outputs/vision/` (edited from the baseline model's text), which can bias the ground truth toward the baseline.
 
 ### 2.9 Tesseract settings test + comparison hint column (2026-10-18, macOS)
@@ -212,7 +212,7 @@ Left out: kornwtp/ConGen-simcse-model-roberta-base-thai (card says Apache-2.0 bu
 - **Exclusion** is by source file name (the PDF and its .docx share a stem) and fail-closed, plus by the md5 of every image embedded in an excluded file (a renamed copy is caught).
 - Five security-review findings were fixed during this work (exclusion fail-open x2, PII scan bypass x2 including one regression, URL credentials in manifests, manifest-driven embedder rebuild); see the commit log.
 
-#### Results (`outputs/retrieval_report.md`, 30 questions, 2 manuals)
+#### Results (`outputs/reports/retrieval_report.md`, 30 questions, 2 manuals)
 
 Grid: 6 embedders x `--max-tokens` {200, 400, 600} x `--tables` {keep, flatten} x context header on/off = 72 configurations. Best per model:
 
@@ -251,7 +251,7 @@ Whole six-model grid: 175 s, peak 3.09 GB (one model loaded at a time). Download
 #### Checks
 - 139 tests (no model, no network); max cognitive complexity 9; no repeated literals.
 - `ingest`, `benchmark` and `compare` outputs byte-identical to before this branch (the two original manuals).
-- `rag-ingest chunk && rag-ingest embed --embedder local --model BAAI/bge-m3 && rag-ingest eval-retrieval` runs end to end (exit 0). The single-index report goes to `outputs/retrieval_report_index.md` so it does not overwrite the grid report.
+- `rag-ingest chunk && rag-ingest embed --embedder local --model BAAI/bge-m3 && rag-ingest eval-retrieval` runs end to end (exit 0). The single-index report goes to `outputs/reports/retrieval_report_index.md` so it does not overwrite the grid report.
 - No chunk, vector, metadata or report file contains text of the excluded manual; the PII rule finds 0 IDs in the included documents (2 phone flags).
 
 #### Still open
@@ -302,7 +302,7 @@ Whole six-model grid: 175 s, peak 3.09 GB (one model loaded at a time). Download
 | ocr (PaddleOCR) | 0.319 | 0.244 | 0.333 | 0.013 | 0.380 | 0 |
 | vision (baseline) | 0.397 | 0.133 | 0.450 | 0.054 | 0.466 | 1 ("no text") |
 
-Pooled CER (all 18): pipeline 0.169, typhoon 0.265, tesseract 0.288, hint 0.298. Full tables: `outputs/benchmark_report.md`, `outputs/benchmark.csv`.
+Pooled CER (all 18): pipeline 0.169, typhoon 0.265, tesseract 0.288, hint 0.298. Full tables: `outputs/reports/benchmark_report.md`, `outputs/reports/benchmark.csv`.
 
 #### What the numbers say
 - **Typhoon reads large screens and tables best** (e.g. CER 0.02–0.09 on `ผู้จัดการเขต` p3_1, p4_1 and `ผู้จัดการสาขา` p5_1, where the local models score 0.11–1.00).
@@ -330,6 +330,10 @@ Pooled CER (all 18): pipeline 0.169, typhoon 0.265, tesseract 0.288, hint 0.298.
 #### Still open
 - A person should check the 15 Claude transcriptions with `rag-ingest review --blank` (start with p7_3 and `ผู้จัดการเขต` p5_1). Then rerun `rag-ingest benchmark`.
 - Invented foreign-language words (hallucinated non-Thai tokens) are still not detected automatically. Loops now are.
+
+### 2.19 Reports in their own folder (2026-10-20, branch `feature/outputs-reports`)
+- All reports moved from the top of `outputs/` to `outputs/reports/` (`Paths.reports` in `config.py`): `benchmark_report.md`, `benchmark.csv`, `compare_*.md` and `retrieval_report*.md/.csv`. The commands write there by default and create the folder when needed; `--report`/`--csv` still override.
+- The two plain-text dumps from the initial commit (`ผู้จัดการสาขา.txt`, `ผู้จัดการเขต.txt`) moved to `outputs/text/`. The pipeline does not use them; delete them if they are not needed.
 
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.

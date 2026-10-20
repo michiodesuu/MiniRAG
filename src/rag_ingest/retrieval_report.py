@@ -1,4 +1,4 @@
-"""outputs/retrieval_report.md + .csv, in the style of benchmark_report.md."""
+"""outputs/reports/retrieval_report.md + .csv, in the style of benchmark_report.md."""
 from dataclasses import dataclass
 from pathlib import Path
 import csv

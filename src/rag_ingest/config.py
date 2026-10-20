@@ -69,8 +69,13 @@ class Paths:
         return self.root / "data" / "eval" / "questions.jsonl"
 
     @property
+    def reports(self) -> Path:
+        """Markdown/CSV reports: benchmark, compare, retrieval."""
+        return self.outputs / "reports"
+
+    @property
     def retrieval_report(self) -> Path:
-        return self.outputs / "retrieval_report.md"
+        return self.reports / "retrieval_report.md"
 
     @property
     def ground_truth(self) -> Path:
