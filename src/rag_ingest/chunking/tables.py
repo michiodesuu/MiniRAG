@@ -1,9 +1,16 @@
 """Tables in ingest Markdown: Markdown tables (Word reader) and HTML tables
 (Typhoon OCR inside screenshots). Parsing to rows is separate from rendering,
-so a table can be rendered for the model either way (--tables):
+so a table can be rendered for the model in one of these forms:
 
   keep     a Markdown table: | h1 | h2 | / |---|---| / | v1 | v2 |
   flatten  one line per data row: "h1: v1, h2: v2" (empty cells left out)
+  columns  only the header row, as a Markdown table without rows. For tables
+           in screenshots (--screenshot-tables): a list screen shows sample
+           records (people, branches, dates) that say nothing about how to
+           use the system, crowd out the text that does, and are personal data.
+
+Markdown is the one table format after ingest: Typhoon's HTML is converted,
+Word tables already are Markdown.
 
 and split by rows when it is larger than a chunk, with the header repeated.
 """
@@ -13,8 +20,9 @@ import re
 
 from rag_ingest.readers.word.tables import markdown_table
 
-KEEP, FLATTEN = "keep", "flatten"
-TABLE_MODES = (KEEP, FLATTEN)
+KEEP, FLATTEN, COLUMNS = "keep", "flatten", "columns"
+TABLE_MODES = (KEEP, FLATTEN)                         # tables in the document's own text
+SCREENSHOT_TABLE_MODES = (KEEP, FLATTEN, COLUMNS)     # tables in screenshot OCR
 HTML_TABLE_BLOCK = re.compile(r"<table\b.*?</table>", re.I | re.S)
 _MD_SEPARATOR = re.compile(r"^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$")
 
@@ -82,5 +90,5 @@ def render(rows: list[list[str]], mode: str) -> TableLines:
         header = rows[0]
         body = rows[1:] or rows
         return TableLines([], [line for r in body if (line := flatten_row(header, r))])
-    lines = markdown_table(rows).splitlines()
+    lines = markdown_table(rows[:1] if mode == COLUMNS else rows).splitlines()
     return TableLines(lines[:2], lines[2:])

@@ -20,7 +20,7 @@ Rules (spec 3.2):
 from dataclasses import dataclass, field
 from typing import Callable
 
-from rag_ingest.chunking.text import Segment, display_form, embed_segments
+from rag_ingest.chunking.text import Segment, TableFormat, display_form, unit_segments
 from rag_ingest.chunking.units import Kind, Unit
 
 ATTACHED_KINDS = (Kind.SCREENSHOT, Kind.PLACEHOLDER)
@@ -39,18 +39,20 @@ class Block:
         return "\n".join(s.text for s in self.segments)
 
 
-def unit_block(unit: Unit, table_mode: str) -> Block:
-    return Block((unit,), tuple(embed_segments(unit, table_mode)), display_form(unit))
+def unit_block(unit: Unit, fmt: TableFormat) -> Block:
+    segments = unit_segments(unit, fmt)
+    embedded = () if unit.duplicate_of_md5 else tuple(segments)  # shown, not embedded again
+    return Block((unit,), embedded, display_form(unit, segments))
 
 
-def make_blocks(units: list[Unit], table_mode: str) -> list[Block]:
+def make_blocks(units: list[Unit], fmt: TableFormat) -> list[Block]:
     groups: list[list[Unit]] = []
     for unit in units:
         if unit.kind in ATTACHED_KINDS and groups:
             groups[-1].append(unit)
         else:
             groups.append([unit])
-    return [merge_blocks([unit_block(u, table_mode) for u in group]) for group in groups]
+    return [merge_blocks([unit_block(u, fmt) for u in group]) for group in groups]
 
 
 def merge_blocks(blocks: list[Block]) -> Block:
@@ -91,7 +93,7 @@ class SectionPacker:
     room: Callable[[str], int]        # tokens left in the budget for this body (< 0: over)
     count: Callable[[str], int]       # tokens of a text
     overlap_tokens: int
-    table_mode: str
+    table_format: TableFormat
     drafts: list[Draft] = field(default_factory=list)
     oversize: int = 0
     _current: list[Block] = field(default_factory=list)
@@ -113,7 +115,7 @@ class SectionPacker:
         if self.fits(block.embed):
             return [block]
         if len(block.units) > 1:
-            return [p for u in block.units for p in self.pieces(unit_block(u, self.table_mode))]
+            return [p for u in block.units for p in self.pieces(unit_block(u, self.table_format))]
         return self._split_lines(block)
 
     def _split_lines(self, block: Block) -> list[Block]:

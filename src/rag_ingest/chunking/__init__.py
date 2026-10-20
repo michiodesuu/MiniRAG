@@ -6,8 +6,10 @@ Modules, in pipeline order:
             table, screenshot, placeholder) with their character ranges
   sections  drops table-of-contents pages; assigns heading paths
             (Strategy: Markdown headings for Word, numbered headings for PDF)
-  text      a unit's embed form (NFC, tables per --tables) and display form
-  tables    Markdown/HTML tables -> rows -> "keep" or "flatten" rendering
+  text      a unit's embed and display form (NFC; tables per --tables and
+            --screenshot-tables; screenshot OCR tidied of heading marks and checkboxes)
+  tables    Markdown/HTML tables -> rows -> "keep", "flatten" or "columns" (header
+            only) as Markdown, the one table format after ingest
   builder   packs a section's units into chunks within the token budget
             (Builder), never splitting screenshots/tables unless they alone
             exceed it, with whole-line overlap

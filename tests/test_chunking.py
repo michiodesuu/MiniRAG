@@ -113,7 +113,7 @@ def test_screenshot_stays_with_its_instruction_and_whole(corpus):
     with_screen = [c for c in result.chunks if "หน้าจอหลัก" in c["display_text"]]
     assert len(with_screen) == 1
     assert "1.กดเลือกเมนู บันทึกอุบัติเหตุ" in with_screen[0]["display_text"]
-    assert SCREEN_A in with_screen[0]["display_text"]
+    assert "หน้าจอหลัก ปุ่มบันทึก\n| ลำดับ | ชื่อ |" in with_screen[0]["display_text"]
     assert with_screen[0]["screenshot_md5"] == [MD5_A]
     assert with_screen[0]["kind"] == "mixed"
 
@@ -162,9 +162,33 @@ def test_word_sections_and_tables(corpus):
 
 
 def test_html_table_in_screenshot_flattened(corpus):
-    chunk = next(c for c in run(corpus, tables="flatten").chunks if "หน้าจอหลัก" in c["embed_text"])
+    chunk = next(c for c in run(corpus, screenshot_tables="flatten").chunks if "หน้าจอหลัก" in c["embed_text"])
     assert "ลำดับ: 1, ชื่อ: สมชาย" in chunk["embed_text"]
     assert "<table>" not in chunk["embed_text"]
+
+
+def test_screenshot_display_is_markdown_not_html(corpus):
+    chunk = next(c for c in run(corpus).chunks if "หน้าจอหลัก" in c["display_text"])
+    assert "<table>" not in chunk["display_text"]
+
+
+@pytest.fixture
+def columns_chunk(corpus):
+    return next(c for c in run(corpus, screenshot_tables="columns").chunks if "หน้าจอหลัก" in c["embed_text"])
+
+
+def test_columns_keeps_the_header(columns_chunk):
+    assert "| ลำดับ | ชื่อ |" in columns_chunk["embed_text"]
+
+
+@pytest.mark.parametrize("field", ["embed_text", "display_text"])
+def test_columns_drops_sample_rows(columns_chunk, field):
+    assert "สมชาย" not in columns_chunk[field]
+
+
+def test_screenshot_mode_leaves_document_tables(tmp_path):
+    result = run(big_table_corpus(tmp_path, 3), screenshot_tables="columns")
+    assert "รายการทดสอบลำดับที่ 2" in result.chunks[0]["embed_text"]
 
 
 def big_table_corpus(tmp_path, rows: int) -> CorpusConfig:

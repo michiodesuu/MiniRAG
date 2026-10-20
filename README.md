@@ -53,7 +53,7 @@ rag-ingest review --blank                   # type ground truth from the image a
 rag-ingest benchmark                        # CER + failures per method -> outputs/reports/benchmark_report.md
 rag-ingest compare --a outputs/vision --b outputs/vision_hint --diff
 rag-ingest ingest                           # final RAG text -> outputs/ingest/<pdf>.md
-rag-ingest chunk                            # -> outputs/chunks/chunks.jsonl (token budget, guards)
+rag-ingest chunk                            # -> outputs/chunks/chunks.jsonl (token budget, guards, table format)
 rag-ingest embed                            # -> outputs/index/<run>/ vectors + manifest
 rag-ingest search "ถ้ารายการถูกอนุมัติแล้วจะแก้ไขได้อย่างไร" --role branch_manager
 rag-ingest eval-retrieval [--grid]          # -> outputs/reports/retrieval_report.md + .csv
@@ -66,6 +66,13 @@ rag-ingest eval-retrieval [--grid]          # -> outputs/reports/retrieval_repor
 | `prompts/thai_document_ocr_full.txt` | 9,147 | full specification; only for models with a large context (too long for `qwen2.5vl:3b`, num_ctx 8192) |
 
 \*Qwen2.5-VL tokenizer. Pick one with `rag-ingest ocr --engine ollama --prompt prompts/thai_document_ocr_compact.txt --output-dir outputs/vision_compact`; each result records its `prompt_file`. Compare against the default with `rag-ingest benchmark` (every `outputs/vision_*` folder is picked up) before switching.
+
+### Table format
+Ingest keeps Typhoon's HTML tables as they are (the lossless record that chunks cite). Chunking turns every table into Markdown, whether it came from Typhoon's HTML or from Word:
+- **Tables in a document's own text** (`--tables`, default `keep`): the whole table.
+- **Tables inside screenshots** (`--screenshot-tables`, default `columns`): only the header row. A list screen's rows are sample records (people, branches, dates). They don't explain the screen, they push the explanation into another chunk, and they are personal data. `keep` and `flatten` remain available.
+
+Screenshot OCR also loses Typhoon's heading marks (`###`) and checkbox glyphs. See `note.md` 2.21.
 
 ### OCR engine
 Ingest takes Typhoon OCR (`outputs/vision_typhoon`) and falls back to the local `vision_hint` result when Typhoon's text fails the quality rules. On 18 screenshots this scores mean CER 0.164, against 0.225 / 0.228 for either alone. See `note.md` 2.18. Ground truth lives in `outputs/ground_truth/`, and `provenance.json` records who made each file and how (`human` or `claude`; blank box or edited from a model). The benchmark reports each provenance separately.

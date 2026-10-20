@@ -79,7 +79,7 @@ def test_eval_command_single_and_grid(tmp_path, monkeypatch):
     assert "Small evaluation set" in report and "| text |" in report
     main(["eval-retrieval", "--grid", "--models", "fake"])
     csv_rows = (tmp_path / "outputs" / "reports" / "retrieval_report.csv").read_text(encoding="utf-8").splitlines()
-    assert len(csv_rows) == 1 + 12  # header + 3 sizes x 2 table modes x header on/off
+    assert len(csv_rows) == 1 + 18  # header + 3 sizes x 3 screenshot table modes x header on/off
 
 
 def test_report_table_cells_and_no_answer_section():

@@ -1,6 +1,7 @@
 import pytest
 
 from rag_ingest.ocr_eval.metrics import cer, edit_distance
+from rag_ingest.chunking.text import tidy_ocr
 from rag_ingest.models import ImageRef
 from rag_ingest.quality import rejection
 from rag_ingest.textproc import NO_TEXT_MARK, join_thai_words, normalize_for_scoring
@@ -41,3 +42,13 @@ def test_image_ref_round_trip():
 ])
 def test_rejection(text, reason):
     assert rejection(text) == reason
+
+
+@pytest.mark.parametrize("raw, tidy", [
+    ("### 1.บันทึกอุบัติเหตุ", "1.บันทึกอุบัติเหตุ"),
+    ("☑ ☒", ""),
+    ("☐ ไม่ดื่มสุรา", "ไม่ดื่มสุรา"),
+    ("ข้อ #2 ยังอยู่", "ข้อ #2 ยังอยู่"),
+])
+def test_tidy_ocr(raw, tidy):
+    assert tidy_ocr(raw) == tidy
