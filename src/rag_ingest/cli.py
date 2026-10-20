@@ -82,8 +82,22 @@ def cmd_ocr(args, paths: Paths):
 
 def cmd_review(args, paths: Paths):
     from rag_ingest.review import serve
+    serve(review_source(args, paths), args.port, not args.no_browser)
+
+
+def review_source(args, paths: Paths):
+    """Blank box (ground truth) or correction of a result folder."""
+    from rag_ingest.ground_truth import GroundTruthStore, benchmark_images
+    from rag_ingest.imaging import list_images
+    from rag_ingest.review import BlankSource, CorrectionSource
     from rag_ingest.stores import VisionStore
-    serve(VisionStore(paths.resolve(args.dir), paths), args.port, not args.no_browser)
+
+    if not args.blank:
+        return CorrectionSource(VisionStore(paths.resolve(args.dir), paths))
+    wanted = benchmark_images(paths.ingest / "manifest.json")
+    images = {p.stem: p for p in list_images(paths.images, SUPPORTED_IMAGE_EXTENSIONS)
+              if wanted is None or p.stem in wanted}
+    return BlankSource(GroundTruthStore(paths.resolve(args.ground_truth_dir)), images)
 
 
 def cmd_compare(args, paths: Paths):
@@ -105,30 +119,16 @@ def cmd_compare(args, paths: Paths):
 
 def cmd_benchmark(args, paths: Paths):
     from rag_ingest import benchmark as bm
-    from rag_ingest.config import METHODS
-    from rag_ingest.stores import open_store
 
-    stores = {m.name: open_store(paths, m.name, m.kind) for m in METHODS}
-    truth = bm.load_ground_truth([s for s in stores.values() if s.folder.is_dir()],
-                                paths.resolve(args.ground_truth_dir))
-    if not truth:
-        sys.exit("No ground truth yet. Correct some images with:\n"
-                "  rag-ingest review --dir outputs/vision_hint\n"
-                "(or put plain corrected text in outputs/ground_truth/<image>.txt), "
-                "then rerun this command.")
-
-    methods = {}
-    for name in bm.method_names(args.exclude):
-        if stores[name].folder.is_dir() and (texts := stores[name].texts()):
-            methods[name] = texts
-    names = list(methods)
-    rows = bm.score_all(truth, methods)
-    report = bm.render(rows, names)
-    print(report)
-
+    result = bm.run(paths, paths.resolve(args.ground_truth_dir), args.exclude)
+    if result is None:
+        sys.exit("No ground truth yet. Type some from a blank box with:\n"
+                 "  rag-ingest review --blank\n"
+                 "(or put plain text in outputs/ground_truth/<image>.txt), then rerun this command.")
+    print(result.report)
     report_path, csv_path = paths.resolve(args.report), paths.resolve(args.csv)
-    report_path.write_text(report, encoding=ENCODING)
-    bm.write_csv(csv_path, rows, names)
+    report_path.write_text(result.report, encoding=ENCODING)
+    bm.write_csv(csv_path, result.rows, result.names)
     print(f"\nSaved: {report_path}\nSaved: {csv_path}")
 
 
@@ -210,8 +210,12 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
     p.add_argument("--api-model", default=os.environ.get("OCR_API_MODEL"),
                 help="Model name for the API (or env OCR_API_MODEL).")
 
-    p = add("review", cmd_review, "Correct OCR results in a local web page.")
-    p.add_argument("--dir", default="outputs/vision")
+    p = add("review", cmd_review, "Correct OCR results, or type ground truth from a blank box.")
+    p.add_argument("--blank", action="store_true",
+                   help="Blank box: type what each image says without seeing any model output; "
+                        "saves outputs/ground_truth/<image>.txt (provenance: human, blank box).")
+    p.add_argument("--dir", default="outputs/vision", help="Result folder to correct (without --blank).")
+    p.add_argument("--ground-truth-dir", default=rel(paths.ground_truth), help="Where --blank saves.")
     p.add_argument("--port", type=int, default=8765)
     p.add_argument("--no-browser", action="store_true")
 

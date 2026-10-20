@@ -262,6 +262,75 @@ Whole six-model grid: 175 s, peak 3.09 GB (one model loaded at a time). Download
 - The committed `outputs/ingest/manifest.json` lacks two `rejected` records that a fresh ingest writes (ingest records rejections only when it does not hit its own OCR cache).
 - The other test files still contain 28 composite assertions (Sonar S9073); `test_chunking.py` is fixed.
 
+### 2.18 OCR ground truth from a blank box, benchmark rerun, engine choice (2026-10-20, branch `feature/ocr-ground-truth`)
+
+#### Ground truth
+- **Scope:** 18 images, all unique screenshots that hold text, per `outputs/ingest/manifest.json` (status `ocr`/`needs_ocr`). The 7 icons and 2 byte-identical duplicates are not scored.
+- **Storage:** `outputs/ground_truth/<image>.txt` plus `provenance.json`, which records who made each transcription, how, and when (`ground_truth.py`).
+- **By a person (3):** the earlier corrections `ผู้จัดการสาขา` p8_3, p10_1 and p11_1. They were *edited from the baseline `vision` output*, so they lean towards that engine. The 4th correction (p2_1) is an icon and is not scored.
+- **By Claude (15):** each one was typed from the image alone (zoomed crops for small text), without any model output shown. The exception is the first ~170 characters of each screenshot's ingest text, which Claude had seen earlier in the session. **These have not been checked by a person.** The report gives them a separate table.
+- **Conventions:**
+  - text only: no radio/checkbox marks, bullets or icons;
+  - clipped text only when its identity is certain;
+  - screens read sidebar first, then the main panel top to bottom;
+  - tables one row per line, header first;
+  - step indicators as `N / ขั้นตอนที่ N / description`.
+- **`rag-ingest review --blank`:** a person can make or check ground truth with it.
+  - It shows each benchmarked image with an empty box: no model text, and no Claude transcription.
+  - Saving writes `outputs/ground_truth/` with provenance `human` / `blank box`, which then replaces Claude's version.
+
+#### Benchmark changes
+- The report has CER tables:
+  - per provenance (all / by a person / by Claude);
+  - per size (small crops / screens).
+- A **failure table** counts, over every benchmarked image, the outputs ingest would reject (quality rules) or that are missing. Failures matter more than a few CER points: a rejected screenshot loses all its text.
+- **New quality rule `repetition_loop`:** ≥20 non-empty lines with under 25% distinct lines.
+  - It catches `vision_both`'s runaway loops (3% distinct lines); real outputs have ≥52% distinct lines.
+  - Ingest output is unchanged.
+- **New `pipeline` row:** what ingest actually takes, i.e. `DEFAULT_SOURCES` in order, the first output that passes the quality rules. This measures the engine choice as it is used.
+- **Folder discovery:** any `outputs/vision_*` folder is now benchmarked without editing `METHODS`.
+
+#### Results (18 images, mean CER, lower is better)
+
+| method | all (18) | by a person (3) | by Claude (15) | small crops (3) | screens (15) | failures /18 |
+|---|---|---|---|---|---|---|
+| **pipeline** (typhoon → hint) | **0.164** | 0.100 | **0.177** | 0.034 | **0.190** | **0** |
+| vision_typhoon | 0.225 | **0.100** | 0.251 | 0.034 | 0.264 | 2 (prompt echo, "no text") |
+| vision_hint | 0.228 | 0.182 | 0.237 | **0.000** | 0.274 | 0 |
+| tesseract | 0.291 | 0.372 | 0.274 | 0.237 | 0.301 | 0 |
+| vision_both | 0.292 | 0.204 | 0.310 | 0.000 | 0.351 | 1 (loop) |
+| ocr (PaddleOCR) | 0.319 | 0.244 | 0.333 | 0.013 | 0.380 | 0 |
+| vision (baseline) | 0.397 | 0.133 | 0.450 | 0.054 | 0.466 | 1 ("no text") |
+
+Pooled CER (all 18): pipeline 0.169, typhoon 0.265, tesseract 0.288, hint 0.298. Full tables: `outputs/benchmark_report.md`, `outputs/benchmark.csv`.
+
+#### What the numbers say
+- **Typhoon reads large screens and tables best** (e.g. CER 0.02–0.09 on `ผู้จัดการเขต` p3_1, p4_1 and `ผู้จัดการสาขา` p5_1, where the local models score 0.11–1.00).
+- **Typhoon fails outright on 2 of 18:**
+  - p7_1 echoed the prompt (CER 0.99);
+  - p7_3 answered "no readable text" on a real screen (0.93).
+- **vision_hint never failed** and is exact on small crops.
+- The fallback chain takes Typhoon's strength and covers both of its failures with vision_hint. That makes it clearly the best (0.164 mean vs 0.225 / 0.228 for either alone).
+- **The baseline `vision` looked second-best on the 3 corrections made by a person (0.133) but is last on the 15 blank-box ones (0.450).** This shows the anchoring bias: those corrections were edited from its output. It is why ground truth should come from a blank box.
+- **Tesseract is a respectable third on screens** (and fast, no GPU), but weak on small crops (0.237).
+
+#### Decision: main engine
+**Main OCR engine: Typhoon OCR (`vision_typhoon`), with `vision_hint` (local qwen2.5vl:3b + hint) as the automatic fallback.** This is the existing `ingest.DEFAULT_SOURCES = ("vision_typhoon", "vision_hint")`, now backed by a benchmark, so the code does not change.
+- **Why not one engine alone:**
+  - Typhoon alone loses 2 screenshots entirely;
+  - vision_hint alone is ~0.07 CER worse and much worse on long tables.
+- **Why not Tesseract or PaddleOCR as the fallback:** both have higher CER than vision_hint (0.291 and 0.319), and PaddleOCR is very poor on some screens (0.94 on `ผู้จัดการเขต` p2_1).
+- **Condition:** Typhoon is an API. If documents may not leave the internal network and Typhoon is not hosted internally, use **`vision_hint` alone** (0 failures, 0.228). In that case, prompt tuning and tiling (step 3) are the levers to close the gap on long screens.
+
+#### Caveats
+- 15 of 18 references are Claude's reading, not a person's, and 18 images are still few. Treat the gaps between methods within ~0.03 as ties (typhoon vs hint alone; tesseract vs vision_both).
+- CER ignores layout (HTML, markdown and whitespace are stripped), so it does not judge Typhoon's HTML tables against plain text. That is the open table-format question (step 2).
+- Two references score poorly for every engine (`ผู้จัดการสาขา` p7_3, `ผู้จัดการเขต` p5_1). They may reflect transcription conventions as much as OCR errors; a person should look at these first.
+
+#### Still open
+- A person should check the 15 Claude transcriptions with `rag-ingest review --blank` (start with p7_3 and `ผู้จัดการเขต` p5_1). Then rerun `rag-ingest benchmark`.
+- Invented foreign-language words (hallucinated non-Thai tokens) are still not detected automatically. Loops now are.
+
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.
@@ -273,7 +342,7 @@ Whole six-model grid: 175 s, peak 3.09 GB (one model loaded at a time). Download
 
 - `review_vision.py` has never been opened in a browser; only confirmed to compile.
 - `--hint` and `--upscale` were only exercised through the batch run; no controlled test of each flag alone.
-- Only 4 corrected transcriptions exist so far -> benchmark numbers are not meaningful yet (aim for 10-15+, include long tables; correct from a blank box or a neutral folder to avoid anchoring on the baseline).
+- ~~Only 4 corrected transcriptions~~ -> 18 images now have ground truth (see 2.18), but 15 of them are Claude's blank-box readings, not yet checked by a person.
 - Tesseract output is not yet used as a hint for the vision model, and not yet included in `compare_vision.py` (which only compares two vision folders).
 - No controlled test of Tesseract settings (`--psm`, upscaling the tiny crops that came back empty).
 - Image tiling (splitting large images) not implemented.
@@ -287,7 +356,7 @@ Whole six-model grid: 175 s, peak 3.09 GB (one model loaded at a time). Download
 1. ~~Finish the hint run~~ — done (27/27, context fix `NUM_CTX = 8192`).
 2. ~~Rerun the comparison on all 27~~ — done (see 2.4).
 3. ~~Add Tesseract~~ — done (see 2.6). Follow-ups: try Tesseract lines as a second/alternative hint for the vision model (add a `--hint-source` option); try `--psm 6`/upscaling on the 7 empty crops; extend the comparison to include PaddleOCR and Tesseract.
-4. **Manual review**: correct 10-15+ more images with `review_vision.py` (especially long tables), then run `python src/benchmark.py` for real CER per method. Also decide how to handle Typhoon's HTML/markdown output.
+4. ~~**Manual review**: correct 10-15+ more images, rerun the benchmark, choose the engine~~ — done (see 2.18: Typhoon with vision_hint fallback). Still open: a person checks the Claude transcriptions (`rag-ingest review --blank`); decide how to handle Typhoon's HTML/markdown output.
 5. **Improve the comparison**: add a column showing whether the hint was applied per image.
 6. **Optional next levers**: prompt tuning (edit `prompts/thai_document_ocr.txt`, compare), image tiling for large images, combining PaddleOCR/Tesseract disagreement flags.
 7. **Fine-tuning (only if the above is not enough)**: LoRA/QLoRA of Qwen2.5-VL (Unsloth / LLaMA-Factory / ms-swift) on the corrected image-text pairs, convert to GGUF, load into Ollama. Needs a few hundred or more corrected examples; risk of hurting other content if data is thin.

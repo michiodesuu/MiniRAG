@@ -36,6 +36,8 @@ def test_image_ref_round_trip():
     ("   ", "empty"),
     (NO_TEXT_MARK, "no_text_marker"),
     ("Extract all text from the image.\nFormatting Rules: ...", "prompt_echo"),
+    ("\n".join(["1.บันทึกอุบัติเหตุ", "2.ติดตามสถานะ"] * 15), "repetition_loop"),
+    ("\n".join(f"แถวที่ {i}" for i in range(30)), None),  # long but every line distinct
 ])
 def test_rejection(text, reason):
     assert rejection(text) == reason

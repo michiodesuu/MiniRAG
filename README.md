@@ -48,8 +48,9 @@ screenshot) are flattened into one picture, so what was hidden stays hidden.
 rag-ingest inspect                          # text chars + images per page
 rag-ingest extract-images                   # data/raw/**/*.pdf|*.docx -> outputs/images/
 rag-ingest ocr --engine api                 # or tesseract | paddle | ollama  (--hint, --upscale, --skip-existing)
-rag-ingest review --dir outputs/vision_hint # correct results -> ground truth
-rag-ingest benchmark                        # CER per method -> outputs/benchmark_report.md
+rag-ingest review --dir outputs/vision_hint # correct a model's results
+rag-ingest review --blank                   # type ground truth from the image alone -> outputs/ground_truth/
+rag-ingest benchmark                        # CER + failures per method -> outputs/benchmark_report.md
 rag-ingest compare --a outputs/vision --b outputs/vision_hint --diff
 rag-ingest ingest                           # final RAG text -> outputs/ingest/<pdf>.md
 rag-ingest chunk                            # -> outputs/chunks/chunks.jsonl (token budget, guards)
@@ -64,7 +65,10 @@ rag-ingest eval-retrieval [--grid]          # -> outputs/retrieval_report.md + .
 | `prompts/thai_document_ocr_compact.txt` | 536 | stricter Thai/number/layout rules, explains the REFERENCE hints |
 | `prompts/thai_document_ocr_full.txt` | 9,147 | full specification; only for models with a large context (too long for `qwen2.5vl:3b`, num_ctx 8192) |
 
-\*Qwen2.5-VL tokenizer. Pick one with `rag-ingest ocr --engine ollama --prompt prompts/thai_document_ocr_compact.txt --output-dir outputs/vision_compact`; each result records its `prompt_file`. Compare against the default with `rag-ingest benchmark` (add the new folder to `METHODS` in `config.py`) on hand-corrected images before switching.
+\*Qwen2.5-VL tokenizer. Pick one with `rag-ingest ocr --engine ollama --prompt prompts/thai_document_ocr_compact.txt --output-dir outputs/vision_compact`; each result records its `prompt_file`. Compare against the default with `rag-ingest benchmark` (every `outputs/vision_*` folder is picked up) before switching.
+
+### OCR engine
+Ingest takes Typhoon OCR (`outputs/vision_typhoon`) and falls back to the local `vision_hint` result when Typhoon's text fails the quality rules. On 18 screenshots this scores mean CER 0.164, against 0.225 / 0.228 for either alone. See `note.md` 2.18. Ground truth lives in `outputs/ground_truth/`, and `provenance.json` records who made each file and how (`human` or `claude`; blank box or edited from a model). The benchmark reports each provenance separately.
 
 `python -m rag_ingest ...` works the same. Every command has `--help`; `--docs-dir`
 (alias `--pdf-dir`) points at another folder of documents.

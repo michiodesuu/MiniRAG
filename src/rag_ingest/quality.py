@@ -9,6 +9,15 @@ from typing import Callable
 from rag_ingest.textproc import NO_TEXT_MARK
 
 PROMPT_ECHO_MARKS = ("Extract all text from the image", "Formatting Rules:")
+# A model stuck repeating itself: many lines, few of them distinct. Measured on
+# every output so far: the loops have 3% distinct lines, real screens >= 52%.
+LOOP_MIN_LINES = 20
+LOOP_MAX_DISTINCT_SHARE = 0.25
+
+
+def repetition_loop(text: str) -> bool:
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    return len(lines) >= LOOP_MIN_LINES and len(set(lines)) / len(lines) < LOOP_MAX_DISTINCT_SHARE
 
 
 @dataclass(frozen=True)
@@ -22,6 +31,7 @@ RULES = (
     # Images reaching OCR are not icons, so "nothing readable" means the engine failed.
     Rule("no_text_marker", lambda text: NO_TEXT_MARK in text),
     Rule("prompt_echo", lambda text: any(mark in text for mark in PROMPT_ECHO_MARKS)),
+    Rule("repetition_loop", repetition_loop),
 )
 
 
