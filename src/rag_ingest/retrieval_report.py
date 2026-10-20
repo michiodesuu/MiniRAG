@@ -4,7 +4,8 @@ from pathlib import Path
 import csv
 
 from rag_ingest.config import ENCODING
-from rag_ingest.retrieval_eval import K_VALUES, Metrics, QuestionResult, Threshold, best_threshold, by_type, metrics
+from rag_ingest.retrieval_eval import (K_VALUES, NO_ANSWER, Metrics, QuestionResult, Threshold,
+                                       best_threshold, by_type, metrics)
 
 
 @dataclass
@@ -30,13 +31,18 @@ def _pct(value: float | None) -> str:
 
 def _row(c: ConfigResult) -> list[str]:
     m, t = c.overall, c.threshold
-    return ([c.name, str(c.chunks)] + [_pct(m.recall.get(k)) for k in K_VALUES]
+    return ([cell(c.name), str(c.chunks)] + [_pct(m.recall.get(k)) for k in K_VALUES]
             + [_pct(m.mrr), _pct(m.role_accuracy), _pct(t.value), _pct(t.false_answer_rate),
-               f"{m.latency * 1000:.0f}", f"{c.embed_seconds:.1f}"])
+               _pct(t.answerable_refused), f"{m.latency * 1000:.0f}", f"{c.embed_seconds:.1f}"])
+
+
+def cell(text: str) -> str:
+    """Safe inside a Markdown table cell."""
+    return text.replace("|", "\\|")
 
 
 HEADER = (["configuration", "chunks"] + [f"R@{k}" for k in K_VALUES]
-          + ["MRR", "role acc", "threshold", "false answer", "ms/query", "embed s"])
+          + ["MRR", "role acc", "threshold", "false answer", "answerable refused", "ms/query", "embed s"])
 
 
 def _table(rows: list[list[str]], header: list[str]) -> list[str]:
@@ -49,14 +55,27 @@ def _rank_key(c: ConfigResult):
 
 
 def best_per_type(configs: list[ConfigResult]) -> list[list[str]]:
-    types = sorted({r.question.type for c in configs for r in c.results})
+    """Answerable types: best MRR. No-answer questions are judged by the threshold instead
+    (see best_refusal), since they have no relevant passage to rank."""
+    types = sorted({r.question.type for c in configs for r in c.results} - {NO_ANSWER})
     rows = []
     for t in types:
         scored = [(c, by_type(c.results)[t]) for c in configs]
         best_c, best_m = max(scored, key=lambda x: (x[1].mrr or 0.0, x[1].recall.get(1, 0.0)))
-        rows.append([t, str(best_m.questions), best_c.name] + [_pct(best_m.recall.get(k)) for k in K_VALUES]
-                    + [_pct(best_m.mrr)])
+        rows.append([t, str(best_m.questions), cell(best_c.name)]
+                    + [_pct(best_m.recall.get(k)) for k in K_VALUES] + [_pct(best_m.mrr)])
     return rows
+
+
+def best_refusal(configs: list[ConfigResult]) -> list[str] | None:
+    """The configuration whose threshold best separates answerable from no-answer questions."""
+    usable = [c for c in configs if c.threshold.balanced_accuracy is not None]
+    if not usable:
+        return None
+    c = max(usable, key=lambda x: (x.threshold.balanced_accuracy, -(x.threshold.false_answer_rate or 0)))
+    t = c.threshold
+    return [cell(c.name), _pct(t.value), _pct(t.balanced_accuracy), _pct(t.false_answer_rate),
+            _pct(t.answerable_refused)]
 
 
 def per_question(c: ConfigResult) -> list[list[str]]:
@@ -83,8 +102,13 @@ def render(configs: list[ConfigResult], documents: list[str]) -> str:
              "## Best configuration per question type\n",
              *_table(best_per_type(configs), ["type", "questions", "configuration"]
                      + [f"R@{k}" for k in K_VALUES] + ["MRR"]), ""]
+    refusal = best_refusal(configs)
+    if refusal:
+        lines += ["## No-answer questions: best \"not found\" threshold\n",
+                  *_table([refusal], ["configuration", "threshold", "balanced accuracy", "false answer",
+                                      "answerable refused"]), ""]
     if ranked:
-        lines += [f"## Per question: {ranked[0].name}\n",
+        lines += [f"## Per question: {cell(ranked[0].name)}\n",
                   *_table(per_question(ranked[0]), ["id", "type", "first relevant rank", "top score", "top role"])]
     return "\n".join(lines) + "\n"
 

@@ -36,8 +36,8 @@ def evaluate_cell(paths: Paths, spec, embedder, settings: ChunkSettings, questio
     from rag_ingest.retrieval_report import ConfigResult
     from rag_ingest.retrieval_eval import evaluate
 
-    name = f"{short_name(embedder.model)} | {settings.max_tokens} | {settings.tables} | " \
-           f"{'header' if settings.context_header else 'no header'}"
+    name = f"{short_name(embedder.model)} · {settings.max_tokens} · {settings.tables} · " \
+           f"{'header' if settings.context_header else 'no header'}"  # no "|": it is a table cell
     slug = f"{short_name(embedder.model)}-{settings.max_tokens}-{settings.tables}-{int(settings.context_header)}"
     run = chunk_corpus(corpus, settings, embedder.count_tokens)
     if run.pii_found:

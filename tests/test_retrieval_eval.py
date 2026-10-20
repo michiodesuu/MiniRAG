@@ -80,3 +80,14 @@ def test_eval_command_single_and_grid(tmp_path, monkeypatch):
     main(["eval-retrieval", "--grid", "--models", "fake"])
     csv_rows = (tmp_path / "outputs" / "retrieval_report.csv").read_text(encoding="utf-8").splitlines()
     assert len(csv_rows) == 1 + 12  # header + 3 sizes x 2 table modes x header on/off
+
+
+def test_report_table_cells_and_no_answer_section():
+    from rag_ingest.retrieval_report import ConfigResult, render
+
+    results = [result(q("a"), 1, 0.9), result(q("x", "no_answer", expected=()), None, 0.5)]
+    report = render([ConfigResult("m · 400 · keep | x", {}, results, 1.0, 3)], ["สาขา"])
+    row = next(line for line in report.splitlines() if line.startswith("| m · 400"))
+    assert row.count(" | ") == len(row.split(" | ")) - 1 and "keep \\| x" in row
+    assert "| no_answer |" not in report.split("## No-answer")[0]  # not ranked by MRR
+    assert "## No-answer questions" in report and "answerable refused" in report
