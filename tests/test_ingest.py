@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from rag_ingest.benchmark import render, score_all, summarize
+from rag_ingest.benchmark import Truth, render, score_all, summarize
 from rag_ingest.compare import hint_label
 from rag_ingest.ingest import Ingestor, OcrCache, OcrSourceChain, run_ingest
 from rag_ingest.models import ImageRef
@@ -111,7 +111,7 @@ def test_real_pdfs_end_to_end(tmp_path):
 
 
 def test_benchmark_scores_and_summary():
-    truth = {"a": "abcd", "b": "xyz"}
+    truth = {stem: Truth(text, "human", "test") for stem, text in {"a": "abcd", "b": "xyz"}.items()}
     methods = {"m1": {"a": "abcd", "b": "xyq"}, "m2": {"a": ""}}
     rows = score_all(truth, methods)
     assert rows[0].scores["m1"].cer == pytest.approx(0)

@@ -1,7 +1,13 @@
-"""Local review UI: show each image beside its OCR text, edit, and save.
+"""Local review UI: an image beside a text box; edit and save.
 
-Saving writes `corrected_text` and review_status="corrected" into the result
-JSON, giving ground-truth pairs (image + corrected_text).
+Two sources of items (Strategy):
+  CorrectionSource  a model's result folder: the box starts with the model's
+                    text; saving writes `corrected_text` into its JSON
+  BlankSource       blank box: the box starts empty (or with your own earlier
+                    blank-box text), no model output is shown, so no engine is
+                    favoured; saving writes outputs/ground_truth/<image>.txt
+                    with provenance "human, blank box". Only images worth a
+                    ground truth are listed (no icons, no duplicates).
 
 Only the page this server rendered can save: requests must name this server
 in Host (blocks DNS rebinding), and saves need the per-run token embedded in
@@ -15,11 +21,13 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib.resources import files
 from pathlib import Path
 from urllib.parse import unquote
+from typing import Protocol
 import json
 import secrets
 import webbrowser
 
 from rag_ingest.config import ENCODING
+from rag_ingest.ground_truth import BLANK_BOX, HUMAN, GroundTruthStore
 from rag_ingest.stores import VisionStore
 
 LOOPBACK = "127.0.0.1"
@@ -31,27 +39,77 @@ IMAGE_TYPES = {".png": "image/png", ".webp": "image/webp", ".gif": "image/gif",
                ".bmp": "image/bmp"}
 
 
-def items_json(store: VisionStore) -> bytes:
-    items = []
-    for stem in store.stems():
-        record = store.load(stem)
-        items.append({"name": f"{stem}.json", "text": record["text"],
-                      "corrected_text": record.get("corrected_text"),
-                      "status": record.get("review_status")})
-    return json.dumps(items, ensure_ascii=False).encode(ENCODING)
+class ReviewSource(Protocol):
+    def items(self) -> list[dict]: ...           # {"name", "text", "corrected_text", "status"}
+
+    def image(self, stem: str) -> Path | None: ...
+
+    def has(self, stem: str) -> bool: ...
+
+    def save(self, stem: str, text: str) -> None: ...
+
+    def describe(self) -> str: ...
 
 
-def image_file(store: VisionStore, stem: str) -> Path | None:
-    """The image behind one result, or None if the result or the file is missing."""
-    if not store.has(stem):
-        return None
-    image = store.image_path(store.load(stem))
-    return image if image.is_file() else None
+class CorrectionSource:
+    def __init__(self, store: VisionStore):
+        self.store = store
+
+    def items(self) -> list[dict]:
+        out = []
+        for stem in self.store.stems():
+            record = self.store.load(stem)
+            out.append({"name": f"{stem}.json", "text": record["text"],
+                        "corrected_text": record.get("corrected_text"),
+                        "status": record.get("review_status")})
+        return out
+
+    def image(self, stem: str) -> Path | None:
+        if not self.store.has(stem):
+            return None
+        image = self.store.image_path(self.store.load(stem))
+        return image if image.is_file() else None
+
+    def has(self, stem: str) -> bool:
+        return self.store.has(stem)
+
+    def save(self, stem: str, text: str) -> None:
+        self.store.save_correction(stem, text)
+
+    def describe(self) -> str:
+        return f"correcting {self.store.folder}"
+
+
+class BlankSource:
+    def __init__(self, truth: GroundTruthStore, images: dict[str, Path]):
+        self.truth, self.images = truth, images  # stem -> image file
+
+    def items(self) -> list[dict]:
+        provenance, out = self.truth.provenance(), []
+        for stem in self.images:
+            mine = provenance.get(stem, {}).get("by") == HUMAN and self.truth.has(stem)
+            text = self.truth.path(stem).read_text(encoding=ENCODING).strip() if mine else None
+            out.append({"name": stem, "text": "", "corrected_text": text,
+                        "status": "corrected" if mine else None})
+        return out
+
+    def image(self, stem: str) -> Path | None:
+        path = self.images.get(stem)
+        return path if path and path.is_file() else None
+
+    def has(self, stem: str) -> bool:
+        return stem in self.images
+
+    def save(self, stem: str, text: str) -> None:
+        self.truth.save(stem, text, HUMAN, BLANK_BOX)
+
+    def describe(self) -> str:
+        return f"blank box -> {self.truth.folder} ({len(self.images)} images)"
 
 
 class ReviewHandler(BaseHTTPRequestHandler):
-    """Routes requests to one VisionStore. Configure with make_handler()."""
-    store: VisionStore
+    """Routes requests to one ReviewSource. Configure with make_handler()."""
+    source: ReviewSource
     hosts: frozenset[str]
     origins: frozenset[str]
     token: str
@@ -91,13 +149,13 @@ class ReviewHandler(BaseHTTPRequestHandler):
         if self.path == "/":
             return self.send(self.page, HTML)
         if self.path == "/api/items":
-            return self.send(items_json(self.store), JSON)
+            return self.send(json.dumps(self.source.items(), ensure_ascii=False).encode(ENCODING), JSON)
         if self.path.startswith("/image/"):
             return self.send_image(self.stem("/image/"))
         self.not_found()
 
     def send_image(self, stem: str):
-        image = image_file(self.store, stem)
+        image = self.source.image(stem)
         if image is None:
             return self.not_found()
         self.send(image.read_bytes(), IMAGE_TYPES.get(image.suffix.lower(), "image/jpeg"))
@@ -108,17 +166,19 @@ class ReviewHandler(BaseHTTPRequestHandler):
         if not self.path.startswith("/api/save/"):
             return self.not_found()
         stem = self.stem("/api/save/")
-        if not self.store.has(stem):
+        if not self.source.has(stem):
             return self.not_found()
         length = int(self.headers.get("Content-Length", 0))
-        self.store.save_correction(stem, self.rfile.read(length).decode(ENCODING))
+        self.source.save(stem, self.rfile.read(length).decode(ENCODING))
         self.send(b"ok", TEXT_PLAIN)
 
 
-def make_handler(store: VisionStore, port: int, token: str) -> type[ReviewHandler]:
+def make_handler(source: ReviewSource | VisionStore, port: int, token: str) -> type[ReviewHandler]:
+    if isinstance(source, VisionStore):
+        source = CorrectionSource(source)
     hosts = frozenset({f"{LOOPBACK}:{port}", f"localhost:{port}"})
     return type("BoundReviewHandler", (ReviewHandler,), {
-        "store": store,
+        "source": source,
         "hosts": hosts,
         "origins": frozenset(f"http://{h}" for h in hosts),  # NOSONAR loopback only, see module doc
         "token": token,
@@ -126,12 +186,12 @@ def make_handler(store: VisionStore, port: int, token: str) -> type[ReviewHandle
     })
 
 
-def serve(store: VisionStore, port: int = 8765, open_browser: bool = True) -> None:
-    if not store.stems():
-        raise FileNotFoundError(f"No result JSON files in {store.folder}")
+def serve(source: ReviewSource, port: int = 8765, open_browser: bool = True) -> None:
+    if not source.items():
+        raise FileNotFoundError(f"Nothing to review ({source.describe()})")
     url = f"http://{LOOPBACK}:{port}/"  # NOSONAR loopback only, see module doc
-    print(f"Reviewing {store.folder}\nOpen {url}  (Ctrl+C to stop)")
+    print(f"Reviewing: {source.describe()}\nOpen {url}  (Ctrl+C to stop)")
     if open_browser:
         webbrowser.open(url)
-    handler = make_handler(store, port, secrets.token_urlsafe(32))
+    handler = make_handler(source, port, secrets.token_urlsafe(32))
     ThreadingHTTPServer((LOOPBACK, port), handler).serve_forever()  # NOSONAR loopback only
