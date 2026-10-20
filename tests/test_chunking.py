@@ -114,7 +114,8 @@ def test_screenshot_stays_with_its_instruction_and_whole(corpus):
     assert len(with_screen) == 1
     assert "1.กดเลือกเมนู บันทึกอุบัติเหตุ" in with_screen[0]["display_text"]
     assert SCREEN_A in with_screen[0]["display_text"]
-    assert with_screen[0]["screenshot_md5"] == [MD5_A] and with_screen[0]["kind"] == "mixed"
+    assert with_screen[0]["screenshot_md5"] == [MD5_A]
+    assert with_screen[0]["kind"] == "mixed"
 
 
 def test_sections_and_documents_never_mix(corpus):
@@ -143,7 +144,8 @@ def test_duplicate_screenshot_embedded_once_and_placeholder_counted(corpus):
     embedded = sum(c["embed_text"].count(SCREEN_B) for c in result.chunks)
     assert embedded == 1
     delete = next(c for c in result.chunks if c["section"] == "3. ลบข้อมูล")
-    assert SCREEN_B in delete["display_text"] and SCREEN_B not in delete["embed_text"]
+    assert SCREEN_B in delete["display_text"]
+    assert SCREEN_B not in delete["embed_text"]
     assert "กดปุ่มลบในรายการ" in delete["embed_text"]   # its own instruction is kept
     assert (delete["duplicate_screenshots"], delete["missing_ocr"]) == (1, 1)
     assert "ยังไม่ได้ OCR" not in delete["embed_text"]
@@ -161,7 +163,8 @@ def test_word_sections_and_tables(corpus):
 
 def test_html_table_in_screenshot_flattened(corpus):
     chunk = next(c for c in run(corpus, tables="flatten").chunks if "หน้าจอหลัก" in c["embed_text"])
-    assert "ลำดับ: 1, ชื่อ: สมชาย" in chunk["embed_text"] and "<table>" not in chunk["embed_text"]
+    assert "ลำดับ: 1, ชื่อ: สมชาย" in chunk["embed_text"]
+    assert "<table>" not in chunk["embed_text"]
 
 
 def big_table_corpus(tmp_path, rows: int) -> CorpusConfig:
@@ -202,19 +205,22 @@ def test_valid_thai_id_rejected_and_never_written(corpus, tmp_path):
     base = "310170012345"
     good = base + str((11 - sum(int(d) * (13 - i) for i, d in enumerate(base)) % 11) % 10)
     bad = base + str((int(good[-1]) + 1) % 10)
-    assert valid_thai_id(good) and not valid_thai_id(bad)
+    assert valid_thai_id(good)
+    assert not valid_thai_id(bad)
     text = (corpus.ingest_dir / "คู่มือเขต.md").read_text(encoding="utf-8")
     (corpus.ingest_dir / "คู่มือเขต.md").write_text(
         text + f"\nเลขบัตร {good}\n\n## อื่น ๆ\n\nเลขอ้างอิง {bad}\n", encoding="utf-8")
     result = run(corpus)
-    assert result.pii_found and result.documents["คู่มือเขต"].pii_rejections == 1
+    assert result.pii_found
+    assert result.documents["คู่มือเขต"].pii_rejections == 1
     assert any(bad in c["embed_text"] for c in result.chunks)    # failed checksum: kept
     assert not any(good in c["embed_text"] for c in result.chunks)
     write_run(result, tmp_path / "out", {"counter": "approximate"})
     for name in ("rejected.jsonl", "manifest.json", "chunks.jsonl"):
         assert good not in (tmp_path / "out" / name).read_text(encoding="utf-8")
     rejected = [json.loads(line) for line in (tmp_path / "out" / "rejected.jsonl").read_text(encoding="utf-8").splitlines()]
-    assert rejected[0]["rule"] == "thai_national_id" and set(rejected[0]) >= {"start", "length", "field"}
+    assert rejected[0]["rule"] == "thai_national_id"
+    assert set(rejected[0]) >= {"start", "length", "field"}
 
 
 def test_excluded_documents_skipped_and_reported(corpus):
@@ -278,7 +284,8 @@ def test_id_cut_by_a_chunk_split_is_still_rejected(tmp_path):
     result = run(CorpusConfig(ingest, tmp_path / "none", {}, frozenset(), {}), max_tokens=60, overlap=20)
     assert result.pii_found
     kept = "".join(c["embed_text"] + c["display_text"] for c in result.chunks)
-    assert good[:6] not in kept and good[6:] not in kept   # neither half survives
+    assert good[:6] not in kept
+    assert good[6:] not in kept   # neither half survives
     write_run(result, tmp_path / "out", {})
     assert good[6:] not in (tmp_path / "out" / "rejected.jsonl").read_text(encoding="utf-8")
 
@@ -291,7 +298,8 @@ def test_id_split_across_table_cells_is_rejected(tmp_path):
     (ingest / "ตาราง.md").write_text(f"<!-- page 1 -->\n[ภาพหน้าจอ]\n<table><tr>{cells}</tr></table>\n[/ภาพหน้าจอ]\n",
                                     encoding="utf-8")
     result = run(CorpusConfig(ingest, tmp_path / "none", {}, frozenset(), {}))
-    assert result.pii_found and result.chunks == []
+    assert result.pii_found
+    assert result.chunks == []
 
 
 def test_outputs_written(corpus, tmp_path):
@@ -300,7 +308,8 @@ def test_outputs_written(corpus, tmp_path):
     lines = path.read_text(encoding="utf-8").splitlines()
     assert len(lines) == len(result.chunks)
     manifest = json.loads((tmp_path / "out" / "manifest.json").read_text(encoding="utf-8"))
-    assert manifest["settings"]["max_tokens"] == 400 and set(manifest["sources"]) == {"คู่มือสาขา", "คู่มือเขต"}
+    assert manifest["settings"]["max_tokens"] == 400
+    assert set(manifest["sources"]) == {"คู่มือสาขา", "คู่มือเขต"}
     assert manifest["documents"]["คู่มือสาขา"]["toc_pages_dropped"] == [1]
 
 
