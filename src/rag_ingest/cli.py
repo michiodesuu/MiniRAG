@@ -87,7 +87,7 @@ def cmd_review(args, paths: Paths):
 
 def review_source(args, paths: Paths):
     """Blank box (ground truth) or correction of a result folder."""
-    from rag_ingest.ground_truth import GroundTruthStore, benchmark_images
+    from rag_ingest.ocr_eval.ground_truth import GroundTruthStore, benchmark_images
     from rag_ingest.imaging import list_images
     from rag_ingest.review import BlankSource, CorrectionSource
     from rag_ingest.stores import VisionStore
@@ -101,7 +101,7 @@ def review_source(args, paths: Paths):
 
 
 def cmd_compare(args, paths: Paths):
-    from rag_ingest.compare import compare, render
+    from rag_ingest.ocr_eval.compare import compare, render
     from rag_ingest.stores import VisionStore
 
     rows, only = compare(VisionStore(paths.resolve(args.a), paths),
@@ -119,7 +119,7 @@ def cmd_compare(args, paths: Paths):
 
 
 def cmd_benchmark(args, paths: Paths):
-    from rag_ingest import benchmark as bm
+    from rag_ingest.ocr_eval import benchmark as bm
 
     result = bm.run(paths, paths.resolve(args.ground_truth_dir), args.exclude)
     if result is None:
@@ -250,8 +250,8 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
 
     # Later stages register their own commands (argument wiring lives with each stage).
     from rag_ingest.chunking.commands import register as register_chunking
-    from rag_ingest.eval_commands import register as register_eval
-    from rag_ingest.index_commands import register as register_index
+    from rag_ingest.retrieval.eval_commands import register as register_eval
+    from rag_ingest.retrieval.index_commands import register as register_index
     for register in (register_chunking, register_index, register_eval):
         register(add, paths)
     return parser

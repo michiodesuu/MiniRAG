@@ -27,7 +27,7 @@ import secrets
 import webbrowser
 
 from rag_ingest.config import ENCODING
-from rag_ingest.ground_truth import BLANK_BOX, HUMAN, GroundTruthStore
+from rag_ingest.ocr_eval.ground_truth import BLANK_BOX, HUMAN, GroundTruthStore
 from rag_ingest.stores import VisionStore
 
 LOOPBACK = "127.0.0.1"

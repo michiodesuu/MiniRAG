@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from difflib import SequenceMatcher, unified_diff
 
-from rag_ingest.metrics import cer
+from rag_ingest.ocr_eval.metrics import cer
 from rag_ingest.stores import VisionStore
 
 

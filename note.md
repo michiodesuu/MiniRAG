@@ -335,6 +335,11 @@ Pooled CER (all 18): pipeline 0.169, typhoon 0.265, tesseract 0.288, hint 0.298.
 - All reports moved from the top of `outputs/` to `outputs/reports/` (`Paths.reports` in `config.py`): `benchmark_report.md`, `benchmark.csv`, `compare_*.md` and `retrieval_report*.md/.csv`. The commands write there by default and create the folder when needed; `--report`/`--csv` still override.
 - The two plain-text dumps from the initial commit (`ผู้จัดการสาขา.txt`, `ผู้จัดการเขต.txt`) moved to `outputs/text/`. The pipeline does not use them; delete them if they are not needed.
 
+### 2.20 Modules grouped by stage (2026-10-20, branch `refactor/group-modules`)
+- `ocr_eval/`: `ground_truth`, `benchmark`, `compare`, `metrics` (moved, names kept).
+- `retrieval/`: `indexing`, `vectorstore`, `index_commands`, `eval_commands`, plus `retrieval_eval` -> `retrieval/evaluation.py` and `retrieval_report` -> `retrieval/report.py` (the package name already says "retrieval").
+- Moves only, no behaviour change: 157 tests pass, `rag-ingest benchmark` writes an identical report, and `rag-ingest search` works on the existing bge-m3 index. Imports are now e.g. `from rag_ingest.ocr_eval.benchmark import ...`, `from rag_ingest.retrieval.indexing import ...`.
+
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.

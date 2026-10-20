@@ -10,7 +10,7 @@ SNIPPET_CHARS = 160
 
 
 def run_embed(args: argparse.Namespace, paths: Paths) -> None:
-    from rag_ingest.indexing import EmbedderSpec, build_index
+    from rag_ingest.retrieval.indexing import EmbedderSpec, build_index
 
     spec = EmbedderSpec(args.embedder, embedder_options(args))
     started = time.perf_counter()
@@ -27,7 +27,7 @@ def snippet(text: str) -> str:
 
 
 def run_search(args: argparse.Namespace, paths: Paths) -> None:
-    from rag_ingest.indexing import StaleIndexError, latest_index, load_index
+    from rag_ingest.retrieval.indexing import StaleIndexError, latest_index, load_index
 
     folder = paths.resolve(args.index) if args.index else latest_index(paths.index)
     try:
