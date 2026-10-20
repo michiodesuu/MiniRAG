@@ -108,17 +108,25 @@ src/rag_ingest/
   engines/        OCR engines behind one interface, created by name, heavy imports deferred
     vision.py     prompt/hints/image prep, with Ollama or OpenAI-compatible transport
   batch.py        run an engine over a folder (resume, per-image failure isolation)
-  quality.py      rules that reject bad OCR (empty, "no text", prompt echo)
+  quality.py      rules that reject bad OCR (empty, "no text", prompt echo, repetition loop)
+  textproc.py     text normalization shared by ingest and scoring
   ingest.py       document text + screenshot OCR merged in reading order
   thai_glyphs.py  restores Thai vowels a PDF's fonts mislabel (shared by reader and converter)
+  ocr_eval/       how good is the OCR?
+    ground_truth.py   outputs/ground_truth/ + provenance (who made it, how)
+    benchmark.py      CER and failures per method, the ingest "pipeline" row
+    compare.py        two result folders side by side
+    metrics.py        edit distance, CER
+  review/         local correction UI (`review`, `review --blank`)
   convert/        PDF -> DOCX: preflight, layout (pdf2docx), docx_fixes, verify, report, cli
   chunking/       ingest .md -> chunks: units, sections, tables, text, builder, guards, pipeline
   embeddings/     fake / local / api embedders, model profiles, vector cache
-  vectorstore.py  brute-force cosine search behind a VectorStore protocol
-  indexing.py     index runs, manifests, staleness check
-  retrieval_eval.py, retrieval_report.py   Recall@k, MRR, role accuracy, no-answer threshold
-  compare.py, benchmark.py, metrics.py, textproc.py
-  review/         local correction UI
+  retrieval/      search and how good it is
+    vectorstore.py    brute-force cosine search behind a VectorStore protocol
+    indexing.py       index runs, manifests, staleness check
+    evaluation.py     Recall@k, MRR, role accuracy, no-answer threshold
+    report.py         outputs/reports/retrieval_report.md + .csv
+    index_commands.py, eval_commands.py   `embed`, `search`, `eval-retrieval`
 tests/            pytest; no model or network needed
 ```
 

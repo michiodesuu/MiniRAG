@@ -24,9 +24,9 @@ from pathlib import Path
 import csv
 
 from rag_ingest.config import ENCODING, METHODS, Method, Paths
-from rag_ingest.ground_truth import CLAUDE, HUMAN, GroundTruthStore, benchmark_images, edited_from
+from rag_ingest.ocr_eval.ground_truth import CLAUDE, HUMAN, GroundTruthStore, benchmark_images, edited_from
 from rag_ingest.ingest import DEFAULT_SOURCES
-from rag_ingest.metrics import edit_distance
+from rag_ingest.ocr_eval.metrics import edit_distance
 from rag_ingest.quality import rejection
 from rag_ingest.stores import ResultStore, VisionStore, open_store
 from rag_ingest.textproc import normalize_for_scoring

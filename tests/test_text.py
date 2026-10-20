@@ -1,6 +1,6 @@
 import pytest
 
-from rag_ingest.metrics import cer, edit_distance
+from rag_ingest.ocr_eval.metrics import cer, edit_distance
 from rag_ingest.models import ImageRef
 from rag_ingest.quality import rejection
 from rag_ingest.textproc import NO_TEXT_MARK, join_thai_words, normalize_for_scoring

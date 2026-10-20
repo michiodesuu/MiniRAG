@@ -31,7 +31,7 @@ from rag_ingest.config import ENCODING
 from rag_ingest.embeddings import create_embedder
 from rag_ingest.embeddings.cache import EmbeddingCache, embed_with_cache
 from rag_ingest.embeddings.profiles import profile
-from rag_ingest.vectorstore import Hit, NumpyVectorStore
+from rag_ingest.retrieval.vectorstore import Hit, NumpyVectorStore
 
 MANIFEST, CHUNKS_FILE, CACHE_DIR = "manifest.json", "chunks.jsonl", "cache"
 

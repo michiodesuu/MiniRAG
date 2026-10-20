@@ -6,9 +6,9 @@ import pytest
 np = pytest.importorskip("numpy")
 from rag_ingest.chunking import ChunkSettings, CorpusConfig, chunk_corpus, write_run  # noqa: E402
 from rag_ingest.cli import main  # noqa: E402
-from rag_ingest.indexing import EmbedderSpec, StaleIndexError, build_index, latest_index, load_index  # noqa: E402
+from rag_ingest.retrieval.indexing import EmbedderSpec, StaleIndexError, build_index, latest_index, load_index  # noqa: E402
 from rag_ingest.tokens import approximate_tokens  # noqa: E402
-from rag_ingest.vectorstore import NumpyVectorStore  # noqa: E402
+from rag_ingest.retrieval.vectorstore import NumpyVectorStore  # noqa: E402
 
 
 def unit(*values):
@@ -117,7 +117,7 @@ def test_manifest_cannot_redirect_the_api_key(monkeypatch):
     spec = EmbedderSpec.from_manifest(tampered)
     assert spec.options == {"model": "m"}
     captured = {}
-    monkeypatch.setattr("rag_ingest.indexing.create_embedder", lambda kind, **o: captured.update(o))
+    monkeypatch.setattr("rag_ingest.retrieval.indexing.create_embedder", lambda kind, **o: captured.update(o))
     spec.create()
     assert captured["url"] == "https://embed.internal/v1/embeddings" and captured["key"] == "k3y"
 
@@ -128,6 +128,6 @@ def test_manifest_cannot_redirect_the_api_key(monkeypatch):
     {"kind": "shell", "options": {}},
 ])
 def test_manifest_cannot_load_unknown_models(embedder):
-    from rag_ingest.indexing import UntrustedIndexError
+    from rag_ingest.retrieval.indexing import UntrustedIndexError
     with pytest.raises(UntrustedIndexError):
         EmbedderSpec.from_manifest(embedder)

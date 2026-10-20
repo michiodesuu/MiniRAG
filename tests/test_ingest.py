@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from rag_ingest.benchmark import Truth, render, score_all, summarize
-from rag_ingest.compare import hint_label
+from rag_ingest.ocr_eval.benchmark import Truth, render, score_all, summarize
+from rag_ingest.ocr_eval.compare import hint_label
 from rag_ingest.ingest import Ingestor, OcrCache, OcrSourceChain, run_ingest
 from rag_ingest.models import ImageRef
 from rag_ingest.models import EmbeddedImage, Page, TextBlock

@@ -3,9 +3,9 @@ import json
 
 import pytest
 
-from rag_ingest.retrieval_eval import (Question, QuestionResult, best_threshold, by_type, is_relevant,
+from rag_ingest.retrieval.evaluation import (Question, QuestionResult, best_threshold, by_type, is_relevant,
                                        load_questions, metrics)
-from rag_ingest.vectorstore import Hit
+from rag_ingest.retrieval.vectorstore import Hit
 
 
 def q(qid, qtype="text", role="branch_manager", expected=(("สาขา", 3),)):
@@ -83,7 +83,7 @@ def test_eval_command_single_and_grid(tmp_path, monkeypatch):
 
 
 def test_report_table_cells_and_no_answer_section():
-    from rag_ingest.retrieval_report import ConfigResult, render
+    from rag_ingest.retrieval.report import ConfigResult, render
 
     results = [result(q("a"), 1, 0.9), result(q("x", "no_answer", expected=()), None, 0.5)]
     report = render([ConfigResult("m · 400 · keep | x", {}, results, 1.0, 3)], ["สาขา"])

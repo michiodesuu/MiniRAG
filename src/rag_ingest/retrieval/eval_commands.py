@@ -32,9 +32,9 @@ def grid_cells() -> list[ChunkSettings]:
 
 
 def evaluate_cell(paths: Paths, spec, embedder, settings: ChunkSettings, questions, corpus: CorpusConfig):
-    from rag_ingest.indexing import build_index, load_index
-    from rag_ingest.retrieval_report import ConfigResult
-    from rag_ingest.retrieval_eval import evaluate
+    from rag_ingest.retrieval.indexing import build_index, load_index
+    from rag_ingest.retrieval.report import ConfigResult
+    from rag_ingest.retrieval.evaluation import evaluate
 
     name = f"{short_name(embedder.model)} · {settings.max_tokens} · {settings.tables} · " \
            f"{'header' if settings.context_header else 'no header'}"  # no "|": it is a table cell
@@ -53,7 +53,7 @@ def evaluate_cell(paths: Paths, spec, embedder, settings: ChunkSettings, questio
 
 
 def run_grid(args, paths: Paths, questions) -> list:
-    from rag_ingest.indexing import EmbedderSpec
+    from rag_ingest.retrieval.indexing import EmbedderSpec
 
     fingerprints, _ = image_fingerprints(EXCLUDED_DOCUMENTS, paths.root / "data")
     corpus = CorpusConfig(paths.resolve(args.ingest), paths.documents, EXCLUDED_DOCUMENTS,
@@ -70,9 +70,9 @@ def run_grid(args, paths: Paths, questions) -> list:
 
 
 def run_single(args, paths: Paths, questions) -> list:
-    from rag_ingest.indexing import latest_index, load_index
-    from rag_ingest.retrieval_eval import evaluate
-    from rag_ingest.retrieval_report import ConfigResult
+    from rag_ingest.retrieval.indexing import latest_index, load_index
+    from rag_ingest.retrieval.evaluation import evaluate
+    from rag_ingest.retrieval.report import ConfigResult
 
     folder = paths.resolve(args.index) if args.index else latest_index(paths.index)
     index = load_index(folder, paths.resolve(args.ingest))
@@ -82,8 +82,8 @@ def run_single(args, paths: Paths, questions) -> list:
 
 
 def run_eval(args: argparse.Namespace, paths: Paths) -> None:
-    from rag_ingest.retrieval_eval import load_questions
-    from rag_ingest.retrieval_report import render, write_csv
+    from rag_ingest.retrieval.evaluation import load_questions
+    from rag_ingest.retrieval.report import render, write_csv
 
     questions = load_questions(paths.resolve(args.questions))
     configs = run_grid(args, paths, questions) if args.grid else run_single(args, paths, questions)

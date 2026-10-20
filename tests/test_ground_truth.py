@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from rag_ingest import benchmark as bm
-from rag_ingest.ground_truth import BLANK_BOX, CLAUDE, HUMAN, GroundTruthStore, benchmark_images
+from rag_ingest.ocr_eval import benchmark as bm
+from rag_ingest.ocr_eval.ground_truth import BLANK_BOX, CLAUDE, HUMAN, GroundTruthStore, benchmark_images
 from rag_ingest.models import Recognition
 from rag_ingest.review import BlankSource
 from rag_ingest.stores import VisionStore

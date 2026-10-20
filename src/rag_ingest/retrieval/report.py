@@ -4,7 +4,7 @@ from pathlib import Path
 import csv
 
 from rag_ingest.config import ENCODING
-from rag_ingest.retrieval_eval import (K_VALUES, NO_ANSWER, Metrics, QuestionResult, Threshold,
+from rag_ingest.retrieval.evaluation import (K_VALUES, NO_ANSWER, Metrics, QuestionResult, Threshold,
                                        best_threshold, by_type, metrics)
 
 
