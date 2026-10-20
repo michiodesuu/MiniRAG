@@ -1,5 +1,9 @@
 """`rag-ingest eval-retrieval`: evaluate one index, or the comparison grid (spec 6.3).
 
+Grid: models x --max-tokens x screenshot table mode x context header. The
+table dimension is --screenshot-tables, because the tables in the ingested
+manuals are all inside screenshots; document tables stay at "keep".
+
 The grid loads one model at a time (never two at once), evaluates every chunk
 setting with it, then frees it before the next model. Each grid cell writes
 its chunks and index under outputs/index/grid/ (not committed) and shares the
@@ -13,7 +17,7 @@ from dataclasses import asdict
 
 from rag_ingest.chunking import ChunkSettings, CorpusConfig, chunk_corpus, write_run
 from rag_ingest.chunking.pipeline import image_fingerprints
-from rag_ingest.chunking.tables import TABLE_MODES
+from rag_ingest.chunking.tables import KEEP, SCREENSHOT_TABLE_MODES
 from rag_ingest.config import DOCUMENT_ROLES, ENCODING, EXCLUDED_DOCUMENTS, Paths
 from rag_ingest.embeddings.options import add_embedder_arguments, embedder_options
 
@@ -27,8 +31,8 @@ def short_name(model: str) -> str:
 
 
 def grid_cells() -> list[ChunkSettings]:
-    return [ChunkSettings(max_tokens, 50, tables, header)
-            for max_tokens, tables, header in itertools.product(GRID_MAX_TOKENS, TABLE_MODES, (True, False))]
+    return [ChunkSettings(max_tokens, 50, KEEP, header, shots)
+            for max_tokens, shots, header in itertools.product(GRID_MAX_TOKENS, SCREENSHOT_TABLE_MODES, (True, False))]
 
 
 def evaluate_cell(paths: Paths, spec, embedder, settings: ChunkSettings, questions, corpus: CorpusConfig):
@@ -36,9 +40,9 @@ def evaluate_cell(paths: Paths, spec, embedder, settings: ChunkSettings, questio
     from rag_ingest.retrieval.report import ConfigResult
     from rag_ingest.retrieval.evaluation import evaluate
 
-    name = f"{short_name(embedder.model)} · {settings.max_tokens} · {settings.tables} · " \
+    name = f"{short_name(embedder.model)} · {settings.max_tokens} · {settings.screenshot_tables} · " \
            f"{'header' if settings.context_header else 'no header'}"  # no "|": it is a table cell
-    slug = f"{short_name(embedder.model)}-{settings.max_tokens}-{settings.tables}-{int(settings.context_header)}"
+    slug = f"{short_name(embedder.model)}-{settings.max_tokens}-{settings.screenshot_tables}-{int(settings.context_header)}"
     run = chunk_corpus(corpus, settings, embedder.count_tokens)
     if run.pii_found:
         raise SystemExit(f"Personal data found while chunking for {name}; run `rag-ingest chunk` to see where.")
@@ -101,7 +105,7 @@ def register(add, paths: Paths) -> None:
     p = add("eval-retrieval", run_eval, "Measure whether search finds the right passage.")
     p.add_argument("--questions", default=paths.relative(paths.eval_questions), help="Gold questions (JSONL).")
     p.add_argument("--grid", action="store_true",
-                   help="Compare models x --max-tokens {200,400,600} x --tables x context header.")
+                   help="Compare models x --max-tokens {200,400,600} x --screenshot-tables x context header.")
     p.add_argument("--models", nargs="+", default=list(GRID_MODELS), help="Models for --grid ('fake' allowed).")
     p.add_argument("--index", help="Index to evaluate without --grid (default: newest).")
     p.add_argument("--ingest", default=paths.relative(paths.ingest), help="Ingest folder.")

@@ -21,8 +21,8 @@ from rag_ingest.chunking import guards
 from rag_ingest.chunking.builder import Draft, SectionPacker, make_blocks
 from rag_ingest.chunking.sections import assign_sections, find_table_of_contents, strategy_for
 from rag_ingest.chunking.sources import IngestOutput, find_doc_type, nfc_name, sha256_file
-from rag_ingest.chunking.tables import KEEP
-from rag_ingest.chunking.text import context_header, nfc
+from rag_ingest.chunking.tables import COLUMNS, KEEP
+from rag_ingest.chunking.text import TableFormat, context_header, nfc
 from rag_ingest.chunking.units import Kind, Unit, parse_markdown
 from rag_ingest.config import ENCODING
 
@@ -36,6 +36,11 @@ class ChunkSettings:
     overlap: int = 50
     tables: str = KEEP
     context_header: bool = True
+    screenshot_tables: str = COLUMNS
+
+    @property
+    def table_format(self) -> TableFormat:
+        return TableFormat(self.tables, self.screenshot_tables)
 
 
 @dataclass
@@ -193,8 +198,8 @@ class Chunker:
         for section, group in groupby(units, key=lambda u: u.section):
             header = self.header(stem, section)
             packer = SectionPacker(self.room_for(header), self.count, self.settings.overlap,
-                                   self.settings.tables)
-            drafts += [(d, header) for d in packer.pack(make_blocks(list(group), self.settings.tables))]
+                                   self.settings.table_format)
+            drafts += [(d, header) for d in packer.pack(make_blocks(list(group), self.settings.table_format))]
             counts.oversize += packer.oversize
         return drafts
 

@@ -340,6 +340,102 @@ Pooled CER (all 18): pipeline 0.169, typhoon 0.265, tesseract 0.288, hint 0.298.
 - `retrieval/`: `indexing`, `vectorstore`, `index_commands`, `eval_commands`, plus `retrieval_eval` -> `retrieval/evaluation.py` and `retrieval_report` -> `retrieval/report.py` (the package name already says "retrieval").
 - Moves only, no behaviour change: 157 tests pass, `rag-ingest benchmark` writes an identical report, and `rag-ingest search` works on the existing bge-m3 index. Imports are now e.g. `from rag_ingest.ocr_eval.benchmark import ...`, `from rag_ingest.retrieval.indexing import ...`.
 
+### 2.21 Table format, and chunking/embedding to match (2026-10-20, branch `feature/table-format`)
+
+#### Question
+Typhoon writes tables as HTML (`<table><tr><td>`) and sidebar items as Markdown headings (`### 1.บันทึกอุบัติเหตุ`). Should that HTML be kept, or turned into plain text, and how should chunking and embedding handle it?
+
+#### What the tables are
+- The two ingested manuals contain 3 tables, all HTML from Typhoon and all inside screenshots of list screens:
+  - `ผู้จัดการสาขา` p6 "ติดตามสถานะ" (7 rows × 10 columns);
+  - `ผู้จัดการเขต` p3 "ติดตามสถานะ" (10 × 8);
+  - `ผู้จัดการเขต` p4 "อนุมัติอุบัติเหตุ" (10 × 9).
+- **Their rows are sample records:** employee names, branches, dates and statuses. None of the 30 evaluation questions asks about a row. They ask what a screen is for and what its statuses mean, which the manual's text explains next to the screenshot.
+- **With `keep`, the rows took 7 of 25 chunks.** Some chunks (e.g. `ผู้จัดการเขต#p4#c07`) were almost only sample rows, and the explanation (how to approve or reject) was pushed into the following chunk.
+- **The rows held 22 mentions of employee names** in chunks and vectors.
+- **The tables are parsed correctly** (`chunking/tables.py`, colspan kept aligned). The issue was what to do with the rows, not the HTML.
+
+#### Decisions
+1. **Ingest keeps Typhoon's raw HTML.** `outputs/ingest/*.md` is the lossless record. Chunks cite character ranges in it, and the OCR cache matches its text, so converting at ingest would lose structure and break both.
+2. **One table format after ingest: Markdown.**
+   - Typhoon's HTML is converted at chunk time; Word tables already are Markdown.
+   - The display text of a screenshot (what a search hit shows, and what the PII guard scans) is now the same rendering as the embedded text, inside the screenshot tags, instead of the raw HTML.
+3. **Tables inside screenshots get their own setting:** `--screenshot-tables` (`ChunkSettings.screenshot_tables`).
+   - **Default `columns`:** the header row only, as a Markdown table without rows. `keep` and `flatten` remain available.
+   - Tables in a document's own text keep `--tables` (default `keep`), because in Word files the rows are real content.
+4. **Screenshot OCR is tidied** (`text.tidy_ocr`): Markdown heading marks and checkbox glyphs (☐ ☑ ☒ ✓ ✗) are removed, in lines and in table cells. Other text is untouched.
+
+#### Measurement (30 questions, 400 tokens, context header; scratch run of all 12 combinations)
+
+| model | OCR tidy | screenshot tables | chunks | R@1 | R@3 | MRR | role acc | MRR on the 11 table-page questions |
+|---|---|---|---|---|---|---|---|---|
+| bge-m3 | no | keep (before) | 25 | 0.69 | 0.96 | 0.79 | 0.96 | 0.82 |
+| bge-m3 | no | flatten | 25 | 0.58 | 0.92 | 0.72 | 0.92 | 0.65 |
+| bge-m3 | no | columns | 19 | 0.65 | 0.88 | 0.79 | 0.92 | 0.75 |
+| bge-m3 | yes | keep | 22 | 0.54 | 0.92 | 0.71 | 0.80 | 0.67 |
+| bge-m3 | yes | flatten | 21 | 0.62 | 0.96 | 0.77 | 0.92 | 0.70 |
+| **bge-m3** | **yes** | **columns (now)** | **18** | **0.69** | 0.88 | **0.80** | **0.96** | 0.80 |
+| e5-small | no | keep (before) | 25 | 0.54 | 0.85 | 0.67 | 0.88 | 0.64 |
+| e5-small | no | flatten | 25 | 0.50 | 0.77 | 0.63 | 0.80 | 0.46 |
+| e5-small | no | columns | 19 | 0.65 | 0.85 | 0.75 | 0.92 | 0.76 |
+| e5-small | yes | keep | 22 | 0.50 | 0.85 | 0.66 | 0.80 | 0.58 |
+| e5-small | yes | flatten | 21 | 0.65 | 0.85 | 0.75 | 0.88 | 0.66 |
+| **e5-small** | **yes** | **columns (now)** | **18** | **0.69** | 0.85 | **0.77** | **0.92** | **0.80** |
+
+#### How to read it
+- **One answerable question is 0.04.** The per-question ranks show changes spread over questions that have nothing to do with tables (q03, q08, q15, q23): shortening a screenshot moves chunk boundaries and reshuffles a question or two either way. Gaps of about 0.04 are noise.
+- **What holds across every run:**
+  - `columns` is never worse than `keep` overall: a tie on bge-m3 (MRR 0.80 vs 0.79), clearly better on e5-small (0.77 vs 0.67). On the 11 table-page questions bge-m3 is level too (0.80 vs 0.82, half a question).
+  - `columns` is stable whether the cleanup is on or off, while `keep` swings by 0.08.
+  - `flatten` is the worst on the table-page questions for both models.
+- **The "not found" threshold is unaffected:** bge-m3 0.57, false answers 0.00, 1 answerable question refused, as before.
+- **The real pipeline reproduces the scratch run:** `rag-ingest chunk && rag-ingest embed && rag-ingest eval-retrieval` gives 18 chunks, R@1 0.69, R@3 0.88, MRR 0.80, role accuracy 0.96 (`outputs/reports/retrieval_report_index.md`).
+- **Chunks: 25 → 18.** The approve screen (`ผู้จัดการเขต` p4) went from 3 chunks of mostly sample rows to one 121-token chunk with the screen's labels, the column names and the how-to-approve text together.
+- **Names from the three tables in chunks: 22 → 0.**
+
+#### Full grid (`outputs/reports/retrieval_report.md`, 108 configurations)
+The grid's table dimension is now `--screenshot-tables`: 6 models × {200, 400, 600} tokens × {keep, flatten, columns} × context header on/off, with the OCR tidy on. The old grid's `--tables` dimension was measuring the same screenshot tables, because the manuals have no tables of their own.
+
+Best configuration per model:
+
+| configuration | chunks | R@1 | R@3 | MRR | role acc | threshold | false answer | answerable refused |
+|---|---|---|---|---|---|---|---|---|
+| bge-m3 · 600 · flatten · header | 20 | 0.81 | 0.88 | 0.84 | 0.96 | 0.57 | 0.00 | 0.04 |
+| WangchanX · 600 · keep · header | 19 | 0.77 | 0.88 | 0.84 | 0.96 | 0.55 | 0.00 | 0.04 |
+| e5-small · 400 · columns · header | 18 | 0.69 | 0.85 | 0.77 | 0.92 | 0.86 | 0.00 | 0.04 |
+| e5-base · 600 · flatten · header | 19 | 0.58 | 0.85 | 0.69 | 0.80 | 0.84 | 0.00 | 0.19 |
+| fake (hash baseline) · 200 · flatten · header | 36 | 0.35 | 0.58 | 0.46 | 0.60 | 0.21 | 0.25 | 0.04 |
+| simcse-m-bert-thai · 200 · flatten · header | 56 | 0.35 | 0.50 | 0.45 | 0.60 | 0.30 | 0.00 | 0.15 |
+
+Every real model's best MRR is level with or above the previous grid (2.17): bge-m3 0.79 → 0.84, WangchanX 0.81 → 0.84, e5-small 0.72 → 0.77, e5-base 0.67 → 0.69.
+
+Mean MRR over the three chunk sizes, context header on:
+
+| model | keep | flatten | columns |
+|---|---|---|---|
+| bge-m3 | 0.76 | **0.79** | 0.77 |
+| WangchanX | **0.78** | 0.77 | **0.78** |
+| e5-small | 0.67 | 0.68 | **0.73** |
+| e5-base | 0.65 | 0.65 | **0.67** |
+
+#### Why `columns` stays the default
+- **On the strong models, retrieval does not separate the modes.**
+  - bge-m3's single best cell (600 · flatten, 0.84) is one question above 400 · columns (0.80).
+  - Its mean over sizes favours flatten by 0.02; WangchanX is a tie.
+- **`columns` is clearly best on the small models,** including the low-memory fallback e5-small (0.73 against 0.67–0.68).
+- **Beyond retrieval:**
+  - fewest chunks (18 at 400 tokens);
+  - each screen's explanation stays in the same chunk as the screen;
+  - no sample records, so the 22 mentions of employee names from the tables are gone from chunks and vectors.
+- **Chunk size stays at 400.** With `columns`, 400 and 600 tie for both bge-m3 (0.80 / 0.80) and e5-small (0.77 / 0.77), and smaller chunks cite more precisely.
+
+#### Embedding
+Unchanged: bge-m3 (`DEFAULT_MODEL`, tied with WangchanX again, best role accuracy), with e5-small as the low-memory fallback. The new format helps the fallback most (MRR 0.67 → 0.77 at the default settings), which narrows its gap to bge-m3 from 0.12 to 0.03.
+
+#### Still open
+- **Names outside tables:** screenshots still carry names in forms and in the header bar (`ชื่อ : อิทธิฤทธิ์ มีชัย`, the logged-in user). `columns` does not cover them; the open question of whether the PII rule should cover names in screenshots remains.
+- **Screenshots of reference tables** (e.g. a table of fees or rights captured as an image) would lose their rows under `columns`. None exist in the ingested manuals; use `--screenshot-tables keep` for such documents, or revisit if the new PDFs/Word files have them once they are ingested.
+
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.

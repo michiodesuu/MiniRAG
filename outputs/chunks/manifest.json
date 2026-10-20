@@ -4,6 +4,7 @@
     "overlap": 50,
     "tables": "keep",
     "context_header": true,
+    "screenshot_tables": "columns",
     "tokenizer": {
       "model": "BAAI/bge-m3",
       "revision": "5617a9f61b028005a4858fdac845db406aefb181",
@@ -21,11 +22,11 @@
       }
     }
   },
-  "chunks": 25,
-  "chunks_sha256": "7ff4dc2b886ae34eaf6dbd0824ca4132f1eb3e46c9388b71e8ad927f17a1c959",
+  "chunks": 18,
+  "chunks_sha256": "fa98dbac87e79beeca697a3b8e06a6e6aba5ea162fecf5e08ca803fe7f7cf8a5",
   "documents": {
     "ผู้จัดการสาขา": {
-      "chunks": 15,
+      "chunks": 12,
       "toc_pages_dropped": [
         1
       ],
@@ -38,7 +39,7 @@
       "oversize": 0
     },
     "ผู้จัดการเขต": {
-      "chunks": 10,
+      "chunks": 6,
       "toc_pages_dropped": [
         1
       ],
@@ -55,21 +56,21 @@
   "dropped": [],
   "flagged": [
     {
-      "chunk_id": "ผู้จัดการสาขา#p5#c05",
+      "chunk_id": "ผู้จัดการสาขา#p4#c04",
       "document": "ผู้จัดการสาขา",
       "rule": "phone_number",
       "action": "flag",
       "field": "embed_text",
-      "start": 1087,
+      "start": 1081,
       "length": 10
     },
     {
-      "chunk_id": "ผู้จัดการสาขา#p5#c05",
+      "chunk_id": "ผู้จัดการสาขา#p4#c04",
       "document": "ผู้จัดการสาขา",
       "rule": "phone_number",
       "action": "flag",
       "field": "display_text",
-      "start": 965,
+      "start": 1042,
       "length": 10
     }
   ],

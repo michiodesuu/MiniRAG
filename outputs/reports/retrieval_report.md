@@ -8,124 +8,160 @@ Recall@k and MRR count answerable questions; *threshold* is the top score below 
 
 | configuration | chunks | R@1 | R@3 | R@5 | MRR | role acc | threshold | false answer | answerable refused | ms/query | embed s |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| WangchanX-Legal-ThaiCCL-Retriever · 400 · keep · header | 25 | 0.69 | 0.96 | 0.96 | 0.81 | 0.92 | 0.58 | 0.00 | 0.04 | 116 | 5.9 |
-| bge-m3 · 400 · keep · header | 25 | 0.69 | 0.96 | 0.96 | 0.79 | 0.96 | 0.56 | 0.00 | 0.04 | 126 | 3.8 |
-| WangchanX-Legal-ThaiCCL-Retriever · 600 · flatten · header | 19 | 0.65 | 0.92 | 1.00 | 0.79 | 0.80 | 0.55 | 0.00 | 0.04 | 123 | 5.1 |
-| WangchanX-Legal-ThaiCCL-Retriever · 600 · keep · header | 19 | 0.62 | 0.92 | 1.00 | 0.78 | 0.84 | 0.55 | 0.00 | 0.04 | 120 | 6.0 |
-| bge-m3 · 600 · keep · header | 19 | 0.65 | 0.92 | 0.96 | 0.77 | 0.88 | 0.56 | 0.00 | 0.04 | 108 | 3.3 |
-| bge-m3 · 600 · flatten · header | 19 | 0.65 | 0.96 | 0.96 | 0.76 | 0.84 | 0.56 | 0.00 | 0.04 | 109 | 3.3 |
-| WangchanX-Legal-ThaiCCL-Retriever · 400 · flatten · header | 25 | 0.58 | 0.92 | 1.00 | 0.75 | 0.84 | 0.58 | 0.00 | 0.04 | 121 | 5.1 |
-| bge-m3 · 600 · keep · no header | 19 | 0.62 | 0.85 | 0.96 | 0.73 | 0.76 | 0.57 | 0.00 | 0.08 | 108 | 3.3 |
-| WangchanX-Legal-ThaiCCL-Retriever · 400 · flatten · no header | 24 | 0.62 | 0.81 | 0.92 | 0.73 | 0.92 | 0.57 | 0.00 | 0.04 | 122 | 4.7 |
-| bge-m3 · 400 · flatten · header | 25 | 0.58 | 0.92 | 0.92 | 0.72 | 0.92 | 0.58 | 0.00 | 0.08 | 127 | 3.8 |
-| e5-small · 600 · flatten · header | 19 | 0.62 | 0.85 | 0.92 | 0.72 | 0.88 | 0.86 | 0.00 | 0.00 | 14 | 0.4 |
-| WangchanX-Legal-ThaiCCL-Retriever · 600 · keep · no header | 19 | 0.58 | 0.88 | 0.96 | 0.72 | 0.76 | 0.55 | 0.00 | 0.04 | 122 | 5.4 |
-| bge-m3 · 600 · flatten · no header | 20 | 0.62 | 0.85 | 0.92 | 0.71 | 0.84 | 0.57 | 0.00 | 0.08 | 108 | 3.2 |
-| e5-small · 600 · keep · header | 19 | 0.58 | 0.88 | 0.88 | 0.71 | 0.80 | 0.86 | 0.00 | 0.00 | 13 | 0.4 |
-| bge-m3 · 200 · keep · header | 31 | 0.54 | 0.92 | 0.96 | 0.71 | 0.76 | 0.56 | 0.00 | 0.04 | 257 | 7.7 |
-| WangchanX-Legal-ThaiCCL-Retriever · 200 · keep · header | 31 | 0.50 | 0.96 | 0.96 | 0.71 | 0.80 | 0.56 | 0.00 | 0.04 | 120 | 9.5 |
-| WangchanX-Legal-ThaiCCL-Retriever · 400 · keep · no header | 24 | 0.58 | 0.85 | 0.88 | 0.70 | 0.92 | 0.57 | 0.00 | 0.04 | 121 | 5.9 |
-| WangchanX-Legal-ThaiCCL-Retriever · 600 · flatten · no header | 20 | 0.58 | 0.88 | 0.92 | 0.70 | 0.84 | 0.55 | 0.00 | 0.04 | 119 | 5.3 |
-| bge-m3 · 400 · keep · no header | 24 | 0.54 | 0.77 | 0.92 | 0.69 | 0.84 | 0.62 | 0.00 | 0.08 | 127 | 3.8 |
-| bge-m3 · 200 · flatten · header | 31 | 0.50 | 0.92 | 0.92 | 0.69 | 0.76 | 0.56 | 0.00 | 0.04 | 126 | 3.8 |
-| WangchanX-Legal-ThaiCCL-Retriever · 200 · flatten · header | 31 | 0.46 | 0.96 | 0.96 | 0.69 | 0.80 | 0.56 | 0.00 | 0.04 | 117 | 4.4 |
-| e5-small · 400 · keep · no header | 24 | 0.58 | 0.77 | 0.85 | 0.68 | 0.76 | 0.87 | 0.00 | 0.04 | 14 | 0.4 |
-| bge-m3 · 400 · flatten · no header | 24 | 0.54 | 0.85 | 0.88 | 0.68 | 0.84 | 0.60 | 0.00 | 0.08 | 112 | 3.4 |
-| e5-small · 400 · keep · header | 25 | 0.54 | 0.85 | 0.88 | 0.67 | 0.88 | 0.87 | 0.00 | 0.04 | 12 | 0.4 |
-| e5-base · 400 · flatten · header | 25 | 0.54 | 0.77 | 0.92 | 0.67 | 0.92 | 0.84 | 0.00 | 0.23 | 37 | 1.1 |
-| e5-small · 600 · flatten · no header | 19 | 0.58 | 0.77 | 0.81 | 0.67 | 0.72 | 0.87 | 0.00 | 0.04 | 14 | 0.4 |
-| e5-base · 400 · keep · header | 25 | 0.54 | 0.81 | 0.88 | 0.66 | 0.92 | 0.84 | 0.00 | 0.23 | 41 | 1.3 |
-| e5-base · 600 · keep · header | 19 | 0.54 | 0.81 | 0.88 | 0.66 | 0.80 | 0.84 | 0.00 | 0.23 | 35 | 1.1 |
-| e5-small · 600 · keep · no header | 19 | 0.50 | 0.81 | 0.88 | 0.66 | 0.72 | 0.87 | 0.00 | 0.04 | 13 | 0.4 |
-| e5-base · 600 · flatten · header | 19 | 0.50 | 0.85 | 0.88 | 0.65 | 0.68 | 0.84 | 0.00 | 0.23 | 32 | 1.0 |
-| e5-base · 200 · flatten · header | 31 | 0.42 | 0.85 | 1.00 | 0.64 | 0.76 | 0.83 | 0.00 | 0.12 | 41 | 1.3 |
-| e5-small · 400 · flatten · header | 25 | 0.50 | 0.77 | 0.85 | 0.63 | 0.80 | 0.86 | 0.00 | 0.04 | 14 | 0.4 |
-| e5-base · 600 · flatten · no header | 19 | 0.46 | 0.77 | 0.88 | 0.63 | 0.72 | 0.84 | 0.00 | 0.15 | 33 | 1.0 |
-| e5-small · 200 · flatten · no header | 31 | 0.46 | 0.81 | 0.85 | 0.63 | 0.64 | 0.86 | 0.00 | 0.04 | 14 | 0.4 |
-| e5-base · 200 · flatten · no header | 31 | 0.42 | 0.81 | 0.92 | 0.63 | 0.56 | 0.84 | 0.00 | 0.19 | 36 | 1.1 |
-| e5-base · 200 · keep · no header | 31 | 0.46 | 0.81 | 0.88 | 0.63 | 0.72 | 0.84 | 0.00 | 0.15 | 34 | 1.0 |
-| e5-small · 200 · keep · no header | 31 | 0.50 | 0.81 | 0.81 | 0.62 | 0.76 | 0.87 | 0.00 | 0.04 | 14 | 0.4 |
-| e5-base · 200 · keep · header | 31 | 0.38 | 0.92 | 0.92 | 0.62 | 0.84 | 0.83 | 0.00 | 0.08 | 105 | 3.2 |
-| e5-small · 400 · flatten · no header | 24 | 0.50 | 0.65 | 0.81 | 0.61 | 0.72 | 0.87 | 0.00 | 0.04 | 14 | 0.4 |
-| WangchanX-Legal-ThaiCCL-Retriever · 200 · keep · no header | 31 | 0.46 | 0.73 | 0.88 | 0.61 | 0.84 | 0.57 | 0.00 | 0.04 | 121 | 5.9 |
-| e5-small · 200 · keep · header | 31 | 0.42 | 0.77 | 0.92 | 0.61 | 0.76 | 0.86 | 0.00 | 0.04 | 75 | 2.3 |
-| e5-base · 400 · flatten · no header | 24 | 0.42 | 0.73 | 0.88 | 0.61 | 0.68 | 0.84 | 0.00 | 0.19 | 40 | 1.2 |
-| e5-base · 400 · keep · no header | 24 | 0.50 | 0.65 | 0.77 | 0.60 | 0.72 | 0.84 | 0.00 | 0.19 | 42 | 1.3 |
-| e5-base · 600 · keep · no header | 19 | 0.46 | 0.73 | 0.77 | 0.59 | 0.64 | 0.84 | 0.00 | 0.19 | 33 | 1.0 |
-| WangchanX-Legal-ThaiCCL-Retriever · 200 · flatten · no header | 31 | 0.42 | 0.77 | 0.88 | 0.59 | 0.80 | 0.57 | 0.00 | 0.04 | 121 | 4.5 |
-| e5-small · 200 · flatten · header | 31 | 0.38 | 0.81 | 0.92 | 0.59 | 0.84 | 0.86 | 0.00 | 0.04 | 13 | 0.4 |
-| bge-m3 · 200 · keep · no header | 31 | 0.35 | 0.81 | 0.88 | 0.57 | 0.84 | 0.61 | 0.00 | 0.08 | 125 | 3.8 |
-| bge-m3 · 200 · flatten · no header | 31 | 0.31 | 0.85 | 0.88 | 0.55 | 0.88 | 0.61 | 0.00 | 0.08 | 126 | 3.8 |
-| fake-hash-3gram-64 · 600 · keep · header | 20 | 0.38 | 0.62 | 0.65 | 0.50 | 0.64 | 0.36 | 0.00 | 0.15 | 0 | 0.0 |
-| fake-hash-3gram-64 · 600 · keep · no header | 18 | 0.35 | 0.58 | 0.62 | 0.46 | 0.68 | 0.37 | 0.00 | 0.19 | 0 | 0.0 |
-| fake-hash-3gram-64 · 200 · flatten · header | 36 | 0.31 | 0.58 | 0.65 | 0.44 | 0.68 | 0.24 | 0.25 | 0.04 | 0 | 0.0 |
-| simcse-model-m-bert-thai-cased · 400 · flatten · header | 36 | 0.31 | 0.54 | 0.65 | 0.42 | 0.76 | 0.28 | 0.00 | 0.15 | 34 | 1.0 |
-| simcse-model-m-bert-thai-cased · 200 · keep · no header | 48 | 0.23 | 0.50 | 0.73 | 0.41 | 0.64 | 0.34 | 0.00 | 0.27 | 33 | 1.0 |
-| fake-hash-3gram-64 · 600 · flatten · header | 20 | 0.31 | 0.50 | 0.58 | 0.41 | 0.72 | 0.36 | 0.00 | 0.15 | 0 | 0.0 |
-| simcse-model-m-bert-thai-cased · 200 · keep · header | 55 | 0.31 | 0.42 | 0.62 | 0.40 | 0.56 | 0.29 | 0.00 | 0.15 | 54 | 1.6 |
-| simcse-model-m-bert-thai-cased · 200 · flatten · no header | 52 | 0.23 | 0.50 | 0.69 | 0.40 | 0.60 | 0.34 | 0.00 | 0.27 | 36 | 1.1 |
-| simcse-model-m-bert-thai-cased · 200 · flatten · header | 56 | 0.31 | 0.38 | 0.62 | 0.40 | 0.60 | 0.29 | 0.00 | 0.15 | 32 | 1.0 |
-| simcse-model-m-bert-thai-cased · 600 · flatten · header | 28 | 0.31 | 0.54 | 0.54 | 0.40 | 0.64 | 0.26 | 0.25 | 0.19 | 33 | 1.0 |
-| fake-hash-3gram-64 · 200 · keep · header | 36 | 0.23 | 0.58 | 0.69 | 0.40 | 0.60 | 0.12 | 0.25 | 0.00 | 0 | 0.0 |
-| simcse-model-m-bert-thai-cased · 400 · keep · header | 36 | 0.27 | 0.50 | 0.65 | 0.39 | 0.68 | 0.28 | 0.00 | 0.15 | 33 | 1.0 |
-| fake-hash-3gram-64 · 400 · flatten · header | 26 | 0.27 | 0.50 | 0.54 | 0.38 | 0.64 | 0.17 | 0.25 | 0.04 | 0 | 0.0 |
+| bge-m3 · 600 · flatten · header | 20 | 0.81 | 0.88 | 0.92 | 0.84 | 0.96 | 0.57 | 0.00 | 0.04 | 139 | 5.6 |
+| WangchanX-Legal-ThaiCCL-Retriever · 600 · keep · header | 19 | 0.77 | 0.88 | 1.00 | 0.84 | 0.96 | 0.55 | 0.00 | 0.04 | 126 | 5.0 |
+| WangchanX-Legal-ThaiCCL-Retriever · 600 · flatten · header | 20 | 0.73 | 0.92 | 1.00 | 0.83 | 0.92 | 0.55 | 0.00 | 0.04 | 127 | 5.3 |
+| bge-m3 · 600 · keep · header | 19 | 0.77 | 0.85 | 0.92 | 0.81 | 0.96 | 0.57 | 0.00 | 0.04 | 137 | 5.4 |
+| bge-m3 · 600 · columns · header | 16 | 0.73 | 0.85 | 0.92 | 0.80 | 0.96 | 0.57 | 0.00 | 0.04 | 144 | 4.3 |
+| bge-m3 · 400 · columns · header | 18 | 0.69 | 0.88 | 0.96 | 0.80 | 0.96 | 0.57 | 0.00 | 0.04 | 140 | 4.2 |
+| WangchanX-Legal-ThaiCCL-Retriever · 400 · columns · header | 18 | 0.65 | 0.92 | 1.00 | 0.79 | 0.92 | 0.57 | 0.00 | 0.04 | 130 | 4.2 |
+| WangchanX-Legal-ThaiCCL-Retriever · 600 · columns · header | 16 | 0.65 | 0.88 | 1.00 | 0.79 | 0.88 | 0.55 | 0.00 | 0.04 | 124 | 3.7 |
+| e5-small · 600 · columns · header | 16 | 0.69 | 0.88 | 0.92 | 0.77 | 0.92 | 0.86 | 0.00 | 0.04 | 18 | 0.6 |
+| bge-m3 · 400 · flatten · header | 21 | 0.62 | 0.96 | 0.96 | 0.77 | 0.92 | 0.57 | 0.00 | 0.04 | 141 | 4.2 |
+| e5-small · 400 · columns · header | 18 | 0.69 | 0.85 | 0.92 | 0.77 | 0.92 | 0.86 | 0.00 | 0.04 | 20 | 0.6 |
+| bge-m3 · 600 · columns · no header | 16 | 0.65 | 0.85 | 0.92 | 0.76 | 0.88 | 0.57 | 0.00 | 0.04 | 144 | 4.3 |
+| e5-small · 600 · keep · header | 19 | 0.65 | 0.85 | 0.92 | 0.76 | 0.96 | 0.87 | 0.00 | 0.04 | 16 | 0.7 |
+| bge-m3 · 200 · keep · header | 31 | 0.65 | 0.92 | 0.92 | 0.76 | 0.88 | 0.57 | 0.00 | 0.04 | 134 | 9.3 |
+| WangchanX-Legal-ThaiCCL-Retriever · 400 · keep · header | 22 | 0.62 | 0.88 | 0.96 | 0.76 | 0.84 | 0.57 | 0.00 | 0.04 | 131 | 5.5 |
+| WangchanX-Legal-ThaiCCL-Retriever · 200 · columns · header | 25 | 0.58 | 0.96 | 1.00 | 0.75 | 0.84 | 0.56 | 0.00 | 0.04 | 131 | 4.3 |
+| bge-m3 · 200 · flatten · header | 31 | 0.62 | 0.88 | 0.96 | 0.75 | 0.88 | 0.57 | 0.00 | 0.04 | 134 | 4.9 |
+| WangchanX-Legal-ThaiCCL-Retriever · 400 · flatten · header | 21 | 0.58 | 0.96 | 0.96 | 0.75 | 0.92 | 0.57 | 0.00 | 0.04 | 130 | 5.0 |
+| WangchanX-Legal-ThaiCCL-Retriever · 200 · keep · header | 31 | 0.58 | 0.96 | 0.96 | 0.75 | 0.88 | 0.56 | 0.00 | 0.04 | 131 | 9.0 |
+| e5-small · 400 · flatten · header | 21 | 0.65 | 0.85 | 0.92 | 0.75 | 0.88 | 0.86 | 0.00 | 0.00 | 19 | 0.6 |
+| bge-m3 · 600 · flatten · no header | 19 | 0.65 | 0.81 | 0.92 | 0.75 | 0.84 | 0.57 | 0.00 | 0.04 | 142 | 5.5 |
+| bge-m3 · 400 · columns · no header | 18 | 0.62 | 0.85 | 0.96 | 0.74 | 0.92 | 0.57 | 0.00 | 0.04 | 143 | 4.6 |
+| bge-m3 · 600 · keep · no header | 19 | 0.65 | 0.85 | 0.92 | 0.74 | 0.84 | 0.57 | 0.00 | 0.04 | 142 | 5.7 |
+| WangchanX-Legal-ThaiCCL-Retriever · 600 · flatten · no header | 19 | 0.62 | 0.88 | 0.92 | 0.73 | 0.88 | 0.55 | 0.00 | 0.04 | 127 | 5.0 |
+| WangchanX-Legal-ThaiCCL-Retriever · 200 · flatten · header | 31 | 0.54 | 0.92 | 1.00 | 0.72 | 0.80 | 0.56 | 0.00 | 0.04 | 131 | 4.8 |
+| bge-m3 · 200 · columns · header | 25 | 0.58 | 0.88 | 0.96 | 0.72 | 0.80 | 0.57 | 0.00 | 0.04 | 136 | 4.4 |
+| bge-m3 · 400 · keep · header | 22 | 0.54 | 0.92 | 0.96 | 0.71 | 0.80 | 0.57 | 0.00 | 0.04 | 146 | 4.4 |
+| WangchanX-Legal-ThaiCCL-Retriever · 600 · keep · no header | 19 | 0.58 | 0.88 | 0.92 | 0.71 | 0.84 | 0.55 | 0.00 | 0.04 | 128 | 5.3 |
+| bge-m3 · 400 · flatten · no header | 21 | 0.54 | 0.88 | 0.96 | 0.71 | 0.96 | 0.60 | 0.00 | 0.08 | 141 | 5.3 |
+| e5-small · 600 · flatten · header | 19 | 0.58 | 0.85 | 0.88 | 0.69 | 0.80 | 0.87 | 0.00 | 0.04 | 17 | 0.7 |
+| e5-base · 600 · flatten · header | 19 | 0.58 | 0.85 | 0.88 | 0.69 | 0.80 | 0.84 | 0.00 | 0.19 | 48 | 1.8 |
+| e5-base · 600 · columns · header | 16 | 0.50 | 0.92 | 0.96 | 0.69 | 0.80 | 0.84 | 0.00 | 0.19 | 48 | 1.4 |
+| WangchanX-Legal-ThaiCCL-Retriever · 600 · columns · no header | 16 | 0.54 | 0.85 | 0.88 | 0.69 | 0.80 | 0.54 | 0.00 | 0.04 | 126 | 3.8 |
+| WangchanX-Legal-ThaiCCL-Retriever · 400 · flatten · no header | 21 | 0.50 | 0.92 | 0.92 | 0.69 | 0.88 | 0.58 | 0.00 | 0.04 | 134 | 5.1 |
+| e5-base · 400 · columns · header | 18 | 0.50 | 0.88 | 0.96 | 0.68 | 0.84 | 0.84 | 0.00 | 0.23 | 48 | 1.6 |
+| e5-base · 400 · columns · no header | 18 | 0.54 | 0.81 | 0.92 | 0.68 | 0.72 | 0.84 | 0.00 | 0.23 | 46 | 1.5 |
+| e5-base · 600 · columns · no header | 16 | 0.54 | 0.81 | 0.92 | 0.68 | 0.72 | 0.84 | 0.00 | 0.23 | 48 | 1.4 |
+| e5-small · 400 · columns · no header | 18 | 0.62 | 0.73 | 0.81 | 0.68 | 0.80 | 0.87 | 0.00 | 0.08 | 20 | 0.7 |
+| e5-small · 600 · columns · no header | 16 | 0.62 | 0.73 | 0.81 | 0.68 | 0.80 | 0.87 | 0.00 | 0.08 | 18 | 0.5 |
+| e5-base · 200 · columns · no header | 25 | 0.50 | 0.81 | 0.96 | 0.68 | 0.76 | 0.85 | 0.00 | 0.19 | 45 | 1.5 |
+| e5-small · 400 · keep · header | 22 | 0.50 | 0.85 | 0.92 | 0.66 | 0.80 | 0.86 | 0.00 | 0.04 | 16 | 0.5 |
+| bge-m3 · 400 · keep · no header | 22 | 0.50 | 0.77 | 0.96 | 0.66 | 0.80 | 0.61 | 0.00 | 0.08 | 143 | 5.8 |
+| e5-base · 200 · keep · header | 31 | 0.46 | 0.88 | 0.96 | 0.66 | 0.88 | 0.83 | 0.00 | 0.08 | 44 | 4.0 |
+| e5-base · 600 · keep · header | 19 | 0.54 | 0.81 | 0.88 | 0.66 | 0.80 | 0.84 | 0.00 | 0.19 | 49 | 1.9 |
+| e5-small · 600 · keep · no header | 19 | 0.54 | 0.73 | 0.85 | 0.65 | 0.76 | 0.87 | 0.00 | 0.04 | 17 | 0.7 |
+| e5-small · 600 · flatten · no header | 19 | 0.54 | 0.73 | 0.85 | 0.65 | 0.72 | 0.86 | 0.00 | 0.08 | 18 | 0.7 |
+| e5-base · 200 · columns · header | 25 | 0.46 | 0.81 | 1.00 | 0.65 | 0.76 | 0.83 | 0.00 | 0.12 | 45 | 1.5 |
+| e5-base · 400 · flatten · no header | 21 | 0.50 | 0.77 | 0.92 | 0.65 | 0.76 | 0.81 | 0.25 | 0.00 | 45 | 1.7 |
+| WangchanX-Legal-ThaiCCL-Retriever · 400 · columns · no header | 18 | 0.46 | 0.88 | 0.88 | 0.65 | 0.84 | 0.58 | 0.00 | 0.04 | 128 | 4.2 |
+| e5-small · 200 · columns · header | 25 | 0.50 | 0.81 | 0.88 | 0.65 | 0.76 | 0.86 | 0.00 | 0.04 | 19 | 0.6 |
+| WangchanX-Legal-ThaiCCL-Retriever · 400 · keep · no header | 22 | 0.46 | 0.88 | 0.92 | 0.64 | 0.80 | 0.58 | 0.00 | 0.04 | 130 | 5.5 |
+| e5-base · 600 · flatten · no header | 19 | 0.50 | 0.81 | 0.81 | 0.64 | 0.76 | 0.84 | 0.00 | 0.15 | 49 | 1.8 |
+| e5-small · 200 · flatten · no header | 31 | 0.46 | 0.81 | 0.88 | 0.64 | 0.68 | 0.86 | 0.00 | 0.04 | 20 | 0.7 |
+| e5-base · 400 · flatten · header | 21 | 0.50 | 0.73 | 0.92 | 0.64 | 0.92 | 0.81 | 0.25 | 0.00 | 47 | 1.8 |
+| e5-base · 200 · flatten · no header | 31 | 0.42 | 0.88 | 0.92 | 0.64 | 0.60 | 0.84 | 0.00 | 0.19 | 46 | 1.7 |
+| e5-base · 200 · flatten · header | 31 | 0.42 | 0.85 | 1.00 | 0.63 | 0.84 | 0.83 | 0.00 | 0.12 | 46 | 1.7 |
+| e5-small · 200 · columns · no header | 25 | 0.50 | 0.77 | 0.81 | 0.63 | 0.72 | 0.87 | 0.00 | 0.08 | 17 | 0.6 |
+| e5-small · 200 · keep · no header | 31 | 0.50 | 0.77 | 0.81 | 0.63 | 0.76 | 0.87 | 0.00 | 0.04 | 19 | 0.8 |
+| e5-base · 400 · keep · header | 22 | 0.46 | 0.73 | 0.92 | 0.63 | 0.76 | 0.84 | 0.00 | 0.19 | 45 | 1.8 |
+| e5-small · 400 · flatten · no header | 21 | 0.50 | 0.73 | 0.88 | 0.62 | 0.68 | 0.87 | 0.00 | 0.04 | 15 | 0.6 |
+| e5-base · 600 · keep · no header | 19 | 0.50 | 0.77 | 0.81 | 0.62 | 0.72 | 0.84 | 0.00 | 0.19 | 49 | 1.9 |
+| e5-base · 200 · keep · no header | 31 | 0.42 | 0.81 | 0.88 | 0.62 | 0.80 | 0.84 | 0.00 | 0.19 | 44 | 1.7 |
+| WangchanX-Legal-ThaiCCL-Retriever · 200 · keep · no header | 31 | 0.46 | 0.73 | 0.88 | 0.61 | 0.84 | 0.58 | 0.00 | 0.04 | 129 | 5.0 |
+| e5-small · 400 · keep · no header | 22 | 0.46 | 0.69 | 0.88 | 0.61 | 0.64 | 0.86 | 0.00 | 0.04 | 16 | 0.7 |
+| e5-small · 200 · keep · header | 31 | 0.42 | 0.77 | 0.88 | 0.60 | 0.76 | 0.86 | 0.00 | 0.04 | 15 | 2.6 |
+| WangchanX-Legal-ThaiCCL-Retriever · 200 · columns · no header | 25 | 0.42 | 0.81 | 0.88 | 0.60 | 0.76 | 0.58 | 0.00 | 0.04 | 131 | 4.3 |
+| e5-small · 200 · flatten · header | 31 | 0.42 | 0.77 | 0.88 | 0.60 | 0.80 | 0.86 | 0.00 | 0.04 | 17 | 0.6 |
+| e5-base · 400 · keep · no header | 22 | 0.42 | 0.69 | 0.85 | 0.59 | 0.68 | 0.84 | 0.00 | 0.19 | 46 | 1.9 |
+| bge-m3 · 200 · columns · no header | 25 | 0.38 | 0.77 | 0.92 | 0.59 | 0.80 | 0.61 | 0.00 | 0.08 | 141 | 4.6 |
+| WangchanX-Legal-ThaiCCL-Retriever · 200 · flatten · no header | 31 | 0.38 | 0.81 | 0.92 | 0.58 | 0.80 | 0.58 | 0.00 | 0.04 | 129 | 4.7 |
+| bge-m3 · 200 · flatten · no header | 31 | 0.35 | 0.88 | 0.92 | 0.58 | 0.84 | 0.61 | 0.00 | 0.08 | 130 | 4.8 |
+| bge-m3 · 200 · keep · no header | 31 | 0.35 | 0.85 | 0.88 | 0.57 | 0.84 | 0.61 | 0.00 | 0.08 | 125 | 5.0 |
+| fake-hash-3gram-64 · 200 · flatten · header | 36 | 0.35 | 0.58 | 0.65 | 0.46 | 0.60 | 0.21 | 0.25 | 0.04 | 0 | 0.0 |
+| simcse-model-m-bert-thai-cased · 200 · flatten · header | 56 | 0.35 | 0.50 | 0.62 | 0.45 | 0.60 | 0.30 | 0.00 | 0.15 | 37 | 1.4 |
+| simcse-model-m-bert-thai-cased · 200 · keep · header | 55 | 0.35 | 0.50 | 0.62 | 0.44 | 0.56 | 0.30 | 0.00 | 0.15 | 36 | 2.0 |
+| simcse-model-m-bert-thai-cased · 200 · columns · header | 52 | 0.35 | 0.46 | 0.58 | 0.43 | 0.60 | 0.30 | 0.00 | 0.15 | 35 | 1.2 |
+| fake-hash-3gram-64 · 600 · flatten · header | 19 | 0.31 | 0.58 | 0.58 | 0.42 | 0.64 | 0.38 | 0.00 | 0.19 | 0 | 0.0 |
+| simcse-model-m-bert-thai-cased · 400 · columns · header | 29 | 0.27 | 0.50 | 0.69 | 0.42 | 0.72 | 0.28 | 0.00 | 0.15 | 33 | 1.2 |
+| simcse-model-m-bert-thai-cased · 200 · keep · no header | 49 | 0.23 | 0.54 | 0.73 | 0.42 | 0.68 | 0.34 | 0.00 | 0.27 | 35 | 1.5 |
+| fake-hash-3gram-64 · 200 · columns · header | 30 | 0.23 | 0.50 | 0.73 | 0.41 | 0.56 | 0.13 | 0.25 | 0.00 | 0 | 0.0 |
+| simcse-model-m-bert-thai-cased · 400 · flatten · no header | 34 | 0.27 | 0.50 | 0.62 | 0.41 | 0.68 | 0.30 | 0.25 | 0.15 | 33 | 1.4 |
+| fake-hash-3gram-64 · 600 · flatten · no header | 20 | 0.27 | 0.58 | 0.58 | 0.40 | 0.56 | 0.37 | 0.00 | 0.19 | 0 | 0.0 |
+| simcse-model-m-bert-thai-cased · 200 · columns · no header | 47 | 0.23 | 0.54 | 0.69 | 0.40 | 0.72 | 0.34 | 0.00 | 0.27 | 36 | 1.2 |
+| simcse-model-m-bert-thai-cased · 400 · flatten · header | 35 | 0.27 | 0.42 | 0.65 | 0.39 | 0.76 | 0.28 | 0.00 | 0.15 | 34 | 1.6 |
+| fake-hash-3gram-64 · 200 · keep · header | 36 | 0.23 | 0.54 | 0.69 | 0.39 | 0.56 | 0.12 | 0.25 | 0.00 | 0 | 0.0 |
+| fake-hash-3gram-64 · 600 · columns · header | 16 | 0.27 | 0.46 | 0.62 | 0.39 | 0.68 | 0.38 | 0.00 | 0.19 | 0 | 0.0 |
+| simcse-model-m-bert-thai-cased · 200 · flatten · no header | 51 | 0.23 | 0.50 | 0.65 | 0.39 | 0.64 | 0.34 | 0.00 | 0.27 | 35 | 1.4 |
+| simcse-model-m-bert-thai-cased · 600 · columns · header | 24 | 0.31 | 0.42 | 0.58 | 0.38 | 0.64 | 0.26 | 0.25 | 0.19 | 33 | 1.2 |
+| simcse-model-m-bert-thai-cased · 400 · keep · header | 36 | 0.23 | 0.46 | 0.65 | 0.38 | 0.68 | 0.28 | 0.00 | 0.15 | 33 | 1.9 |
+| simcse-model-m-bert-thai-cased · 600 · flatten · header | 27 | 0.31 | 0.42 | 0.50 | 0.37 | 0.60 | 0.26 | 0.25 | 0.19 | 34 | 1.5 |
 | fake-hash-3gram-64 · 200 · flatten · no header | 35 | 0.23 | 0.50 | 0.58 | 0.37 | 0.52 | 0.22 | 0.25 | 0.04 | 0 | 0.0 |
-| fake-hash-3gram-64 · 600 · flatten · no header | 19 | 0.27 | 0.46 | 0.54 | 0.37 | 0.72 | 0.37 | 0.00 | 0.19 | 0 | 0.0 |
-| simcse-model-m-bert-thai-cased · 600 · keep · header | 27 | 0.31 | 0.42 | 0.46 | 0.36 | 0.60 | 0.26 | 0.25 | 0.19 | 36 | 1.1 |
-| fake-hash-3gram-64 · 400 · keep · header | 25 | 0.27 | 0.38 | 0.46 | 0.34 | 0.80 | 0.17 | 0.25 | 0.04 | 0 | 0.0 |
-| simcse-model-m-bert-thai-cased · 400 · flatten · no header | 35 | 0.19 | 0.38 | 0.50 | 0.32 | 0.64 | 0.30 | 0.25 | 0.15 | 32 | 1.0 |
-| fake-hash-3gram-64 · 400 · flatten · no header | 26 | 0.19 | 0.46 | 0.50 | 0.31 | 0.60 | 0.27 | 0.25 | 0.08 | 0 | 0.0 |
-| fake-hash-3gram-64 · 200 · keep · no header | 34 | 0.19 | 0.46 | 0.50 | 0.31 | 0.68 | 0.22 | 0.25 | 0.04 | 0 | 0.0 |
-| simcse-model-m-bert-thai-cased · 400 · keep · no header | 35 | 0.15 | 0.42 | 0.54 | 0.31 | 0.64 | 0.30 | 0.25 | 0.15 | 38 | 1.2 |
-| fake-hash-3gram-64 · 400 · keep · no header | 25 | 0.23 | 0.35 | 0.46 | 0.30 | 0.76 | 0.19 | 0.25 | 0.04 | 0 | 0.0 |
-| simcse-model-m-bert-thai-cased · 600 · keep · no header | 24 | 0.19 | 0.31 | 0.42 | 0.28 | 0.60 | 0.28 | 0.00 | 0.27 | 37 | 1.1 |
-| simcse-model-m-bert-thai-cased · 600 · flatten · no header | 26 | 0.15 | 0.35 | 0.50 | 0.28 | 0.48 | 0.28 | 0.00 | 0.27 | 36 | 1.1 |
+| simcse-model-m-bert-thai-cased · 400 · keep · no header | 36 | 0.23 | 0.42 | 0.58 | 0.37 | 0.64 | 0.30 | 0.25 | 0.15 | 33 | 1.8 |
+| simcse-model-m-bert-thai-cased · 600 · keep · header | 27 | 0.31 | 0.42 | 0.50 | 0.36 | 0.64 | 0.26 | 0.25 | 0.19 | 33 | 1.9 |
+| fake-hash-3gram-64 · 600 · keep · header | 18 | 0.27 | 0.46 | 0.50 | 0.36 | 0.64 | 0.38 | 0.00 | 0.19 | 0 | 0.0 |
+| fake-hash-3gram-64 · 600 · columns · no header | 16 | 0.27 | 0.42 | 0.54 | 0.36 | 0.60 | 0.37 | 0.00 | 0.19 | 0 | 0.0 |
+| fake-hash-3gram-64 · 600 · keep · no header | 18 | 0.23 | 0.46 | 0.50 | 0.34 | 0.52 | 0.37 | 0.00 | 0.19 | 0 | 0.0 |
+| fake-hash-3gram-64 · 200 · columns · no header | 28 | 0.23 | 0.42 | 0.58 | 0.34 | 0.60 | 0.22 | 0.25 | 0.04 | 0 | 0.0 |
+| fake-hash-3gram-64 · 400 · columns · header | 21 | 0.23 | 0.35 | 0.62 | 0.34 | 0.72 | 0.18 | 0.25 | 0.04 | 0 | 0.0 |
+| fake-hash-3gram-64 · 400 · flatten · header | 25 | 0.23 | 0.38 | 0.50 | 0.33 | 0.68 | 0.18 | 0.25 | 0.04 | 0 | 0.0 |
+| simcse-model-m-bert-thai-cased · 600 · keep · no header | 24 | 0.19 | 0.46 | 0.54 | 0.33 | 0.56 | 0.27 | 0.00 | 0.23 | 33 | 1.8 |
+| simcse-model-m-bert-thai-cased · 400 · columns · no header | 29 | 0.19 | 0.42 | 0.54 | 0.32 | 0.64 | 0.30 | 0.25 | 0.15 | 33 | 1.3 |
+| fake-hash-3gram-64 · 400 · flatten · no header | 25 | 0.23 | 0.38 | 0.46 | 0.32 | 0.60 | 0.20 | 0.25 | 0.04 | 0 | 0.0 |
+| fake-hash-3gram-64 · 400 · keep · header | 25 | 0.23 | 0.35 | 0.50 | 0.32 | 0.76 | 0.18 | 0.25 | 0.04 | 0 | 0.0 |
+| fake-hash-3gram-64 · 200 · keep · no header | 34 | 0.19 | 0.42 | 0.50 | 0.31 | 0.64 | 0.22 | 0.25 | 0.04 | 0 | 0.0 |
+| fake-hash-3gram-64 · 400 · keep · no header | 25 | 0.23 | 0.35 | 0.46 | 0.30 | 0.64 | 0.20 | 0.25 | 0.04 | 0 | 0.0 |
+| simcse-model-m-bert-thai-cased · 600 · columns · no header | 22 | 0.15 | 0.42 | 0.50 | 0.30 | 0.48 | 0.27 | 0.00 | 0.23 | 33 | 1.3 |
+| fake-hash-3gram-64 · 400 · columns · no header | 21 | 0.23 | 0.31 | 0.46 | 0.30 | 0.60 | 0.20 | 0.25 | 0.04 | 0 | 0.0 |
+| simcse-model-m-bert-thai-cased · 600 · flatten · no header | 24 | 0.15 | 0.35 | 0.46 | 0.28 | 0.52 | 0.27 | 0.00 | 0.23 | 33 | 1.5 |
 
 ## Best configuration per question type
 
 | type | questions | configuration | R@1 | R@3 | R@5 | MRR |
 |---|---|---|---|---|---|---|
-| cross_role | 6 | WangchanX-Legal-ThaiCCL-Retriever · 400 · keep · header | 0.67 | 1.00 | 1.00 | 0.83 |
-| screenshot_only | 6 | bge-m3 · 400 · keep · header | 1.00 | 1.00 | 1.00 | 1.00 |
-| text | 14 | bge-m3 · 400 · keep · header | 0.64 | 1.00 | 1.00 | 0.79 |
+| cross_role | 6 | e5-small · 200 · columns · header | 0.83 | 0.83 | 1.00 | 0.87 |
+| screenshot_only | 6 | bge-m3 · 400 · keep · no header | 1.00 | 1.00 | 1.00 | 1.00 |
+| text | 14 | bge-m3 · 600 · flatten · header | 0.79 | 0.86 | 0.93 | 0.83 |
 
 ## No-answer questions: best "not found" threshold
 
 | configuration | threshold | balanced accuracy | false answer | answerable refused |
 |---|---|---|---|---|
-| e5-small · 600 · keep · header | 0.86 | 1.00 | 0.00 | 0.00 |
+| e5-small · 400 · flatten · header | 0.86 | 1.00 | 0.00 | 0.00 |
 
-## Per question: WangchanX-Legal-ThaiCCL-Retriever · 400 · keep · header
+## Per question: bge-m3 · 600 · flatten · header
 
 | id | type | first relevant rank | top score | top role |
 |---|---|---|---|---|
-| q01 | text | 1 | 0.712 | branch_manager |
-| q02 | text | - | 0.637 | district_manager |
-| q03 | text | 1 | 0.626 | branch_manager |
-| q04 | text | 1 | 0.722 | branch_manager |
-| q05 | text | 1 | 0.703 | branch_manager |
-| q06 | text | 3 | 0.691 | branch_manager |
-| q07 | text | 1 | 0.671 | branch_manager |
-| q08 | text | 2 | 0.599 | branch_manager |
-| q09 | text | 2 | 0.605 | branch_manager |
-| q10 | text | 1 | 0.647 | branch_manager |
-| q11 | text | 1 | 0.714 | district_manager |
-| q12 | text | 3 | 0.699 | district_manager |
-| q13 | text | 1 | 0.658 | district_manager |
-| q14 | text | 1 | 0.673 | district_manager |
-| q15 | screenshot_only | 1 | 0.596 | branch_manager |
-| q16 | screenshot_only | 2 | 0.474 | district_manager |
-| q17 | screenshot_only | 1 | 0.575 | branch_manager |
-| q18 | screenshot_only | 1 | 0.708 | branch_manager |
-| q19 | screenshot_only | 1 | 0.576 | district_manager |
-| q20 | screenshot_only | 1 | 0.596 | district_manager |
-| q21 | cross_role | 1 | 0.670 | branch_manager |
-| q22 | cross_role | 1 | 0.680 | district_manager |
-| q23 | cross_role | 2 | 0.680 | branch_manager |
-| q24 | cross_role | 2 | 0.669 | district_manager |
-| q25 | cross_role | 1 | 0.668 | branch_manager |
-| q26 | cross_role | 1 | 0.649 | district_manager |
-| q27 | no_answer | - | 0.491 | branch_manager |
-| q28 | no_answer | - | 0.483 | branch_manager |
-| q29 | no_answer | - | 0.428 | branch_manager |
-| q30 | no_answer | - | 0.517 | district_manager |
+| q01 | text | 1 | 0.687 | branch_manager |
+| q02 | text | 4 | 0.646 | branch_manager |
+| q03 | text | 1 | 0.640 | branch_manager |
+| q04 | text | 1 | 0.723 | branch_manager |
+| q05 | text | 1 | 0.699 | branch_manager |
+| q06 | text | 3 | 0.697 | district_manager |
+| q07 | text | 1 | 0.682 | branch_manager |
+| q08 | text | 1 | 0.610 | branch_manager |
+| q09 | text | - | 0.573 | branch_manager |
+| q10 | text | 1 | 0.672 | branch_manager |
+| q11 | text | 1 | 0.720 | district_manager |
+| q12 | text | 1 | 0.692 | district_manager |
+| q13 | text | 1 | 0.655 | district_manager |
+| q14 | text | 1 | 0.655 | district_manager |
+| q15 | screenshot_only | 1 | 0.620 | branch_manager |
+| q16 | screenshot_only | 1 | 0.500 | branch_manager |
+| q17 | screenshot_only | 1 | 0.596 | branch_manager |
+| q18 | screenshot_only | 1 | 0.709 | branch_manager |
+| q19 | screenshot_only | 1 | 0.573 | district_manager |
+| q20 | screenshot_only | 1 | 0.601 | district_manager |
+| q21 | cross_role | 1 | 0.682 | branch_manager |
+| q22 | cross_role | 1 | 0.682 | district_manager |
+| q23 | cross_role | 3 | 0.712 | branch_manager |
+| q24 | cross_role | - | 0.671 | district_manager |
+| q25 | cross_role | 1 | 0.682 | branch_manager |
+| q26 | cross_role | 1 | 0.663 | district_manager |
+| q27 | no_answer | - | 0.509 | branch_manager |
+| q28 | no_answer | - | 0.518 | branch_manager |
+| q29 | no_answer | - | 0.445 | branch_manager |
+| q30 | no_answer | - | 0.540 | branch_manager |
