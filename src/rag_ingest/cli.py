@@ -113,6 +113,7 @@ def cmd_compare(args, paths: Paths):
     print(report)
     if args.report:
         out = paths.resolve(args.report)
+        out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(report, encoding=ENCODING)
         print(f"\nSaved to: {out}")
 
@@ -127,6 +128,8 @@ def cmd_benchmark(args, paths: Paths):
                  "(or put plain text in outputs/ground_truth/<image>.txt), then rerun this command.")
     print(result.report)
     report_path, csv_path = paths.resolve(args.report), paths.resolve(args.csv)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(result.report, encoding=ENCODING)
     bm.write_csv(csv_path, result.rows, result.names)
     print(f"\nSaved: {report_path}\nSaved: {csv_path}")
@@ -223,12 +226,12 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
     p.add_argument("--a", default="outputs/vision")
     p.add_argument("--b", default="outputs/vision_hint")
     p.add_argument("--diff", action="store_true", help="Add a line diff per differing image.")
-    p.add_argument("--report", default="outputs/compare_report.md", help="'' to skip saving.")
+    p.add_argument("--report", default=rel(paths.reports / "compare_report.md"), help="'' to skip saving.")
 
     p = add("benchmark", cmd_benchmark, "Score every method against corrected text (CER).")
     p.add_argument("--ground-truth-dir", default=rel(paths.ground_truth))
-    p.add_argument("--report", default="outputs/benchmark_report.md")
-    p.add_argument("--csv", default="outputs/benchmark.csv")
+    p.add_argument("--report", default=rel(paths.reports / "benchmark_report.md"))
+    p.add_argument("--csv", default=rel(paths.reports / "benchmark.csv"))
     p.add_argument("--exclude", nargs="*", default=[], metavar="METHOD")
 
     p = add("ingest", cmd_ingest, "Build RAG text per document (PDF/Word): its text + screenshot OCR.")

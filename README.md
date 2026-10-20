@@ -50,13 +50,13 @@ rag-ingest extract-images                   # data/raw/**/*.pdf|*.docx -> output
 rag-ingest ocr --engine api                 # or tesseract | paddle | ollama  (--hint, --upscale, --skip-existing)
 rag-ingest review --dir outputs/vision_hint # correct a model's results
 rag-ingest review --blank                   # type ground truth from the image alone -> outputs/ground_truth/
-rag-ingest benchmark                        # CER + failures per method -> outputs/benchmark_report.md
+rag-ingest benchmark                        # CER + failures per method -> outputs/reports/benchmark_report.md
 rag-ingest compare --a outputs/vision --b outputs/vision_hint --diff
 rag-ingest ingest                           # final RAG text -> outputs/ingest/<pdf>.md
 rag-ingest chunk                            # -> outputs/chunks/chunks.jsonl (token budget, guards)
 rag-ingest embed                            # -> outputs/index/<run>/ vectors + manifest
 rag-ingest search "ถ้ารายการถูกอนุมัติแล้วจะแก้ไขได้อย่างไร" --role branch_manager
-rag-ingest eval-retrieval [--grid]          # -> outputs/retrieval_report.md + .csv
+rag-ingest eval-retrieval [--grid]          # -> outputs/reports/retrieval_report.md + .csv
 ```
 ### OCR prompts
 | file | tokens* | use |
