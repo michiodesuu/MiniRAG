@@ -44,8 +44,10 @@ PROFILES = {
 
 DEFAULT_BATCH_SIZE = 8  # passages per forward pass on CPU
 
-# Used when --model is not given; set from the retrieval comparison (note.md 2.17).
-DEFAULT_MODEL = "intfloat/multilingual-e5-small"
+# Used when --model is not given; chosen from the retrieval comparison (note.md 2.17):
+# tied best with WangchanX on 30 questions, general-purpose, best role accuracy.
+# Low-RAM fallback: intfloat/multilingual-e5-small (half the memory, ~9x faster queries).
+DEFAULT_MODEL = "BAAI/bge-m3"
 
 # Considered and left out: kornwtp/ConGen-simcse-model-roberta-base-thai (card says
 # Apache-2.0 but does not name its base model, so the licence chain cannot be checked).

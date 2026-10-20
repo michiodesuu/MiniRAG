@@ -1,0 +1,84 @@
+{
+  "settings": {
+    "max_tokens": 400,
+    "overlap": 50,
+    "tables": "keep",
+    "context_header": true,
+    "tokenizer": {
+      "model": "BAAI/bge-m3",
+      "revision": "5617a9f61b028005a4858fdac845db406aefb181",
+      "dim": 1024,
+      "pooling": "cls",
+      "normalise": true,
+      "max_len": 1024,
+      "query_prefix": "",
+      "passage_prefix": "",
+      "token_counter": "model tokenizer",
+      "library": {
+        "sentence-transformers": "6.1.0",
+        "transformers": "5.20.1",
+        "torch": "2.14.1"
+      }
+    }
+  },
+  "chunks": 25,
+  "chunks_sha256": "7ff4dc2b886ae34eaf6dbd0824ca4132f1eb3e46c9388b71e8ad927f17a1c959",
+  "documents": {
+    "ผู้จัดการสาขา": {
+      "chunks": 15,
+      "toc_pages_dropped": [
+        1
+      ],
+      "duplicates": 0,
+      "duplicate_screenshots": 2,
+      "pii_rejections": 0,
+      "phone_flags": 2,
+      "missing_ocr": 0,
+      "empty": 0,
+      "oversize": 0
+    },
+    "ผู้จัดการเขต": {
+      "chunks": 10,
+      "toc_pages_dropped": [
+        1
+      ],
+      "duplicates": 0,
+      "duplicate_screenshots": 0,
+      "pii_rejections": 0,
+      "phone_flags": 0,
+      "missing_ocr": 0,
+      "empty": 0,
+      "oversize": 0
+    }
+  },
+  "excluded": [],
+  "dropped": [],
+  "flagged": [
+    {
+      "chunk_id": "ผู้จัดการสาขา#p5#c05",
+      "document": "ผู้จัดการสาขา",
+      "rule": "phone_number",
+      "action": "flag",
+      "field": "embed_text",
+      "start": 1087,
+      "length": 10
+    },
+    {
+      "chunk_id": "ผู้จัดการสาขา#p5#c05",
+      "document": "ผู้จัดการสาขา",
+      "rule": "phone_number",
+      "action": "flag",
+      "field": "display_text",
+      "start": 965,
+      "length": 10
+    }
+  ],
+  "sources": {
+    "ผู้จัดการสาขา": "e9b0cdd3526aaceaebbae50acdca04ec687fad038c2c41bc330c589f574323cc",
+    "ผู้จัดการเขต": "868fe275fca854ccd893e6261be24d07a6f1a39f9e7f46280bdb35f54e14aae1"
+  },
+  "exclusion_fingerprints": {
+    "images": 38,
+    "files_not_found": []
+  }
+}

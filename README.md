@@ -52,6 +52,10 @@ rag-ingest review --dir outputs/vision_hint # correct results -> ground truth
 rag-ingest benchmark                        # CER per method -> outputs/benchmark_report.md
 rag-ingest compare --a outputs/vision --b outputs/vision_hint --diff
 rag-ingest ingest                           # final RAG text -> outputs/ingest/<pdf>.md
+rag-ingest chunk                            # -> outputs/chunks/chunks.jsonl (token budget, guards)
+rag-ingest embed                            # -> outputs/index/<run>/ vectors + manifest
+rag-ingest search "ถ้ารายการถูกอนุมัติแล้วจะแก้ไขได้อย่างไร" --role branch_manager
+rag-ingest eval-retrieval [--grid]          # -> outputs/retrieval_report.md + .csv
 ```
 ### OCR prompts
 | file | tokens* | use |
@@ -64,6 +68,18 @@ rag-ingest ingest                           # final RAG text -> outputs/ingest/<
 
 `python -m rag_ingest ...` works the same. Every command has `--help`; `--docs-dir`
 (alias `--pdf-dir`) points at another folder of documents.
+
+### Chunks, vectors and search
+Install the `embed` extra (`uv pip install -e ".[embed]"`, pulls in PyTorch). `chunk`
+counts tokens with the embedding model's own tokenizer (`--embedder local --model …`;
+`--embedder fake` for a quick run), keeps screenshots with the instruction before them,
+never crosses a section, drops contents pages, and refuses chunks holding a Thai
+national ID (exit code 1; positions only in `outputs/chunks/rejected.jsonl`).
+Documents in `config.EXCLUDED_DOCUMENTS` are never read. `embed` caches vectors in
+`outputs/index/cache/` (not committed); `search` and `eval-retrieval` refuse an index
+whose source files changed. Models, licences and the exact text-to-vector method:
+note.md 2.17. The embedding API backend reads `EMBED_API_URL`, `EMBED_API_MODEL`,
+`EMBED_API_KEY`.
 
 ### Word documents
 Put `.docx` files in `data/raw/docx/`; every command handles both formats. Headings become
@@ -92,6 +108,11 @@ src/rag_ingest/
   ingest.py       document text + screenshot OCR merged in reading order
   thai_glyphs.py  restores Thai vowels a PDF's fonts mislabel (shared by reader and converter)
   convert/        PDF -> DOCX: preflight, layout (pdf2docx), docx_fixes, verify, report, cli
+  chunking/       ingest .md -> chunks: units, sections, tables, text, builder, guards, pipeline
+  embeddings/     fake / local / api embedders, model profiles, vector cache
+  vectorstore.py  brute-force cosine search behind a VectorStore protocol
+  indexing.py     index runs, manifests, staleness check
+  retrieval_eval.py, retrieval_report.py   Recall@k, MRR, role accuracy, no-answer threshold
   compare.py, benchmark.py, metrics.py, textproc.py
   review/         local correction UI
 tests/            pytest; no model or network needed

@@ -75,7 +75,7 @@ def test_eval_command_single_and_grid(tmp_path, monkeypatch):
     main(["chunk", "--embedder", "fake"])
     main(["embed", "--embedder", "fake"])
     main(["eval-retrieval"])
-    report = (tmp_path / "outputs" / "retrieval_report.md").read_text(encoding="utf-8")
+    report = (tmp_path / "outputs" / "retrieval_report_index.md").read_text(encoding="utf-8")
     assert "Small evaluation set" in report and "| text |" in report
     main(["eval-retrieval", "--grid", "--models", "fake"])
     csv_rows = (tmp_path / "outputs" / "retrieval_report.csv").read_text(encoding="utf-8").splitlines()

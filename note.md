@@ -153,6 +153,115 @@ Model-free (low memory). Run: `python src/ingest_pdf.py` -> `outputs/ingest/<pdf
 - `rag-ingest ocr --prompt FILE` (vision engines); each result's `prompt_file` now records the prompt actually used (before, it always named the default file).
 - **Not yet tested:** compare compact vs default with `rag-ingest benchmark` on the corrected images (needs Ollama + the model, or the Typhoon API, on the Windows machine).
 
+### 2.17 Chunking, embeddings and retrieval evaluation (2026-10-20, branch `feature/chunk-and-embed`)
+
+New stages: `rag-ingest chunk | embed | search | eval-retrieval`. Input is the existing `outputs/ingest/` (the 2 original manuals; not regenerated). The unredacted PDF moved to `data/excluded/` (user's decision) and is on `config.EXCLUDED_DOCUMENTS`.
+
+#### How text becomes a vector (exactly)
+
+**1. What text is embedded: `embed_text`.** One chunk of one section of one document:
+- the context header `<document> › <section>` on the first line (e.g. `ผู้จัดการสาขา › 6. ส่งคำขอแก้ไขและลบ`), so near-identical steps in the branch and district manuals stay distinguishable;
+- then the chunk's units in reading order: text-layer blocks, headings, tables (Markdown, or `header: value` lines with `--tables flatten`), and screenshot OCR without the `[ภาพหน้าจอ]` tags;
+- Unicode NFC; no page comments; placeholders (screenshots without OCR) and screenshots already embedded elsewhere contribute nothing;
+- it may start with up to `--overlap` tokens of whole lines carried from the previous chunk of the same section.
+
+Real example, `ผู้จัดการสาขา#p9#c13` (174 tokens):
+```
+ผู้จัดการสาขา › 6. ส่งคำขอแก้ไขและลบ
+6. ส่งคำขอแก้ไขและลบ
+หมายเลข 1 : กดเลือกที่เมนู ติดตามสถานะ ตามในรูปภาพ
+...
+ส่งคำขอแก้ไข
+ต้องการส่งคำขอแก้ไขข้อมูลใช่หรือไม่          <- screenshot OCR (the pop-up)
+ตกลง ยกเลิก
+จากนั้นกดตกลงเพื่อทำการยืนยันการขแก้ไขข้อมูล *เมื่อขอแก้ไขสำเร็จต้องรอ ...
+```
+`display_text` keeps the original Markdown of the same span (with screenshot tags) for people and citations.
+
+**2. Tokenisation.** e5-small, e5-base and bge-m3 all use the XLM-RoBERTa SentencePiece tokenizer (unigram model, 250,002 pieces). Its vocabulary holds whole Thai words, so Thai is split into words although Thai has no spaces. Real example, query `ถ้ารายการถูกอนุมัติแล้วจะแก้ไขได้อย่างไร`:
+- bge-m3 (no prefix), 11 tokens: `<s> ▁ถ้า รายการ ถูก อนุมัติ แล้ว จะ แก้ไข ได้ อย่างไร </s>`
+- e5-small (prefix `query: `), 14 tokens: `<s> ▁que ry : ▁ถ้า รายการ ถูก อนุมัติ แล้ว จะ แก้ไข ได้ อย่างไร </s>`
+
+Chunk budgets (`--max-tokens`) are counted with this same tokenizer, header and prefix included. Past `max_seq_length` (512 for e5, set to 1024 for bge-m3) the encoder silently truncates the end; chunks are at most 600 tokens, so only e5 at `--max-tokens 600` can truncate.
+
+**3. Encoder.** The transformer (12 layers for e5-small/-base, 24 for bge-m3) turns the token sequence into one contextual vector per token (384 / 768 / 1024 numbers).
+
+**4. Pooling** (from each model's `1_Pooling/config.json`, not memory): e5 = mean of the token vectors (padding excluded); bge-m3 = the vector of the first token (`<s>`, "CLS"). e5 requires the prefixes `query: ` for questions and `passage: ` for chunks (its model card); bge-m3 needs none.
+
+**5. L2 normalisation.** Each vector is divided by its length, so it has length 1 (the models' `Normalize` layer; checked again in code). For unit vectors a·b = |a||b|cos θ = cos θ, so the dot product is the cosine similarity.
+
+**6. Search.** `vectors.npy` is an N × dim float32 matrix (N = number of chunks). A query vector q is scored against every row: scores = V·q (exact brute force; fast at N in the hundreds). Optional filters (document, role, doc_type) remove rows first; the top k scores are returned. Scores lie in [-1, 1]; in practice related Thai passages score high (0.8-0.9 for e5) and unrelated ones lower, but the scale differs per model, so the "not found" threshold is learned per configuration from the no-answer questions (`eval-retrieval`).
+
+**7. Reproducibility.** Model revisions are pinned (commit hashes in `embeddings/profiles.py`) and recorded with every setting in each index manifest (`settings()`: model, revision, dim, pooling, max_len, prefixes, library versions). Vectors are cached under `outputs/index/cache/` with key sha256(settings JSON + NUL + embed_text), so a change of model, revision, setting or text gives a new key. Each index records the sha256 of every source `.md` and of `chunks.jsonl`; `search` and `eval-retrieval` refuse a stale index and name the changed file.
+
+#### Models (from their model cards and repository files, 2026-10-19)
+
+| model | licence | parameters | dim | max input | pooling | prefixes | revision |
+|---|---|---|---|---|---|---|---|
+| BAAI/bge-m3 | MIT | ~568M (2.27 GB fp32) | 1024 | 8192 | CLS | none ("no longer requires adding instructions") | 5617a9f |
+| intfloat/multilingual-e5-base | MIT | 278M | 768 | 512 | mean | `query: ` / `passage: ` | d128750 |
+| intfloat/multilingual-e5-small | MIT | 118M | 384 | 512 | mean | `query: ` / `passage: ` | 614241f |
+| airesearch/WangchanX-Legal-ThaiCCL-Retriever | MIT | 568M | 1024 | 8192 | CLS | none assumed (card gives no usage; base bge-m3) | 2a03371 |
+| kornwtp/simcse-model-m-bert-thai-cased | Apache-2.0 | ~178M (711 MB fp32) | 768 | 512 | CLS | none | 10ca1e5 |
+
+Left out: kornwtp/ConGen-simcse-model-roberta-base-thai (card says Apache-2.0 but does not name its base model, so the licence chain cannot be checked). All candidates run locally; no external embedding API is used.
+
+#### Decisions and deviations from the spec
+- **Repeated screenshots:** the spec drops a chunk whose screenshot set equals an earlier chunk's. In the branch manual pages 7, 8, 9 show one screenshot under *different* instructions (edit, delete, request a change); dropping those chunks would delete the delete/request instructions from search. Instead the repeated screenshot's text is embedded once (counted as `duplicate_screenshots`) and each page keeps its own instructions. Whole chunks are still dropped when their `embed_text` is identical, or when they are screenshot-only with a repeated set.
+- **Personal data:** a Thai national ID (13 digits, checksum verified) rejects the chunk and stops the run (exit 1) unless `--allow-pii`; rejected chunks never enter chunks.jsonl either way, and reports hold rule + position only. Each whole document is scanned before chunking (so a chunk split cannot cut an ID in two), and every chunk again. Digits are matched across separators, HTML/Markdown cells, Thai and full-width digits. Measured false IDs: 0 in 2,000 table rows of small numbers or of dates/amounts; ~8% of rows in tables dense with 1-7-digit numbers (privacy first). Known gap: an ID in an unusual grouping of 4+ parts directly next to another number. Phone numbers are flagged, not rejected: 2 in a form screenshot of the branch manual (`เบอร์โทรศัพท์`).
+- **Exclusion** is by source file name (the PDF and its .docx share a stem) and fail-closed, plus by the md5 of every image embedded in an excluded file (a renamed copy is caught).
+- Five security-review findings were fixed during this work (exclusion fail-open x2, PII scan bypass x2 including one regression, URL credentials in manifests, manifest-driven embedder rebuild); see the commit log.
+
+#### Results (`outputs/retrieval_report.md`, 30 questions, 2 manuals)
+
+Grid: 6 embedders x `--max-tokens` {200, 400, 600} x `--tables` {keep, flatten} x context header on/off = 72 configurations. Best per model:
+
+| configuration | R@1 | R@3 | R@5 | MRR | role acc | ms/query |
+|---|---|---|---|---|---|---|
+| WangchanX-Legal-ThaiCCL-Retriever · 400 · keep · header | 0.69 | 0.96 | 0.96 | 0.81 | 0.92 | 116 |
+| bge-m3 · 400 · keep · header | 0.69 | 0.96 | 0.96 | 0.79 | 0.96 | 126 |
+| e5-small · 600 · flatten · header | 0.62 | 0.85 | 0.92 | 0.72 | 0.88 | 14 |
+| e5-base · 400 · flatten · header | 0.54 | 0.77 | 0.92 | 0.67 | 0.92 | 37 |
+| fake (hash baseline) · 600 · keep · header | 0.38 | 0.62 | 0.65 | 0.50 | 0.64 | 0 |
+| simcse-m-bert-thai · 400 · flatten · header | 0.31 | 0.54 | 0.65 | 0.42 | 0.76 | 34 |
+
+Per question type (best configuration): text R@1 0.64 / MRR 0.79 (bge-m3 · 400 · keep · header); screenshot-only R@1 **1.00** (bge-m3 · 400 · keep · header): the OCR text pays off; cross-role MRR 0.83 (WangchanX · 400 · keep · header). One answerable question = 0.04 here (26 answerable), so WangchanX vs bge-m3 is a tie.
+
+- **Context header:** on, in every model by several questions (bge-m3 · 400 · keep: MRR 0.79 vs 0.69 without; role accuracy 0.96 vs 0.84).
+- **Chunk size:** 400 (bge-m3: 0.79 vs 0.71 at 200; 600 level with 400).
+- **Tables:** keep (level with or slightly ahead of flatten; keeps the source form).
+- **Model: BAAI/bge-m3** (now `DEFAULT_MODEL`). Tied best, general-purpose (WangchanX is tuned for corporate/commercial law), best role accuracy, MIT. **Low-RAM fallback: intfloat/multilingual-e5-small** (MIT): about 3 questions lower MRR, half the memory, ~9x faster queries, and its "not found" threshold (0.86) separated all 4 no-answer questions without refusing an answerable one.
+- **"Not found" threshold, bge-m3:** 0.56 refuses all 4 no-answer questions but also 1 answerable one (the 48-hour question scores 0.52). Not yet safe to use as a gate.
+- The thai SimCSE model is below the hashing baseline on MRR: unsupervised Wikipedia SimCSE does not suit this retrieval task.
+
+#### Measured RAM and time (Mac, Apple M4 Pro, 26 GB; Windows not measured)
+
+Embedding the 25 chunks with the cache off, including model loading (`/usr/bin/time -l rag-ingest embed --no-cache`):
+
+| model | peak RAM | wall time | query (grid) |
+|---|---|---|---|
+| e5-small | 1.25 GB | 9.5 s | 14 ms |
+| e5-base | 1.57 GB | 9.0 s | 37 ms |
+| bge-m3 | 2.38 GB | 12.9 s | 126 ms |
+| WangchanX | 2.38 GB | 14.2 s | 116 ms |
+| simcse-m-bert-thai | 1.27 GB | 10.0 s | 34 ms |
+
+Whole six-model grid: 175 s, peak 3.09 GB (one model loaded at a time). Downloads: e5-base 1.13 GB, bge-m3 2.27 GB (already cached), WangchanX 2.29 GB (~23 min; the Hugging Face Xet transfer failed once and was retried), SimCSE 0.72 GB.
+
+#### Checks
+- 139 tests (no model, no network); max cognitive complexity 9; no repeated literals.
+- `ingest`, `benchmark` and `compare` outputs byte-identical to before this branch (the two original manuals).
+- `rag-ingest chunk && rag-ingest embed --embedder local --model BAAI/bge-m3 && rag-ingest eval-retrieval` runs end to end (exit 0). The single-index report goes to `outputs/retrieval_report_index.md` so it does not overwrite the grid report.
+- No chunk, vector, metadata or report file contains text of the excluded manual; the PII rule finds 0 IDs in the included documents (2 phone flags).
+
+#### Still open
+- **Windows:** RAM and time not measured on the Windows CPU machine; bge-m3 needs ~2.4 GB there plus the OS. If that is too much, use e5-small.
+- **Evaluation set** is small (30 questions, 2 manuals); grow it, especially no-answer questions, before trusting a threshold.
+- **Names** in screenshots (e.g. user names in the system's header bar) are personal data the PII rule does not cover (it covers national IDs and phone numbers).
+- `outputs/ingest/` has not been re-run for the 3 new PDFs and the 2 Word files; chunk/embed work on any set of `.md` files once it is.
+- The committed `outputs/ingest/manifest.json` lacks two `rejected` records that a fresh ingest writes (ingest records rejections only when it does not hit its own OCR cache).
+- The other test files still contain 28 composite assertions (Sonar S9073); `test_chunking.py` is fixed.
+
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.

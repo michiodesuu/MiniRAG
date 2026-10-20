@@ -88,7 +88,9 @@ def run_eval(args: argparse.Namespace, paths: Paths) -> None:
     questions = load_questions(paths.resolve(args.questions))
     configs = run_grid(args, paths, questions) if args.grid else run_single(args, paths, questions)
     documents = sorted({doc for q in questions for doc, _ in q.expected})
-    report = paths.resolve(args.report)
+    # The grid report is the comparison deliverable; a single-index check must not overwrite it.
+    default = paths.retrieval_report if args.grid else paths.retrieval_report.with_name("retrieval_report_index.md")
+    report = paths.resolve(args.report) if args.report else default
     report.write_text(render(configs, documents), encoding=ENCODING)
     write_csv(report.with_suffix(".csv"), configs)
     print(f"Saved: {report}\nSaved: {report.with_suffix('.csv')}")
@@ -102,4 +104,5 @@ def register(add, paths: Paths) -> None:
     p.add_argument("--models", nargs="+", default=list(GRID_MODELS), help="Models for --grid ('fake' allowed).")
     p.add_argument("--index", help="Index to evaluate without --grid (default: newest).")
     p.add_argument("--ingest", default=paths.relative(paths.ingest), help="Ingest folder.")
-    p.add_argument("--report", default=paths.relative(paths.retrieval_report), help="Report path (.md; .csv beside it).")
+    p.add_argument("--report", help="Report path, .csv written beside it (default: "
+                                    "outputs/retrieval_report.md with --grid, else outputs/retrieval_report_index.md).")
