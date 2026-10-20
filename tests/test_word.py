@@ -229,3 +229,19 @@ def test_list_documents_searches_type_subfolders(tmp_path, capsys):
     (root / "docx" / "b.docx").write_bytes(b"PK")  # same name as pdf/b.pdf
     with pytest.raises(ValueError, match="share a name"):
         list_documents(root)
+
+
+def test_document_without_numbering_part_reads():
+    """Word files with no lists have no numbering.xml; python-docx raises for them."""
+    from rag_ingest.readers.word import numbering_element
+
+    class NoNumbering:
+        @property
+        def numbering_part(self):
+            raise NotImplementedError
+
+    class Doc:
+        part = NoNumbering()
+
+    assert numbering_element(Doc()) is None
+    assert Numbering(None).label("1", 0) is None

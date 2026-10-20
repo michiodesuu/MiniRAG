@@ -55,6 +55,24 @@ class Paths:
         return self.outputs / "ingest"
 
     @property
+    def chunks(self) -> Path:
+        """chunks.jsonl, rejected.jsonl and manifest.json from `rag-ingest chunk`."""
+        return self.outputs / "chunks"
+
+    @property
+    def index(self) -> Path:
+        """One folder per embedding run, plus cache/ (vectors are not committed)."""
+        return self.outputs / "index"
+
+    @property
+    def eval_questions(self) -> Path:
+        return self.root / "data" / "eval" / "questions.jsonl"
+
+    @property
+    def retrieval_report(self) -> Path:
+        return self.outputs / "retrieval_report.md"
+
+    @property
     def ground_truth(self) -> Path:
         return self.outputs / "ground_truth"
 
@@ -83,3 +101,20 @@ METHODS_BY_NAME = {m.name: m for m in METHODS}
 
 # Default places the vision engine takes hint lines from (--hint-source).
 HINT_FOLDERS = {"paddle": "ocr", "tesseract": "tesseract"}
+
+# Source files whose text must never be chunked, embedded or reported
+# (file name -> reason). Keyed by file name, not stem: the unredacted PDF and
+# its safe .docx share a stem. An ingest .md whose source type is unknown is
+# excluded when its stem matches (fail closed). `chunk --exclude STEM` adds more.
+EXCLUDED_DOCUMENTS = {
+    "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน.pdf": (
+        "hides full names and 13-digit national ID numbers under fake blur patches; "
+        "use its converted .docx instead"),
+}
+
+# Who a document is written for (stem -> role), so search can filter and the
+# evaluation can tell whether the top result came from the right role.
+DOCUMENT_ROLES = {
+    "ผู้จัดการสาขา": "branch_manager",
+    "ผู้จัดการเขต": "district_manager",
+}

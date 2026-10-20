@@ -2,8 +2,8 @@
 import argparse
 import os
 import sys
-from urllib.parse import urlsplit
 
+from rag_ingest.net import warn_if_clear_text
 from rag_ingest.config import ENCODING, Paths, SUPPORTED_IMAGE_EXTENSIONS
 
 
@@ -23,17 +23,6 @@ def cmd_extract_text(args, paths: Paths):
 
 
 VISION_ENGINES = ("ollama", "api")
-LOOPBACK_HOSTS = ("localhost", "127.0.0.1", "::1")
-
-
-def warn_if_clear_text(url: str):
-    """Images (and any API key) would cross the network unencrypted."""
-    parts = urlsplit(url)
-    if parts.scheme != "https" and parts.hostname not in LOOPBACK_HOSTS:
-        print(f"WARNING: {parts.scheme}:// sends images unencrypted to {parts.hostname}; "
-            "use https if the server supports it.", file=sys.stderr)
-
-
 def api_options(args) -> dict:
     if not (args.api_url and args.api_model):
         sys.exit("--engine api needs --api-url and --api-model (or OCR_API_URL / OCR_API_MODEL)")
@@ -251,6 +240,13 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
     p = add("convert", cmd_convert, "Convert PDF to Word (.docx) keeping layout; Thai-aware.")
     p.epilog, p.formatter_class = USAGE_EXAMPLES, argparse.RawDescriptionHelpFormatter
     add_convert_arguments(p, paths)
+
+    # Later stages register their own commands (argument wiring lives with each stage).
+    from rag_ingest.chunking.commands import register as register_chunking
+    from rag_ingest.eval_commands import register as register_eval
+    from rag_ingest.index_commands import register as register_index
+    for register in (register_chunking, register_index, register_eval):
+        register(add, paths)
     return parser
 
 
