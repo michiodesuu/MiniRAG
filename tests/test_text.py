@@ -1,6 +1,6 @@
 import pytest
 
-from rag_ingest.ocr_eval.metrics import cer, edit_distance
+from rag_ingest.ocr_eval.metrics import cer, edit_distance, ngram_overlap
 from rag_ingest.chunking.text import tidy_ocr
 from rag_ingest.models import ImageRef
 from rag_ingest.quality import rejection
@@ -52,3 +52,11 @@ def test_rejection(text, reason):
 ])
 def test_tidy_ocr(raw, tidy):
     assert tidy_ocr(raw) == tidy
+
+
+def test_ngram_overlap_ignores_order():
+    assert ngram_overlap("กขคงจฉชซฌญ", "ฉชซฌญกขคงจ") == (pytest.approx(0.75), pytest.approx(0.75))
+
+
+def test_ngram_recall_drops_when_text_is_left_out():
+    assert ngram_overlap("กขคง", "กขคงจฉชซ")[0] == pytest.approx(2 / 6)

@@ -9,6 +9,7 @@ from rag_ingest.engines import create_engine
 from rag_ingest.engines.vision import HINT_INTRO, HintProvider, VisionEngine, _hint_provider
 from rag_ingest.models import OcrLine, Recognition
 from rag_ingest.stores import LineStore, VisionStore
+from rag_ingest.textproc import NO_TEXT_MARK
 
 
 class FakeTransport:
@@ -159,3 +160,49 @@ def test_results_record_the_prompt_actually_used(paths, make_image):
 
     with pytest.raises(FileNotFoundError, match="Prompt not found"):
         _vision_engine(FakeTransport(), paths, None, 0, paths.root / "missing.txt")
+
+
+def lined_image(path, rows=(100, 300, 500), size=(200, 600)):
+    """White image with black text-like bars 20 px high starting at the given rows."""
+    img = Image.new("RGB", size, "white")
+    for top in rows:
+        img.paste((0, 0, 0), (10, top, 190, top + 20))
+    img.save(path)
+    return path
+
+
+def test_cut_rows_land_between_lines(tmp_path):
+    from rag_ingest.imaging import cut_rows, load_rgb
+
+    img = load_rgb(lined_image(tmp_path / "tall.png"))
+    cuts = cut_rows(img, 200)
+    assert cuts and all(not (top <= cut < top + 20) for cut in cuts for top in (100, 300, 500))
+
+
+def test_short_image_is_one_strip(tmp_path):
+    from rag_ingest.imaging import strips, load_rgb
+
+    assert len(strips(load_rgb(lined_image(tmp_path / "s.png", size=(200, 240))), 200)) == 1
+
+
+def test_tiled_engine_reads_each_strip_and_joins(tmp_path):
+    transport = FakeTransport()
+    result = VisionEngine(transport, "PROMPT", tile_height=200).recognize(lined_image(tmp_path / "t.png"))
+    assert result.text == "\n".join(["อ่านได้"] * len(transport.calls))
+    assert result.settings["tiles"] == len(transport.calls) > 1
+
+
+class BlankStripTransport(FakeTransport):
+    def complete(self, prompt, image):
+        self.calls.append((prompt, image))
+        return NO_TEXT_MARK if len(self.calls) == 1 else "ข้อความ"
+
+
+def test_strips_without_text_are_left_out(tmp_path):
+    result = VisionEngine(BlankStripTransport(), "P", tile_height=200).recognize(lined_image(tmp_path / "b.png"))
+    assert NO_TEXT_MARK not in result.text
+
+
+def test_tiling_refuses_hints(paths):
+    with pytest.raises(ValueError):
+        VisionEngine(FakeTransport(), "P", _hint_provider(paths, "paddle"), tile_height=200)

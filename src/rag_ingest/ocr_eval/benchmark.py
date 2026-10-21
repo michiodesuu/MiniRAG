@@ -26,7 +26,7 @@ import csv
 from rag_ingest.config import ENCODING, METHODS, Method, Paths
 from rag_ingest.ocr_eval.ground_truth import CLAUDE, HUMAN, GroundTruthStore, benchmark_images, edited_from
 from rag_ingest.ingest import DEFAULT_SOURCES
-from rag_ingest.ocr_eval.metrics import edit_distance
+from rag_ingest.ocr_eval.metrics import edit_distance, ngram_overlap
 from rag_ingest.quality import rejection
 from rag_ingest.stores import ResultStore, VisionStore, open_store
 from rag_ingest.textproc import normalize_for_scoring
@@ -48,6 +48,8 @@ class Score:
     cer: float     # capped at 1.0
     edits: int
     hyp_len: int
+    recall: float = 0.0     # character 3-grams of the reference found, any order
+    precision: float = 0.0  # character 3-grams of the output that are in the reference
 
 
 @dataclass
@@ -111,7 +113,7 @@ def score_all(truth: dict[str, Truth], methods: dict[str, dict[str, str]]) -> li
             if stem in outputs:
                 hyp = normalize_for_scoring(outputs[stem])
                 edits = edit_distance(hyp, ref)
-                scores[name] = Score(min(edits / len(ref), 1.0), edits, len(hyp))
+                scores[name] = Score(min(edits / len(ref), 1.0), edits, len(hyp), *ngram_overlap(hyp, ref))
         rows.append(ImageScores(stem, len(ref), scores, truth[stem].by))
     return rows
 
@@ -150,6 +152,22 @@ def _cer_table(title: str, rows: list[ImageScores], names: list[str]) -> list[st
     return lines + [""]
 
 
+def _completeness_table(rows: list[ImageScores], names: list[str]) -> list[str]:
+    lines = ["## Completeness, order ignored (character 3-grams, higher is better)\n",
+             "Recall: share of the reference that was read; precision: share of the output that is "
+             "real. CER also counts text read in another order as error; these do not.\n",
+             "| method | mean recall | mean precision | images |", "|---|---|---|---|"]
+    stats = []
+    for name in names:
+        scores = [r.scores[name] for r in rows if name in r.scores]
+        if scores:
+            stats.append((name, sum(s.recall for s in scores) / len(scores),
+                          sum(s.precision for s in scores) / len(scores), len(scores)))
+    for name, recall, precision, n in sorted(stats, key=lambda s: -s[1]):
+        lines.append(f"| {name} | {recall:.3f} | {precision:.3f} | {n} |")
+    return lines + [""]
+
+
 def _failure_table(failures: dict[str, Failures]) -> list[str]:
     lines = ["## Failures on every benchmarked image (ingest would reject these)\n",
              "| method | failed | of | rejected (rule: count) | no output |", "|---|---|---|---|---|"]
@@ -177,6 +195,8 @@ def render(rows: list[ImageScores], names: list[str], failures: dict[str, Failur
     lines += _cer_table("Ground truth by Claude (blank box)", by[CLAUDE], names)
     lines += _cer_table(f"Small crops (reference <= {SHORT_REF_CHARS} chars)", short, names)
     lines += _cer_table(f"Screens and tables (reference > {SHORT_REF_CHARS} chars)", long_, names)
+    if rows:
+        lines += _completeness_table(rows, names)
     if failures:
         lines += _failure_table(failures)
     lines += ["## Per image (CER)\n", "| image | by | ref chars | " + " | ".join(names) + " |",
