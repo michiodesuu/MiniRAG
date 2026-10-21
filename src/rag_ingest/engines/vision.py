@@ -2,15 +2,23 @@
 
 VisionEngine owns what is sent (prompt, hints, image preparation);
 a Transport owns how it is sent (local Ollama or an OpenAI-compatible API).
+
+Tiling (tile_height > 0): a tall image is cut into horizontal strips at blank
+rows (imaging.strips), each strip is read with the same prompt, and the texts
+are joined top to bottom. A small vision model sees each strip at a higher
+resolution than the whole screen, so it leaves out less. Hints are not
+combined with tiling: hint lines carry no position, so every strip would get
+the whole image's lines and could copy text that is not in it.
 """
 from pathlib import Path
 from typing import Protocol
 import base64
 
 from rag_ingest.config import ENCODING, HINT_FOLDERS, Paths
-from rag_ingest.imaging import image_bytes
+from rag_ingest.imaging import image_bytes, load_rgb, png_bytes, strips
 from rag_ingest.models import Recognition
 from rag_ingest.stores import LineStore
+from rag_ingest.textproc import NO_TEXT_MARK
 
 TEMPERATURE = 0
 HINT_MIN_CONFIDENCE = 0.8
@@ -102,14 +110,29 @@ class VisionEngine:
 
     def __init__(self, transport: Transport, prompt: str,
                  hints: HintProvider | None = None, upscale: int = 0,
-                 prompt_file: Path | None = None):
+                 prompt_file: Path | None = None, tile_height: int = 0):
+        if hints and tile_height:
+            raise ValueError("Hints cannot be combined with tiling (hint lines have no position).")
         self.transport, self.prompt, self.hints, self.upscale = transport, prompt, hints, upscale
-        self.prompt_file = prompt_file
+        self.prompt_file, self.tile_height = prompt_file, tile_height
+
+    def _read_strips(self, image: Path) -> tuple[str, int]:
+        """(joined text, number of strips). Strips with nothing readable are left
+        out, unless no strip has text."""
+        parts = strips(load_rgb(image, self.upscale), self.tile_height)
+        if len(parts) == 1:
+            return self.transport.complete(self.prompt, image_bytes(image, self.upscale)), 1
+        texts = [self.transport.complete(self.prompt, png_bytes(part)) for part in parts]
+        readable = [t for t in texts if t and NO_TEXT_MARK not in t]
+        return ("\n".join(readable) if readable else texts[0]), len(parts)
 
     def recognize(self, image: Path) -> Recognition:
         hint, used = self.hints.hint(image.stem) if self.hints else (None, [])
-        prompt = self.prompt + (HINT_INTRO + hint if hint else "")
-        text = self.transport.complete(prompt, image_bytes(image, self.upscale))
+        if self.tile_height:
+            text, tiles = self._read_strips(image)
+        else:
+            prompt = self.prompt + (HINT_INTRO + hint if hint else "")
+            text, tiles = self.transport.complete(prompt, image_bytes(image, self.upscale)), 1
         return Recognition(
             text=text,
             model=self.transport.model,
@@ -119,6 +142,7 @@ class VisionEngine:
                 "paddle_hint": "paddle" in used,
                 "tesseract_hint": "tesseract" in used,
                 "upscale_min_side": self.upscale,
+                **({"tile_height": self.tile_height, "tiles": tiles} if self.tile_height else {}),
             },
             prompt_file=self.prompt_file,
         )
@@ -132,22 +156,22 @@ def _hint_provider(paths: Paths, hint_source: str | None) -> HintProvider | None
 
 
 def _vision_engine(transport: Transport, paths: Paths, hint_source: str | None,
-                   upscale: int, prompt: Path | None) -> VisionEngine:
+                   upscale: int, prompt: Path | None, tile: int = 0) -> VisionEngine:
     prompt_file = prompt or paths.prompt
     if not prompt_file.exists():
         raise FileNotFoundError(f"Prompt not found: {prompt_file}")
     return VisionEngine(transport, prompt_file.read_text(encoding=ENCODING),
-                        _hint_provider(paths, hint_source), upscale, prompt_file)
+                        _hint_provider(paths, hint_source), upscale, prompt_file, tile)
 
 
 def ollama_engine(paths: Paths, hint_source: str | None = None, upscale: int = 0,
                   model: str = "qwen2.5vl:3b", num_ctx: int = 8192,
-                  prompt: Path | None = None) -> VisionEngine:
-    return _vision_engine(OllamaTransport(model, num_ctx), paths, hint_source, upscale, prompt)
+                  prompt: Path | None = None, tile: int = 0) -> VisionEngine:
+    return _vision_engine(OllamaTransport(model, num_ctx), paths, hint_source, upscale, prompt, tile)
 
 
 def api_engine(paths: Paths, url: str, model: str, key: str | None = None,
                hint_source: str | None = None, upscale: int = 0,
-               prompt: Path | None = None) -> VisionEngine:
+               prompt: Path | None = None, tile: int = 0) -> VisionEngine:
     return _vision_engine(OpenAICompatibleTransport(url, model, key), paths, hint_source,
-                          upscale, prompt)
+                          upscale, prompt, tile)

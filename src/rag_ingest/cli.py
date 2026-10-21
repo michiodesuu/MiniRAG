@@ -31,16 +31,23 @@ def api_options(args) -> dict:
     return {"url": args.api_url, "model": args.api_model, "key": os.environ.get("OCR_API_KEY")}
 
 
-def engine_options(args, paths: Paths) -> dict:
-    for flag in ("hint", "prompt"):
+def check_vision_flags(args) -> None:
+    for flag in ("hint", "prompt", "tile"):
         if getattr(args, flag) and args.engine not in VISION_ENGINES:
             sys.exit(f"--{flag} only applies to the vision engines (ollama, api)")
+    if args.tile and args.hint:
+        sys.exit("--tile cannot be combined with --hint: hint lines have no position, "
+                 "so every strip would get the whole image's lines.")
+
+
+def engine_options(args, paths: Paths) -> dict:
+    check_vision_flags(args)
     if args.engine == "tesseract":
         return {"upscale": args.upscale, "psm": args.psm}
     if args.engine == "paddle":
         return {}
     vision = {"paths": paths, "hint_source": args.hint, "upscale": args.upscale,
-              "prompt": paths.resolve(args.prompt) if args.prompt else None}
+              "prompt": paths.resolve(args.prompt) if args.prompt else None, "tile": args.tile}
     if args.engine == "ollama":
         return {**vision, "model": args.model or "qwen2.5vl:3b", "num_ctx": args.num_ctx}
     return {**vision, **api_options(args)}
@@ -206,6 +213,9 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
                    help="Vision engines: prompt file (default prompts/thai_document_ocr.txt). "
                         "Also: prompts/thai_document_ocr_compact.txt, or _full.txt (9k tokens, "
                         "too long for qwen2.5vl:3b's 8k context). Recorded in each result.")
+    p.add_argument("--tile", type=int, default=0, metavar="PX",
+                   help="Vision engines: cut images taller than about PX (after --upscale) into "
+                        "strips of about PX at blank rows; one model call per strip. Not with --hint.")
     p.add_argument("--model", help="Ollama model (default qwen2.5vl:3b).")
     p.add_argument("--num-ctx", type=int, default=8192, help="Ollama context size.")
     p.add_argument("--api-url", default=os.environ.get("OCR_API_URL"),

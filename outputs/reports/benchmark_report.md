@@ -64,6 +64,20 @@ Ground truth: 18 images (3 by a person, 15 by Claude from a blank box and not ye
 | ocr | 0.380 | 0.339 | 0 | 15 |
 | vision | 0.466 | 0.735 | 0 | 15 |
 
+## Completeness, order ignored (character 3-grams, higher is better)
+
+Recall: share of the reference that was read; precision: share of the output that is real. CER also counts text read in another order as error; these do not.
+
+| method | mean recall | mean precision | images |
+|---|---|---|---|
+| pipeline | 0.874 | 0.921 | 18 |
+| vision_typhoon | 0.804 | 0.833 | 18 |
+| vision_hint | 0.785 | 0.922 | 18 |
+| vision_both | 0.777 | 0.858 | 18 |
+| tesseract | 0.764 | 0.845 | 18 |
+| ocr | 0.691 | 0.765 | 18 |
+| vision | 0.588 | 0.651 | 18 |
+
 ## Failures on every benchmarked image (ingest would reject these)
 
 | method | failed | of | rejected (rule: count) | no output |

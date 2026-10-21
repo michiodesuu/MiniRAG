@@ -1,7 +1,9 @@
 """What a unit contributes to `embed_text` (the model's input) and `display_text`.
 
 embed form of a unit:
-  - Unicode NFC (Thai can arrive decomposed, e.g. "ํา" for "ำ")
+  - Unicode NFC (puts combining marks in canonical order, e.g. a tone mark typed
+    before a below-vowel; it does not compose "ํา" into "ำ", which has only a
+    compatibility decomposition: PDF text gets that from thai_glyphs)
   - no page comments and no screenshot tags (the units already exclude them)
   - tables rendered as Markdown per TableFormat (tables.py): --tables for the
     document's own tables, --screenshot-tables for tables in screenshot OCR
