@@ -57,6 +57,8 @@ rag-ingest chunk                            # -> outputs/chunks/chunks.jsonl (to
 rag-ingest embed                            # -> outputs/index/<run>/ vectors + manifest
 rag-ingest search "ถ้ารายการถูกอนุมัติแล้วจะแก้ไขได้อย่างไร" --role branch_manager
 rag-ingest eval-retrieval [--grid]          # -> outputs/reports/retrieval_report.md + .csv
+rag-ingest load [--dry-run]                 # newest index -> PostgreSQL + Qdrant (docker compose up -d)
+rag-ingest eval-retrieval --backend qdrant  # the same evaluation, searched in Qdrant
 ```
 ### OCR prompts
 | file | tokens* | use |
@@ -91,6 +93,20 @@ Documents in `config.EXCLUDED_DOCUMENTS` are never read. `embed` caches vectors 
 whose source files changed. Models, licences and the exact text-to-vector method:
 note.md 2.17. The embedding API backend reads `EMBED_API_URL`, `EMBED_API_MODEL`,
 `EMBED_API_KEY`.
+
+### Databases (PostgreSQL + Qdrant)
+```
+uv pip install --python .venv/bin/python -e ".[db]"
+cp .env.example .env            # set POSTGRES_PASSWORD; .env is git-ignored
+docker compose up -d            # postgres:17 + qdrant, data in named volumes, bound to localhost
+rag-ingest load                 # migrations run first; then the newest index under outputs/index
+```
+- **PostgreSQL** holds `documents` (id, name, source path, content hash, role, doc type, status verified/unverified, ingested time) and `chunks` (chunk id, index run, document id, section, pages, type text/table/screenshot, text, token count, embedding model). Migrations: `src/rag_ingest/databases/migrations/`.
+- **Qdrant** holds one collection per index run (named like the run folder, `BAAI-bge-m3__1a6e93b0`), cosine, 1024 dims for BGE-M3. Point id = uuid5(chunk id); payload = chunk id, document, role, doc type, type, kind, section, pages. The document id links the two.
+- **Idempotent:** an unchanged document (same content hash, same chunk ids in both stores) is skipped; a changed one replaces its old chunks, in this run and in older runs' collections.
+- **All or nothing per document:** if Qdrant or the PostgreSQL commit fails, the transaction rolls back and the document's previous points are restored; the other documents still load and the command exits 1.
+- **Never loaded:** chunks in `rejected.jsonl` (Thai national IDs), excluded documents (`config.EXCLUDED_DOCUMENTS`, the chunk manifest's `excluded`), chunks not in the current `chunks.jsonl`. Such an index is refused whole, as is a stale index or one whose manifest fails the embedder allow-list.
+- `--status verified|unverified` sets the document status; without it a stored status is kept.
 
 ### Word documents
 Put `.docx` files in `data/raw/docx/`; every command handles both formats. Headings become
@@ -134,7 +150,14 @@ src/rag_ingest/
     evaluation.py     Recall@k, MRR, role accuracy, no-answer threshold
     report.py         outputs/reports/retrieval_report.md + .csv
     index_commands.py, eval_commands.py   `embed`, `search`, `eval-retrieval`
-tests/            pytest; no model or network needed
+  databases/      `load`: index run -> PostgreSQL + Qdrant
+    settings.py       connection settings from the environment / .env
+    postgres.py       PostgresChunkStore + migrations/*.sql
+    qdrant.py         QdrantVectorStore (the VectorStore protocol on Qdrant)
+    memory.py         MemoryChunkStore, the in-memory stand-in for tests
+    loader.py         checks, idempotency, all-or-nothing per document
+tests/            pytest; no model or network needed (database tests also run against
+                  docker when it is up; the Qdrant parity test needs the BGE-M3 index)
 ```
 
 ## Tests

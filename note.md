@@ -436,6 +436,40 @@ Unchanged: bge-m3 (`DEFAULT_MODEL`, tied with WangchanX again, best role accurac
 - **Names outside tables:** screenshots still carry names in forms and in the header bar (`ชื่อ : อิทธิฤทธิ์ มีชัย`, the logged-in user). `columns` does not cover them; the open question of whether the PII rule should cover names in screenshots remains.
 - **Screenshots of reference tables** (e.g. a table of fees or rights captured as an image) would lose their rows under `columns`. None exist in the ingested manuals; use `--screenshot-tables keep` for such documents, or revisit if the new PDFs/Word files have them once they are ingested.
 
+### 2.22 Databases: PostgreSQL + Qdrant (2026-10-22, branch `feature/databases`)
+
+#### What was built
+- `docker-compose.yml`: `postgres:17.6` and `qdrant/qdrant:v1.15.4`, named data volumes, ports bound to 127.0.0.1. Credentials only from `.env` (git-ignored); `.env.example` lists the variables. No password default anywhere: a missing `POSTGRES_PASSWORD` stops the command.
+- **PostgreSQL schema** (`databases/migrations/001_documents_chunks.sql`, applied once each, recorded in `schema_migrations`):
+  - `documents`: id (the document stem, as in chunk ids), name, source path (the ingest .md), content hash (its sha256 = the chunks' `source_sha256`), role, doc type, status (`verified`/`unverified`, default unverified), ingested time.
+  - `chunks`: chunk id, index run, document id (FK, cascade), section, page start/end, type, text (`display_text`, what an answer cites), token count, embedding model. Primary key (index run, chunk id), so two runs can be loaded side by side.
+  - No ACL or conversation tables (other parts); role and status are there for them.
+- **Qdrant:** one collection per index run, named after the run folder; cosine, dim from the index (1024 for BGE-M3); keyword payload indexes on document, role, doc_type. Point id = uuid5(fixed namespace, chunk id). Payload: chunk id, document, role, doc type, kind, type, section, page start/end. No chunk text in Qdrant.
+- **Code:** `QdrantVectorStore` implements the existing `VectorStore` protocol (add, save as a no-op, search with the same filters) plus count, delete by document, and points (used as the undo copy). `PostgresChunkStore` for the two tables. `MemoryChunkStore` mirrors it in memory, including transaction rollback. `NumpyVectorStore` is unchanged and still the index format and test backend.
+- `rag-ingest load [--index RUN] [--status ...] [--dry-run]`, and `rag-ingest eval-retrieval --backend qdrant`.
+
+#### Decisions
+- **`type` is derived, not new data.** Chunks have `kind` text/ocr/mixed. `type` = `screenshot` when the chunk holds any OCR'd screenshot (ocr or mixed), `table` when its display text has a Markdown table separator row, else `text`. `kind` stays in the Qdrant payload.
+- **Pages:** chunks span `page_start`–`page_end`; both are stored (the evaluation needs the range).
+- **Idempotency:** skip when the stored content hash and status match and both stores hold exactly the document's chunk ids for this run (so a store that drifted is repaired by the next load). A changed hash replaces the document's chunks in every run: PostgreSQL deletes them, and the loader removes its points from the older runs' collections.
+- **All-or-nothing, per document:** PostgreSQL rows are written inside a transaction; the Qdrant upsert and the removal of the document's other points happen inside it; then commit. Any exception (Qdrant down, commit fails) rolls back and puts the document's previous Qdrant points back from the copy taken first. A failed document is reported, the others still load, exit code 1.
+- **Safety checks carry over and fail closed:** `load_index` (stale check + manifest allow-list) runs first; then every vector row must be a chunk of the current `chunks.jsonl`, not in `rejected.jsonl`, from a recorded source, and not excluded (`EXCLUDED_DOCUMENTS` by stem + type, an `unknown` type counts as excluded, plus the chunk manifest's `excluded`). Any hit refuses the whole load before anything is written.
+- **Exact search** (`SearchParams(exact=True)`): at this size HNSW would also be exact, but parity should not depend on it.
+
+#### Checks
+- `tests/test_databases.py`: 22 tests (40 cases); those that touch a store run on the in-memory stand-ins (`MemoryChunkStore` + `QdrantClient(":memory:")`, always) and on the docker databases (throwaway schema and collections; skipped when not reachable). Covers migrations, both stores written and linked, payload without text, Qdrant vs numpy search with filters, skip on reload, a changed document replacing its chunks (this run and older runs), status kept, Qdrant failing before/after upsert and on delete, the PostgreSQL commit failing after Qdrant was written, one failed document not stopping the others, a real Thai ID chunk never reaching either store, an index with a rejected chunk refused, the excluded PDF (real stem, pdf source) never loaded, an old index holding it refused, stale and untrusted indexes refused, the CLI.
+- **Parity gate** (`tests/test_qdrant_parity.py`): the committed chunks' BGE-M3 index (`BAAI-bge-m3__1a6e93b0`, 18 chunks) loaded into Qdrant and searched with plain dense search: the top 5 is identical to numpy for all 30 questions (scores within 1e-4), **R@5 0.96, MRR 0.80**, same as numpy. Set `RAG_PARITY_DOCKER=1` to repeat it on the docker Qdrant.
+- `rag-ingest load --dry-run` on the real index: 2 documents, 18 chunks (ผู้จัดการสาขา 12, ผู้จัดการเขต 6).
+
+#### Docker gotchas
+- An **empty `QDRANT_API_KEY`** makes Qdrant require a key nobody has (every request 401). Compose now refuses to start without one; set it in `.env`.
+- The client (1.19) is newer than the pinned server image (1.15.4): the client's compatibility check is switched off (`check_compatibility=False`); the calls used are basic and the tests pass.
+
+#### Still open
+- **Docker run (2026-10-22):** after Docker Desktop was restarted, all 40 cases of `tests/test_databases.py` passed on the real databases, the parity test passed on the docker Qdrant (`RAG_PARITY_DOCKER=1`), and `rag-ingest load` loaded 2 documents / 18 chunks, then skipped both on the second run. `eval-retrieval --backend qdrant` gives R@1 0.69, R@3 0.88, R@5 0.96, MRR 0.80.
+- A document removed from the corpus is not deleted from the databases by `load` (it only adds/replaces); `delete_document` exists on both stores for that.
+- Hybrid search, reranking, ACL and conversation tables are out of scope here.
+
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.
