@@ -252,7 +252,8 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
     from rag_ingest.chunking.commands import register as register_chunking
     from rag_ingest.retrieval.eval_commands import register as register_eval
     from rag_ingest.retrieval.index_commands import register as register_index
-    for register in (register_chunking, register_index, register_eval):
+    from rag_ingest.databases.commands import register as register_databases
+    for register in (register_chunking, register_index, register_eval, register_databases):
         register(add, paths)
     return parser
 

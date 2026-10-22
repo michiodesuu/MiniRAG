@@ -81,8 +81,15 @@ def run_single(args, paths: Paths, questions) -> list:
     folder = paths.resolve(args.index) if args.index else latest_index(paths.index)
     index = load_index(folder, paths.resolve(args.ingest))
     embedder = index.embedder_spec().create()
-    results = evaluate(questions, embedder.embed_query, index.search)
-    return [ConfigResult(folder.name, index.manifest["chunk_settings"], results, 0.0, index.manifest["count"])]
+    search, name = index.search, folder.name
+    if args.backend == "qdrant":  # same index, searched in its Qdrant collection (`rag-ingest load` first)
+        from rag_ingest.databases.qdrant import QdrantVectorStore
+        from rag_ingest.databases.settings import read_env_file
+        read_env_file(paths.root / ".env")
+        store = QdrantVectorStore.connect(folder.name, index.manifest["dim"])
+        search, name = store.search, f"{folder.name} (qdrant)"
+    results = evaluate(questions, embedder.embed_query, search)
+    return [ConfigResult(name, index.manifest["chunk_settings"], results, 0.0, index.manifest["count"])]
 
 
 def run_eval(args: argparse.Namespace, paths: Paths) -> None:
@@ -108,6 +115,8 @@ def register(add, paths: Paths) -> None:
                    help="Compare models x --max-tokens {200,400,600} x --screenshot-tables x context header.")
     p.add_argument("--models", nargs="+", default=list(GRID_MODELS), help="Models for --grid ('fake' allowed).")
     p.add_argument("--index", help="Index to evaluate without --grid (default: newest).")
+    p.add_argument("--backend", choices=["numpy", "qdrant"], default="numpy",
+                   help="Without --grid: search the index files (numpy) or its Qdrant collection.")
     p.add_argument("--ingest", default=paths.relative(paths.ingest), help="Ingest folder.")
     p.add_argument("--report", help="Report path, .csv written beside it (default: "
                                     "outputs/reports/retrieval_report.md with --grid, else retrieval_report_index.md beside it).")

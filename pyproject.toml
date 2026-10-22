@@ -17,7 +17,8 @@ api = ["httpx"]
 docx = ["python-docx"]   # Word (.docx) input; small, pure Python + lxml
 convert = ["pdf2docx"]  # pdf_to_docx.py; pulls in OpenCV (~100 MB)
 embed = ["sentence-transformers>=6.1", "numpy"]  # local embeddings (pulls in PyTorch)
-dev = ["pytest", "python-docx", "numpy"]
+db = ["psycopg[binary]>=3.2", "qdrant-client>=1.15", "numpy"]  # rag-ingest load
+dev = ["pytest", "python-docx", "numpy", "qdrant-client>=1.15"]
 
 [project.scripts]
 rag-ingest = "rag_ingest.cli:main"
@@ -30,8 +31,12 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-rag_ingest = ["review/*.html"]
+rag_ingest = ["review/*.html", "databases/migrations/*.sql"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src", "."]  # "." for the root-level pdf_to_docx.py
+filterwarnings = [  # Qdrant's local (":memory:") mode, the CI stand-in for the server
+    "ignore:Payload indexes have no effect in the local Qdrant",
+    "ignore:Local mode performs exact",
+]
