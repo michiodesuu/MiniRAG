@@ -35,7 +35,7 @@ class QdrantVectorStore:
         from rag_ingest.databases.settings import QdrantSettings
 
         settings = settings or QdrantSettings.from_env()
-        return cls(QdrantClient(url=settings.url, api_key=settings.api_key), collection, dim)
+        return cls(QdrantClient(url=settings.url, api_key=settings.api_key, check_compatibility=False), collection, dim)
 
     def ensure_collection(self) -> None:
         from qdrant_client import models

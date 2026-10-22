@@ -461,8 +461,12 @@ Unchanged: bge-m3 (`DEFAULT_MODEL`, tied with WangchanX again, best role accurac
 - **Parity gate** (`tests/test_qdrant_parity.py`): the committed chunks' BGE-M3 index (`BAAI-bge-m3__1a6e93b0`, 18 chunks) loaded into Qdrant and searched with plain dense search: the top 5 is identical to numpy for all 30 questions (scores within 1e-4), **R@5 0.96, MRR 0.80**, same as numpy. Set `RAG_PARITY_DOCKER=1` to repeat it on the docker Qdrant.
 - `rag-ingest load --dry-run` on the real index: 2 documents, 18 chunks (ผู้จัดการสาขา 12, ผู้จัดการเขต 6).
 
+#### Docker gotchas
+- An **empty `QDRANT_API_KEY`** makes Qdrant require a key nobody has (every request 401). Compose now refuses to start without one; set it in `.env`.
+- The client (1.19) is newer than the pinned server image (1.15.4): the client's compatibility check is switched off (`check_compatibility=False`); the calls used are basic and the tests pass.
+
 #### Still open
-- **Not yet run against the docker databases:** Docker Desktop failed to start on this machine (`opening tray: starting electron: unmarshaling start request: unexpected EOF`). The docker half of the tests (16) skipped; run `docker compose up -d && pytest tests/test_databases.py` and `RAG_PARITY_DOCKER=1 pytest tests/test_qdrant_parity.py` once it is up.
+- **Docker run (2026-10-22):** after Docker Desktop was restarted, all 40 cases of `tests/test_databases.py` passed on the real databases, the parity test passed on the docker Qdrant (`RAG_PARITY_DOCKER=1`), and `rag-ingest load` loaded 2 documents / 18 chunks, then skipped both on the second run. `eval-retrieval --backend qdrant` gives R@1 0.69, R@3 0.88, R@5 0.96, MRR 0.80.
 - A document removed from the corpus is not deleted from the databases by `load` (it only adds/replaces); `delete_document` exists on both stores for that.
 - Hybrid search, reranking, ACL and conversation tables are out of scope here.
 

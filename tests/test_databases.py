@@ -63,7 +63,8 @@ def docker_backend():
     try:
         store = PostgresChunkStore.connect(PostgresSettings.from_env())
         settings = QdrantSettings.from_env()
-        client = QdrantClient(url=settings.url, api_key=settings.api_key, timeout=3)
+        client = QdrantClient(url=settings.url, api_key=settings.api_key, timeout=3,
+                              check_compatibility=False)
         client.get_collections()
     except (RuntimeError, psycopg.OperationalError, Exception) as error:  # noqa: BLE001
         pytest.skip(f"databases not reachable ({type(error).__name__}); run `docker compose up -d`")

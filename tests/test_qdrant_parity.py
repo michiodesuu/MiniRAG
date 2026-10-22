@@ -41,7 +41,7 @@ def qdrant_clients():
         from rag_ingest.databases.settings import QdrantSettings, read_env_file
         read_env_file(PATHS.root / ".env")
         settings = QdrantSettings.from_env()
-        yield "docker", QdrantClient(url=settings.url, api_key=settings.api_key)
+        yield "docker", QdrantClient(url=settings.url, api_key=settings.api_key, check_compatibility=False)
 
 
 @pytest.fixture(scope="module")
