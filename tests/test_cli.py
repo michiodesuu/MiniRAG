@@ -44,3 +44,15 @@ def test_prompt_option(paths):
     assert engine_options(parse(paths, "--engine", "ollama"), paths)["prompt"] is None
     with pytest.raises(SystemExit, match="--prompt only applies"):
         engine_options(parse(paths, "--engine", "tesseract", "--prompt", "p.txt"), paths)
+
+
+def test_env_file_supplies_ocr_api_defaults(paths, tmp_path, monkeypatch):
+    from rag_ingest.databases.settings import read_env_file
+    env = tmp_path / ".env"
+    env.write_text("OCR_API_URL=https://x/v1\nOCR_API_MODEL=m\n", encoding="utf-8")
+    for name in ("OCR_API_URL", "OCR_API_MODEL"):
+        monkeypatch.setenv(name, "")
+        monkeypatch.delenv(name)  # restored after the test; read_env_file sets them below
+    read_env_file(env)
+    args = parse(paths, "--engine", "api")
+    assert (args.api_url, args.api_model) == ("https://x/v1", "m")

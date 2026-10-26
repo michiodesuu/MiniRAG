@@ -270,7 +270,9 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> None:
     sys.stdout.reconfigure(encoding=ENCODING)  # Thai garbles on the default Windows console
+    from rag_ingest.databases.settings import read_env_file
     paths = Paths.default()
+    read_env_file(paths.root / ".env")  # before the parser: argparse reads OCR_API_* defaults now
     args = build_parser(paths).parse_args(argv)
     args.func(args, paths)
 

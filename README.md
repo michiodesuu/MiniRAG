@@ -15,7 +15,7 @@ uv pip install --python .venv/bin/python -e ".[tesseract,api,dev]"   # Windows: 
 Extras: `docx` (Word input), `tesseract`, `paddle` (~1 GB), `ollama`, `api`, `dev`; install only what you use.
 Tesseract needs the binary with Thai data (`brew install tesseract tesseract-lang`, or winget on Windows).
 For the local vision model: `ollama pull qwen2.5vl:3b`.
-Typhoon / other OpenAI-compatible API: set `OCR_API_URL`, `OCR_API_MODEL` (and `OCR_API_KEY` if needed).
+Typhoon / other OpenAI-compatible API: set `OCR_API_URL`, `OCR_API_MODEL` (and `OCR_API_KEY` if needed) in `.env` (see `.env.example`) or the shell.
 
 ## Source documents
 ```
