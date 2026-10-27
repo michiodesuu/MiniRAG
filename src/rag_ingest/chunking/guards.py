@@ -32,6 +32,14 @@ The pipeline scans each whole document before chunking, so a number that a
 chunk split would cut in two is still caught (pipeline.mark_pii_units), and
 scans every chunk again afterwards.
 
+Names are redacted, not rejected: a Thai title (นาย, นาง, นางสาว, น.ส., ...) plus the
+word after it, and one more word if a space follows (a surname), becomes
+NAME_REDACTED in both embed_text and display_text, so neither the vectors nor the
+databases hold the name. Thai has no spaces, so a title is also the start of
+ordinary words (นายจ้าง = employer): NOT_NAMES lists the ones to leave alone.
+shortcut: a name without a title, or an ordinary word not in NOT_NAMES, is
+missed or caught wrongly; upgrade to a Thai NER model if that matters.
+
 Chunk rules (applied by the pipeline, named here so reports use one vocabulary):
   empty             drop    nothing left to embed after cleaning
   duplicate_text    drop    embed_text identical to an earlier chunk's
@@ -161,6 +169,18 @@ def _is_phone(groups: list[Group]) -> bool:
     mobile = len(digits) == 10 and digits[:2] in ("06", "08", "09")
     landline = len(digits) == 9 and digits[0] == "0" and digits[1] in "234567"
     return mobile or landline
+
+
+NAME_REDACTED = "[ชื่อ]"
+NAME_TITLES = ("นางสาว", "นายแพทย์", "นาย", "นาง", "น.ส.", "ด.ช.", "ด.ญ.", "เด็กชาย", "เด็กหญิง")
+NOT_NAMES = ("จ้าง", "ทะเบียน", "อำเภอ", "กรัฐมนตรี", "หน้า", "ทุน", "ช่าง", "พยาบาล", "แบบ", "สาว", "แพทย์")
+_NAME = re.compile(
+    rf"(?:{'|'.join(map(re.escape, NAME_TITLES))})[ \t]?(?!{'|'.join(NOT_NAMES)})[ก-๙]{{2,}}(?:[ \t][ก-๙]{{2,}})?")
+
+
+def redact_names(text: str) -> tuple[str, int]:
+    """(text with every name replaced by NAME_REDACTED, how many were replaced)."""
+    return _NAME.subn(NAME_REDACTED, text)
 
 
 @dataclass(frozen=True)

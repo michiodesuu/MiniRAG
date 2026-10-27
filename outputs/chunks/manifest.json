@@ -23,7 +23,7 @@
     }
   },
   "chunks": 18,
-  "chunks_sha256": "fa98dbac87e79beeca697a3b8e06a6e6aba5ea162fecf5e08ca803fe7f7cf8a5",
+  "chunks_sha256": "037bdbdbe898025cf38fbaa21aa4245cdd1aec76229882517521e42713c67b5a",
   "documents": {
     "ผู้จัดการสาขา": {
       "chunks": 12,
@@ -34,6 +34,7 @@
       "duplicate_screenshots": 2,
       "pii_rejections": 0,
       "phone_flags": 2,
+      "name_redactions": 2,
       "missing_ocr": 0,
       "empty": 0,
       "oversize": 0
@@ -47,6 +48,7 @@
       "duplicate_screenshots": 0,
       "pii_rejections": 0,
       "phone_flags": 0,
+      "name_redactions": 0,
       "missing_ocr": 0,
       "empty": 0,
       "oversize": 0

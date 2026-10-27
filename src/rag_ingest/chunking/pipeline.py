@@ -51,6 +51,7 @@ class DocumentCounts:
     duplicate_screenshots: int = 0
     pii_rejections: int = 0
     phone_flags: int = 0
+    name_redactions: int = 0
     missing_ocr: int = 0
     empty: int = 0
     oversize: int = 0
@@ -158,7 +159,7 @@ def make_chunk(draft: Draft, header: str, index: int, doc: DocumentContext,
                count: Callable[[str], int]) -> dict:
     units = draft.units
     body = nfc(draft.body)
-    embed_text = f"{header}\n{body}" if header and body else body
+    embed_text, names = guards.redact_names(f"{header}\n{body}" if header and body else body)
     shots = [u for u in units if u.kind == Kind.SCREENSHOT]
     pages = [u.page for u in units]
     return {
@@ -172,7 +173,8 @@ def make_chunk(draft: Draft, header: str, index: int, doc: DocumentContext,
         "missing_ocr": sum(1 for u in units if u.kind == Kind.PLACEHOLDER),
         "duplicate_screenshots": sum(1 for u in shots if u.duplicate_of_md5),
         "tokens": count(embed_text),
-        "embed_text": embed_text, "display_text": draft.display,
+        "name_redactions": names,
+        "embed_text": embed_text, "display_text": guards.redact_names(draft.display)[0],
         "source_sha256": doc.sha256,
         "char_start": min(u.start for u in units), "char_end": max(u.end for u in units),
     }
@@ -285,6 +287,7 @@ def chunk_document(path: Path, images, doc: DocumentContext, chunker: Chunker,
     for index, (draft, header) in enumerate(chunker.document_drafts(units, doc.stem, counts)):
         chunk = make_chunk(draft, header, index, doc, chunker.count)
         counts.missing_ocr += chunk["missing_ocr"]
+        counts.name_redactions += chunk["name_redactions"]
         counts.duplicate_screenshots += chunk["duplicate_screenshots"]
         if apply_guards(chunk, run, corpus, counts, any(u.pii for u in draft.units)):
             run.chunks.append(chunk)
@@ -324,7 +327,7 @@ def summary(run: ChunkRun) -> str:
         lines.append(f"  {doc}: {c.chunks} chunks, contents pages dropped {c.toc_pages_dropped or '-'}, "
                      f"duplicates {c.duplicates}, repeated screenshots {c.duplicate_screenshots}, "
                      f"missing OCR {c.missing_ocr}, PII rejected {c.pii_rejections}, "
-                     f"phone flags {c.phone_flags}, oversize {c.oversize}")
+                     f"phone flags {c.phone_flags}, names redacted {c.name_redactions}, oversize {c.oversize}")
     lines += [f"Excluded: {e['document']} ({e['reason']})" for e in run.excluded]
     lines += [f"Rejected: {r['chunk_id']} [{r['rule']}] {r['field']} @{r['start']}+{r['length']}"
               for r in run.rejected]
