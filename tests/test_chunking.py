@@ -282,6 +282,21 @@ def test_overlap_cut_inside_a_name_does_not_keep_the_surname(corpus):
                 assert "ใจดี" not in chunk["embed_text"] + chunk["display_text"]
 
 
+def test_name_formed_only_by_rendering_is_redacted(corpus):
+    # Screenshot cleaning turns the checkbox glyph into a space: "นาย☐สมชาย" only then reads as a name.
+    text = (corpus.ingest_dir / "คู่มือเขต.md").read_text(encoding="utf-8")
+    (corpus.ingest_dir / "คู่มือเขต.md").write_text(
+        text + "\n\n[ภาพหน้าจอ]\nผู้ใช้ นาย☐สมชาย ใจดี\n[/ภาพหน้าจอ]\n", encoding="utf-8")
+    for chunk in run(corpus).chunks:
+        assert "สมชาย" not in chunk["embed_text"] + chunk["display_text"]
+
+
+def test_name_in_document_name_is_not_in_the_context_header(corpus):
+    (corpus.ingest_dir / "คู่มือ นายสมชาย.md").write_text("# บทนำ\n\nข้อความทั่วไป\n", encoding="utf-8")
+    chunks = chunks_of(run(corpus), "คู่มือ นายสมชาย")
+    assert chunks and all("สมชาย" not in c["embed_text"] for c in chunks)
+
+
 @pytest.mark.parametrize("text, expected", [
     ("นาย จ้าง", "[ชื่อ]"),                                  # a space after the title: a name, not a compound
     ("นาย๑๒๓", "นาย๑๒๓"),                                    # Thai digits are not name characters

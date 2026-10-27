@@ -171,7 +171,7 @@ def make_chunk(draft: Draft, header: str, index: int, doc: DocumentContext,
                count: Callable[[str], int]) -> dict:
     units = draft.units
     body = nfc(draft.body)
-    embed_text = f"{header}\n{body}" if header and body else body
+    embed_text = guards.redact_names(f"{header}\n{body}" if header and body else body)[0]  # backstop
     shots = [u for u in units if u.kind == Kind.SCREENSHOT]
     pages = [u.page for u in units]
     return {
@@ -185,7 +185,8 @@ def make_chunk(draft: Draft, header: str, index: int, doc: DocumentContext,
         "missing_ocr": sum(1 for u in units if u.kind == Kind.PLACEHOLDER),
         "duplicate_screenshots": sum(1 for u in shots if u.duplicate_of_md5),
         "tokens": count(embed_text),
-        "embed_text": embed_text, "display_text": draft.display,
+        "embed_text": embed_text,
+        "display_text": guards.redact_names(draft.display)[0],
         "source_sha256": doc.sha256,
         "char_start": min(u.start for u in units), "char_end": max(u.end for u in units),
     }
@@ -196,7 +197,7 @@ class Chunker:
         self.settings, self.count = settings, count
 
     def header(self, stem: str, section: str) -> str:
-        return context_header(stem, section) if self.settings.context_header else ""
+        return guards.redact_names(context_header(stem, section))[0] if self.settings.context_header else ""
 
     def room_for(self, header: str) -> Callable[[str], int]:
         """Tokens left in the budget for a chunk body under this header."""
