@@ -23,7 +23,7 @@
     }
   },
   "chunks": 18,
-  "chunks_sha256": "a69e4a39423214913ebe0c86f9ab6f1535d40678cf851ec06c3326af3719b09b",
+  "chunks_sha256": "3234418fa014dd39dfa002a708da07c3b160c83152ddc4d3a4c513a3c31303a3",
   "documents": {
     "ผู้จัดการสาขา": {
       "chunks": 12,
@@ -34,7 +34,7 @@
       "duplicate_screenshots": 2,
       "pii_rejections": 0,
       "phone_flags": 2,
-      "name_redactions": 2,
+      "name_redactions": 15,
       "missing_ocr": 0,
       "empty": 0,
       "oversize": 0
@@ -48,7 +48,7 @@
       "duplicate_screenshots": 0,
       "pii_rejections": 0,
       "phone_flags": 0,
-      "name_redactions": 0,
+      "name_redactions": 3,
       "missing_ocr": 0,
       "empty": 0,
       "oversize": 0
@@ -63,7 +63,7 @@
       "rule": "phone_number",
       "action": "flag",
       "field": "embed_text",
-      "start": 1081,
+      "start": 1051,
       "length": 10
     },
     {
@@ -72,7 +72,7 @@
       "rule": "phone_number",
       "action": "flag",
       "field": "display_text",
-      "start": 1042,
+      "start": 1012,
       "length": 10
     }
   ],
@@ -83,5 +83,8 @@
   "exclusion_fingerprints": {
     "images": 38,
     "files_not_found": []
+  },
+  "name_denylist": {
+    "entries": 6
   }
 }
