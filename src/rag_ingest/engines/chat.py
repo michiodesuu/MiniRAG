@@ -20,6 +20,9 @@ class ChatClient:
             raise ValueError("Chat API URL must not be empty")
         if not model:
             raise ValueError("Chat model must not be empty")
+        parts = urlsplit(url)
+        if parts.scheme not in {"http", "https"} or not parts.hostname:
+            raise ValueError("Chat API URL must be an absolute HTTP(S) URL")
         self._httpx = httpx
         self.url = url
         self.model = model
@@ -48,16 +51,21 @@ class ChatClient:
                 raise ValueError("max_tokens must be greater than zero")
             payload["max_tokens"] = max_tokens
         headers = {"Authorization": f"Bearer {self._key}"} if self._key else {}
-        response = self._httpx.post(
-            self.url, json=payload, headers=headers, timeout=self.timeout
-        )
+        try:
+            response = self._httpx.post(
+                self.url, json=payload, headers=headers, timeout=self.timeout
+            )
+        except self._httpx.HTTPError as error:
+            raise RuntimeError(
+                f"Chat API at {_endpoint(self.url)} request failed ({type(error).__name__})"
+            ) from error
         if response.status_code >= 400:
             raise RuntimeError(
                 f"Chat API at {_endpoint(self.url)} answered HTTP {response.status_code}"
             )
         try:
             content = response.json()["choices"][0]["message"]["content"]
-        except (IndexError, KeyError, TypeError) as error:
+        except (IndexError, KeyError, TypeError, ValueError) as error:
             raise ValueError("Chat API returned an invalid OpenAI-compatible response") from error
         if not isinstance(content, str) or not content.strip():
             raise ValueError("Chat API returned empty or non-text content")

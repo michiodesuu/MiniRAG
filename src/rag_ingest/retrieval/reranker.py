@@ -20,6 +20,9 @@ class RerankerClient:
             raise ValueError("Reranker API URL must not be empty")
         if not model:
             raise ValueError("Reranker model must not be empty")
+        parts = urlsplit(url)
+        if parts.scheme not in {"http", "https"} or not parts.hostname:
+            raise ValueError("Reranker API URL must be an absolute HTTP(S) URL")
         self._httpx = httpx
         self.url = url
         self.model = model
@@ -50,17 +53,22 @@ class RerankerClient:
 
         count = min(top_n, len(hits)) if top_n is not None else len(hits)
         headers = {"Authorization": f"Bearer {self._key}"} if self._key else {}
-        response = self._httpx.post(
-            self.url,
-            json={
-                "model": self.model,
-                "query": query,
-                "documents": [texts[hit.chunk_id] for hit in hits],
-                "top_n": count,
-            },
-            headers=headers,
-            timeout=self.timeout,
-        )
+        try:
+            response = self._httpx.post(
+                self.url,
+                json={
+                    "model": self.model,
+                    "query": query,
+                    "documents": [texts[hit.chunk_id] for hit in hits],
+                    "top_n": count,
+                },
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except self._httpx.HTTPError as error:
+            raise RuntimeError(
+                f"Reranker API at {_endpoint(self.url)} request failed ({type(error).__name__})"
+            ) from error
         if response.status_code >= 400:
             raise RuntimeError(
                 f"Reranker API at {_endpoint(self.url)} answered HTTP {response.status_code}"
