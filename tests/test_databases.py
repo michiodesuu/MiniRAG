@@ -141,7 +141,7 @@ def test_migrations_apply_once(backend):
     first = backend.chunk_store.migrate()
     assert backend.chunk_store.migrate() == []
     if not isinstance(backend.chunk_store, MemoryChunkStore):
-        assert first == ["001_documents_chunks"]
+        assert first == ["001_documents_chunks", "002_conversation_memory"]
 
 
 def test_load_writes_both_databases_linked_by_document(backend, corpus):
