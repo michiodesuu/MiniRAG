@@ -1,0 +1,4 @@
+# One name per line: given names and surnames separately, and every spelling the OCR produced.
+# Copy to name_denylist.txt (git-ignored). These are made-up examples.
+สมศักดิ์
+รักเรียน

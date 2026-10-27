@@ -88,7 +88,10 @@ counts tokens with the embedding model's own tokenizer (`--embedder local --mode
 `--embedder fake` for a quick run), keeps screenshots with the instruction before them,
 never crosses a section, drops contents pages, and refuses chunks holding a Thai
 national ID (exit code 1; positions only in `outputs/chunks/rejected.jsonl`).
-Documents in `config.EXCLUDED_DOCUMENTS` are never read. `embed` caches vectors in
+Person names become `[ชื่อ]` before packing (`chunking/guards.py`): after a Thai title (นาย, นาง, ...), after
+a label (`ชื่อ :`, `ชื่อ-สกุล :`), and anywhere they appear in `data/name_denylist.txt` (one name per line,
+every OCR spelling; git-ignored because it is personal data; see `data/name_denylist.example.txt`,
+`--name-denylist FILE`). Documents in `config.EXCLUDED_DOCUMENTS` are never read. `embed` caches vectors in
 `outputs/index/cache/` (not committed); `search` and `eval-retrieval` refuse an index
 whose source files changed. Models, licences and the exact text-to-vector method:
 note.md 2.17. The embedding API backend reads `EMBED_API_URL`, `EMBED_API_MODEL`,
