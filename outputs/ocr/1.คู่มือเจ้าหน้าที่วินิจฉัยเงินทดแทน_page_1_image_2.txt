@@ -1,0 +1,11 @@
+งกาาารมรลมอนดราย เนองน กากาารท กง าน บ รราา 	confidence=0.8044
+แจ้งการประสบอันตราย	confidence=0.9979
+เลขประจาตัวประชาชน	confidence=0.9696
+วันที่ประสบอันตราย *	confidence=0.9936
+12403001	confidence=1.0000
+18/05/2563	confidence=1.0000
+	confidence=0.0000
+กรอกข้อมูล	confidence=0.9900
+ล้างข้อมูล	confidence=0.9997
+Copyright © 2020 สำนักงานประกันสังคม version : 1.0.0	confidence=0.9493
+ข้อตกลงและเงื่อนไขการใช้บริการ	confidence=0.9586

@@ -1,0 +1,97 @@
+ไฟล์	confidence=0.9599
+หนาหรก	confidence=0.9420
+แทรก	confidence=0.9144
+ออกแปป	confidence=0.8334
+การอางอง	confidence=0.7791
+การสงจดหมาย	confidence=0.9415
+รว	confidence=0.4959
+มุมมอง	confidence=0.8880
+ https://classroom.google.com/u/0/c/NDcwODI2Mzc5NTRa/m…. 	confidence=0.9601
+***	confidence=0.5727
+ซ	confidence=0.1232
+Angsana New (หัวเรื่องแบา ๆ	confidence=0.9448
+14	confidence=0.9999
++	confidence=0.2185
+-ค	confidence=0.3501
+*=	confidence=0.7849
+ศ	confidence=0.1958
+B I U - ab x 2	confidence=0.7094
+PO	confidence=0.5643
+วาง	confidence=0.7863
+สิไตล์	confidence=0.7620
+CS4 ว30181 การเขียนโปรแกรมเพื่อแก้ปัญหา-ทางเลือก(ซับซ้อน).pdf	confidence=0.9554
+การ	confidence=0.9314
+PDF	confidence=0.8323
+A- - A + Aa +	confidence=0.6108
+AA	confidence=0.9604
+	confidence=0.0000
+2↓	confidence=0.4010
+11	confidence=0.2345
+ซ	confidence=0.3609
+แก้ไย ๆ	confidence=0.8637
+330191 วิทยาการคำนวณ 1 หน่วยที่ 3 การเขียนโปรแกรมเพื่อแก้ปัญหา ผู้สอน: สหัสชัย พุ่มบานเย็น	confidence=0.9653
+คลิปบอร์ด พ	confidence=0.8915
+ฟอนต์	confidence=0.9302
+	confidence=0.0000
+ย่อหน้า	confidence=0.9848
+	confidence=0.0000
+สไตส์	confidence=0.8477
+r	confidence=0.0898
+Math.round(11.5); Math.pow(2,3); Math.pow(5,2);Math.random();	confidence=0.9688
+การเปรียบเทียบ	confidence=0.9972
+การเขียนโปรแกรมแบบทางเลือก	confidence=0.9762
+7 โดยเมื่อนไย มักเป็น	confidence=0.7759
+ห้a = 2, b = 3	confidence=0.7604
+การเปรียเตีย ที่ได้	confidence=0.7937
+การเปรียบเทียนเครื่องหมาย	confidence=0.9326
+ตัวอย่าง	confidence=0.9351
+ผอคัพธ์เป็นค่า	confidence=0.6923
+มากว่า	confidence=0.9072
+>	confidence=0.9628
+a>b	confidence=0.8649
+"true" (จริง) หรือ	confidence=0.9328
+น้อยว่า	confidence=0.8224
+ตัวดำเนินการตรรกะ	confidence=0.9998
+"false" (i))	confidence=0.7249
+<	confidence=0.9742
+a<b	confidence=0.9445
+มากกว่าหรือเท่ากับ	confidence=0.9215
+>=	confidence=0.8836
+a >= b	confidence=0.7608
+บ้อยกว่าหรือเท่ากัน	confidence=0.7812
+(-	confidence=0.4314
+a <=b	confidence=0.8210
+เห่ากับ	confidence=0.8630
+ให้ a = 0, b = 1	confidence=0.9257
+==	confidence=0.7060
+a == b	confidence=0.7291
+ โดยเงื่อนไข มักเป็น	confidence=0.9309
+ไม่เท่ากัน	confidence=0.8699
+1=	confidence=0.6577
+a l= b	confidence=0.7692
+การเปรียบเทียบที่ให้	confidence=0.9652
+BLUMMILUE	confidence=0.5367
+BLMMCUI	confidence=0.6170
+CLBCC	confidence=0.6362
+LUMDSMUEM	confidence=0.4557
+อนท	confidence=0.3369
+8	confidence=0.9672
+a &b	confidence=0.9612
+"true" (จริง) หรือ	confidence=0.9836
+หรือ	confidence=0.9998
+11	confidence=0.7284
+a l b	confidence=0.7467
+"false" (เท็จ)	confidence=0.9789
+นิเสธ	confidence=0.8836
+-.	confidence=0.5032
+!b	confidence=0.9492
+ดรรกะ	confidence=0.8699
+330191 วิทยาการคำนวณ 1 หน่วยที่ 3 การเขียนโปรแกรมเพื่อแก้ปัญหา ผู้สอน: สหัส์ชัย พุมบานเย็น	confidence=0.9669
+หน้า	confidence=0.9956
+5	confidence=0.9987
+19	confidence=0.9999
+Q	confidence=0.6655
++	confidence=0.9789
+หน้า 2 จาก 2163 ค่า	confidence=0.8952
+	confidence=0.0000
+ไนทพ	confidence=0.2630
