@@ -11,6 +11,8 @@ class MemoryChunkStore:
     def __init__(self):
         self.docs: dict[str, dict] = {}
         self.chunks: dict[tuple[str, str], dict] = {}  # (index_run, chunk_id) -> row
+        self.conversations: dict[str, dict] = {}
+        self.messages: dict[str, list[dict[str, str]]] = {}
 
     def migrate(self) -> list[str]:
         return []
@@ -20,11 +22,11 @@ class MemoryChunkStore:
 
     @contextmanager
     def transaction(self):
-        saved = copy.deepcopy((self.docs, self.chunks))
+        saved = copy.deepcopy((self.docs, self.chunks, self.conversations, self.messages))
         try:
             yield self
         except BaseException:
-            self.docs, self.chunks = saved
+            self.docs, self.chunks, self.conversations, self.messages = saved
             raise
 
     def document(self, document_id: str) -> dict | None:
@@ -39,6 +41,51 @@ class MemoryChunkStore:
 
     def all_chunk_ids(self) -> list[str]:
         return sorted(c for _, c in self.chunks)
+
+    def authorized_chunk_ids(self, role: str, index_run: str, chunk_ids: list[str]) -> set[str]:
+        if not role:
+            raise ValueError("A caller role is required for ACL filtering")
+        candidates = set(chunk_ids)
+        return {
+            chunk_id
+            for (run, chunk_id), chunk in self.chunks.items()
+            if run == index_run
+            and chunk_id in candidates
+            and self.docs[chunk["document_id"]]["status"] == "verified"
+            and self.docs[chunk["document_id"]]["role"] == role
+        }
+
+    def create_conversation(self, conversation_id: str, owner_id: str) -> None:
+        if not conversation_id or not owner_id:
+            raise ValueError("Conversation ID and owner ID must not be empty")
+        existing = self.conversations.get(conversation_id)
+        if existing and existing["owner_id"] != owner_id:
+            raise ValueError("Conversation does not belong to this user")
+        self.conversations.setdefault(conversation_id, {"owner_id": owner_id})
+        self.messages.setdefault(conversation_id, [])
+
+    def conversation_history(
+        self, conversation_id: str, owner_id: str, limit: int = 20
+    ) -> list[dict[str, str]]:
+        if limit <= 0:
+            raise ValueError("History limit must be greater than zero")
+        conversation = self.conversations.get(conversation_id)
+        if not conversation or conversation["owner_id"] != owner_id:
+            raise ValueError("Conversation does not belong to this user")
+        return copy.deepcopy(self.messages[conversation_id][-limit:])
+
+    def save_turn(
+        self, conversation_id: str, owner_id: str, user_text: str, assistant_text: str
+    ) -> None:
+        if not user_text or not assistant_text:
+            raise ValueError("Conversation messages must not be empty")
+        conversation = self.conversations.get(conversation_id)
+        if not conversation or conversation["owner_id"] != owner_id:
+            raise ValueError("Conversation does not belong to this user")
+        self.messages[conversation_id].extend([
+            {"role": "user", "content": user_text},
+            {"role": "assistant", "content": assistant_text},
+        ])
 
     def index_runs(self, document_id: str) -> list[str]:
         return sorted({run for (run, _), row in self.chunks.items() if row["document_id"] == document_id})

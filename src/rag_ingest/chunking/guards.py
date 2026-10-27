@@ -32,6 +32,26 @@ The pipeline scans each whole document before chunking, so a number that a
 chunk split would cut in two is still caught (pipeline.mark_pii_units), and
 scans every chunk again afterwards.
 
+Names are redacted, not rejected: a Thai title (นาย, นาง, นางสาว, น.ส., ...) plus the
+word after it, and one more word if a space follows (a surname), becomes
+NAME_REDACTED. The pipeline redacts every unit before packing, so embed_text,
+display_text, the overlap and the section all hold the redacted text, and a chunk
+split or an overlap cut can never keep half a name. Thai has no spaces, so a title
+is also the start of ordinary words (นายจ้าง = employer): NOT_NAMES lists the ones
+to leave alone, but only when no space follows the title.
+shortcut: a name without a title, or an ordinary word not in NOT_NAMES, is
+missed or caught wrongly; upgrade to a Thai NER model if that matters.
+
+Two more name rules catch names with no title:
+  label      the value after a person's label ("ชื่อ :", "ชื่อ-สกุล :", "ชื่อผู้เขียนรายงาน :"),
+             up to 3 words on the same line; "ชื่อสาขา :" is not a person's label
+  deny-list  names listed in a file (data/name_denylist.txt, git-ignored: it is
+             personal data itself), one per line, given names and surnames
+             separately; each is redacted wherever it appears, neighbours merged
+             into one NAME_REDACTED. Spellings differ between OCR engines, so list
+             the variants. Entries need MIN_DENY_CHARS characters, because Thai has
+             no word boundaries and a short entry would hit ordinary words.
+
 Chunk rules (applied by the pipeline, named here so reports use one vocabulary):
   empty             drop    nothing left to embed after cleaning
   duplicate_text    drop    embed_text identical to an earlier chunk's
@@ -41,9 +61,12 @@ Exclusion (whole documents: by file name, and by the image fingerprints of the
 excluded files) happens before a document's text is read.
 """
 from dataclasses import dataclass
+from pathlib import Path
 import re
 import unicodedata
 from typing import Callable
+
+from rag_ingest.config import ENCODING
 
 REJECT, FLAG = "reject", "flag"
 EMPTY, DUPLICATE_TEXT, DUPLICATE_SCREENSHOTS = "empty", "duplicate_text", "duplicate_screenshots"
@@ -161,6 +184,49 @@ def _is_phone(groups: list[Group]) -> bool:
     mobile = len(digits) == 10 and digits[:2] in ("06", "08", "09")
     landline = len(digits) == 9 and digits[0] == "0" and digits[1] in "234567"
     return mobile or landline
+
+
+NAME_REDACTED = "[ชื่อ]"
+NAME_TITLES = ("นางสาว", "นายแพทย์", "นาย", "นาง", "น.ส.", "ด.ช.", "ด.ญ.", "เด็กชาย", "เด็กหญิง")
+NOT_NAMES = ("จ้าง", "ทะเบียน", "อำเภอ", "กรัฐมนตรี", "หน้า", "ทุน", "ช่าง", "พยาบาล", "แบบ", "สาว", "แพทย์")
+THAI_LETTERS = "\u0e01-\u0e3a\u0e40-\u0e4e"  # consonants, vowels, tone marks; not Thai digits
+_TITLE = "|".join(map(re.escape, NAME_TITLES))
+_WORD = rf"[{THAI_LETTERS}]{{2,}}"
+# NOT_NAMES only applies with no space after the title: a compound word has none.
+_NAME = re.compile(rf"(?:{_TITLE})(?:(?!{'|'.join(NOT_NAMES)}){_WORD}|[ \t]{_WORD})(?:[ \t]{_WORD})?")
+
+
+_LABEL = re.compile(
+    rf"(?P<label>ชื่อ(?:-?(?:นาม)?สกุล|ผู้[{THAI_LETTERS}]{{0,20}})?[ \t]*[:：][ \t]*)"
+    rf"{_WORD}(?:[ \t]{_WORD}){{0,2}}")
+MIN_DENY_CHARS = 3
+_deny: re.Pattern | None = None  # module state: set once per run by the chunk command
+
+
+def set_name_denylist(names: list[str]) -> None:
+    global _deny
+    names = sorted({unicodedata.normalize("NFC", n.strip()) for n in names if n.strip()}, key=len, reverse=True)
+    if short := [n for n in names if len(n) < MIN_DENY_CHARS]:
+        raise ValueError(f"Deny-list entries need at least {MIN_DENY_CHARS} characters "
+                         f"(a shorter one would hit ordinary words); entry {short[0]!r} is too short")
+    token = "|".join(map(re.escape, names))
+    _deny = re.compile(rf"(?:{token})(?:[ \t](?:{token}))*", re.IGNORECASE) if names else None
+
+
+def load_name_denylist(path: Path) -> int:
+    """Install the names in a file (one per line, # comments); returns how many."""
+    lines = [line.strip() for line in path.read_text(encoding=ENCODING).splitlines()]
+    names = [line for line in lines if line and not line.startswith("#")]
+    set_name_denylist(names)
+    return len(names)
+
+
+def redact_names(text: str) -> tuple[str, int]:
+    """(text with every name replaced by NAME_REDACTED, how many were replaced)."""
+    text, titled = _NAME.subn(NAME_REDACTED, unicodedata.normalize("NFC", text))
+    text, labelled = _LABEL.subn(lambda m: m["label"] + NAME_REDACTED, text)
+    text, listed = _deny.subn(NAME_REDACTED, text) if _deny else (text, 0)
+    return text, titled + labelled + listed
 
 
 @dataclass(frozen=True)

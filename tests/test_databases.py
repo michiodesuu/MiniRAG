@@ -21,7 +21,9 @@ from rag_ingest.cli import main  # noqa: E402
 from rag_ingest.databases.loader import UnsafeLoadError, chunk_type, plan_load, run_load  # noqa: E402
 from rag_ingest.databases.memory import MemoryChunkStore  # noqa: E402
 from rag_ingest.databases.qdrant import QdrantVectorStore, point_id  # noqa: E402
+from rag_ingest.retrieval.access import filter_authorized_hits  # noqa: E402
 from rag_ingest.retrieval.indexing import EmbedderSpec, StaleIndexError, build_index, load_index  # noqa: E402
+from rag_ingest.retrieval.vectorstore import Hit  # noqa: E402
 from rag_ingest.tokens import approximate_tokens  # noqa: E402
 
 EXCLUDED_STEM = "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน"  # the real excluded PDF's stem (config.py)
@@ -139,7 +141,7 @@ def test_migrations_apply_once(backend):
     first = backend.chunk_store.migrate()
     assert backend.chunk_store.migrate() == []
     if not isinstance(backend.chunk_store, MemoryChunkStore):
-        assert first == ["001_documents_chunks"]
+        assert first == ["001_documents_chunks", "002_conversation_memory"]
 
 
 def test_load_writes_both_databases_linked_by_document(backend, corpus):
@@ -239,6 +241,28 @@ def test_status_is_kept_unless_given(backend, corpus):
     assert result.loaded == [] and backend.chunk_store.document("คู่มือเขต")["status"] == "verified"
     backend.load(corpus.plan(folder, status="unverified"))
     assert backend.chunk_store.document("คู่มือเขต")["status"] == "unverified"
+
+
+def test_acl_filters_unverified_and_other_roles(backend, corpus):
+    plan = corpus.plan(corpus.index(), status="verified")
+    backend.load(plan)
+    candidates = [
+        Hit(chunk_id, 1.0, {})
+        for document in plan.documents
+        for chunk_id in (chunk["chunk_id"] for chunk in document.chunks)
+    ]
+
+    authorized = filter_authorized_hits(candidates, backend.chunk_store, "branch_manager", plan.run)
+    assert authorized
+    assert all(hit.chunk_id.startswith("คู่มือสาขา#") for hit in authorized)
+
+    if isinstance(backend.chunk_store, MemoryChunkStore):
+        backend.chunk_store.docs["คู่มือสาขา"]["status"] = "unverified"
+    else:
+        backend.chunk_store.conn.execute(
+            "UPDATE documents SET status = 'unverified' WHERE id = %s", ("คู่มือสาขา",)
+        )
+    assert filter_authorized_hits(candidates, backend.chunk_store, "branch_manager", plan.run) == []
 
 
 # --- all or nothing ----------------------------------------------------------------------------

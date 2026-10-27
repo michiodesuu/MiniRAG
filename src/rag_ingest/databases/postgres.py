@@ -74,6 +74,79 @@ class PostgresChunkStore:
     def all_chunk_ids(self) -> list[str]:
         return [r["chunk_id"] for r in self.conn.execute("SELECT chunk_id FROM chunks ORDER BY chunk_id")]
 
+    def authorized_chunk_ids(self, role: str, index_run: str, chunk_ids: list[str]) -> set[str]:
+        """Return candidates from verified documents assigned to the caller's role."""
+        if not role:
+            raise ValueError("A caller role is required for ACL filtering")
+        if not chunk_ids:
+            return set()
+        rows = self.conn.execute(
+            "SELECT c.chunk_id FROM chunks c JOIN documents d ON d.id = c.document_id "
+            "WHERE d.status = 'verified' AND d.role = %s AND c.index_run = %s "
+            "AND c.chunk_id = ANY(%s)",
+            (role, index_run, chunk_ids),
+        )
+        return {row["chunk_id"] for row in rows}
+
+    def create_conversation(self, conversation_id: str, owner_id: str) -> None:
+        if not conversation_id or not owner_id:
+            raise ValueError("Conversation ID and owner ID must not be empty")
+        with self.conn.transaction():
+            inserted = self.conn.execute(
+                "INSERT INTO conversations (id, owner_id) VALUES (%s, %s) "
+                "ON CONFLICT (id) DO NOTHING RETURNING id",
+                (conversation_id, owner_id),
+            ).fetchone()
+            if not inserted:
+                row = self.conn.execute(
+                    "SELECT owner_id FROM conversations WHERE id = %s", (conversation_id,)
+                ).fetchone()
+                if not row or row["owner_id"] != owner_id:
+                    raise ValueError("Conversation does not belong to this user")
+
+    def conversation_history(
+        self, conversation_id: str, owner_id: str, limit: int = 20
+    ) -> list[dict[str, str]]:
+        if limit <= 0:
+            raise ValueError("History limit must be greater than zero")
+        if not self.conn.execute(
+            "SELECT 1 FROM conversations WHERE id = %s AND owner_id = %s",
+            (conversation_id, owner_id),
+        ).fetchone():
+            raise ValueError("Conversation does not belong to this user")
+        rows = self.conn.execute(
+            "SELECT m.role, m.content FROM conversation_messages m "
+            "JOIN conversations c ON c.id = m.conversation_id "
+            "WHERE c.id = %s AND c.owner_id = %s "
+            "ORDER BY m.id DESC LIMIT %s",
+            (conversation_id, owner_id, limit),
+        ).fetchall()
+        return list(reversed(rows))
+
+    def save_turn(
+        self, conversation_id: str, owner_id: str, user_text: str, assistant_text: str
+    ) -> None:
+        if not user_text or not assistant_text:
+            raise ValueError("Conversation messages must not be empty")
+        with self.conn.transaction():
+            if not self.conn.execute(
+                "SELECT 1 FROM conversations WHERE id = %s AND owner_id = %s FOR UPDATE",
+                (conversation_id, owner_id),
+            ).fetchone():
+                raise ValueError("Conversation does not belong to this user")
+            with self.conn.cursor() as cursor:
+                cursor.executemany(
+                    "INSERT INTO conversation_messages (conversation_id, role, content) "
+                    "VALUES (%s, %s, %s)",
+                    [
+                        (conversation_id, "user", user_text),
+                        (conversation_id, "assistant", assistant_text),
+                    ],
+                )
+            self.conn.execute(
+                "UPDATE conversations SET updated_at = now() WHERE id = %s", (conversation_id,)
+            )
+
     def index_runs(self, document_id: str) -> list[str]:
         rows = self.conn.execute("SELECT DISTINCT index_run FROM chunks WHERE document_id = %s ORDER BY 1",
                                  (document_id,))

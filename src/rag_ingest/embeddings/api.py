@@ -92,8 +92,9 @@ class ApiEmbedder:
 
 def api_options(args: argparse.Namespace) -> dict:
     url = args.api_url or os.environ.get("EMBED_API_URL")
-    model = args.api_model or os.environ.get("EMBED_API_MODEL")
+    model = args.api_model or os.environ.get("EMBED_API_MODEL") or os.environ.get("EMBEDDING_MODEL")
     if not (url and model):
-        sys.exit("--embedder api needs --api-url and --api-model (or EMBED_API_URL / EMBED_API_MODEL)")
+        sys.exit("--embedder api needs --api-url and --api-model "
+                 "(or EMBED_API_URL / EMBED_API_MODEL / EMBEDDING_MODEL)")
     return {"url": url, "model": model, "key": os.environ.get("EMBED_API_KEY"),
             "tokenizer": args.tokenizer, "revision": os.environ.get("EMBED_API_REVISION")}

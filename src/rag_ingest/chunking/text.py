@@ -21,7 +21,7 @@ from typing import Callable
 import re
 import unicodedata
 
-from rag_ingest.chunking import tables
+from rag_ingest.chunking import guards, tables
 from rag_ingest.chunking.units import Kind, Unit
 
 SCREENSHOT_OPEN, SCREENSHOT_CLOSE = "[ภาพหน้าจอ]", "[/ภาพหน้าจอ]"
@@ -88,13 +88,22 @@ def _mixed_segments(text: str, mode: str, tidy: Tidy) -> list[Segment]:
     return out + _line_segments(text[cursor:], mode, tidy)
 
 
+def _redacted(segment: Segment) -> Segment:
+    return Segment(guards.redact_names(segment.text)[0],
+                   tuple(guards.redact_names(line)[0] for line in segment.header))
+
+
 def unit_segments(unit: Unit, fmt: TableFormat) -> list[Segment]:
-    """The unit rendered for the model (duplicates included; see embed_segments)."""
+    """The unit rendered for the model (duplicates included; see embed_segments).
+    Names are redacted again after rendering: tidying and table parsing can join
+    a title and a name that the raw text kept apart ("นาย☐สมชาย")."""
     if unit.kind == Kind.PLACEHOLDER:
         return []
     if unit.kind == Kind.SCREENSHOT:
-        return _mixed_segments(nfc(unit.text), fmt.screenshot, tidy_ocr)
-    return _mixed_segments(nfc(unit.text), fmt.document, None)
+        segments = _mixed_segments(nfc(unit.text), fmt.screenshot, tidy_ocr)
+    else:
+        segments = _mixed_segments(nfc(unit.text), fmt.document, None)
+    return [_redacted(s) for s in segments]
 
 
 def embed_segments(unit: Unit, fmt: TableFormat) -> list[Segment]:

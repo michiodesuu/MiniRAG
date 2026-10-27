@@ -36,7 +36,11 @@ def run_search(args: argparse.Namespace, paths: Paths) -> None:
         sys.exit(str(error))
     embedder = index.embedder_spec().create()
     filters = {"role": args.role, "document": args.document, "doc_type": args.doc_type}
-    hits = index.search(embedder.embed_query(args.query), args.k, filters)
+    query_vec = embedder.embed_query(args.query)
+    if getattr(args, "hybrid", False):
+        hits = index.hybrid_search(args.query, query_vec, args.k, filters)
+    else:
+        hits = index.search(query_vec, args.k, filters)
     print(f"Index: {folder.name} ({index.manifest['embedder']['settings']['model']})")
     for rank, hit in enumerate(hits, 1):
         print(f"{rank}. {hit.score:.3f}  {hit.chunk_id}  p.{hit.pages}  {hit.meta.get('section') or '-'}")
@@ -59,6 +63,7 @@ def register(add, paths: Paths) -> None:
     p.add_argument("--role", help="Only this role, e.g. branch_manager.")
     p.add_argument("--document", help="Only this document (stem).")
     p.add_argument("--doc-type", choices=["pdf", "docx"], help="Only this source type.")
+    p.add_argument("--hybrid", action="store_true", help="Use hybrid search (Dense + BM25 + RRF).")
     p.add_argument("--index", help="Index folder (default: the newest under outputs/index).")
     p.add_argument("--ingest", default=paths.relative(paths.ingest),
                    help="Ingest folder, for the staleness check.")

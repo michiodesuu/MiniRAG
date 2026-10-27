@@ -51,6 +51,7 @@ class DocumentCounts:
     duplicate_screenshots: int = 0
     pii_rejections: int = 0
     phone_flags: int = 0
+    name_redactions: int = 0
     missing_ocr: int = 0
     empty: int = 0
     oversize: int = 0
@@ -140,6 +141,18 @@ def link_screenshots(units: list[Unit], images, corpus: Corpus) -> list[Unit]:
     return out
 
 
+def redact_units(units: list[Unit]) -> tuple[list[Unit], int]:
+    """Names out of every unit (and its section) before packing, so no later step
+    (split, overlap, header) can hold a name or half of one."""
+    out, total = [], 0
+    for unit in units:
+        text, found = guards.redact_names(unit.text)
+        section, in_section = guards.redact_names(unit.section)
+        total += found
+        out.append(unit.with_(text=text, section=section) if found or in_section else unit)
+    return out, total
+
+
 def chunk_kind(units: list[Unit]) -> str:
     has_text = any(u.kind in TEXT_KINDS for u in units)
     has_ocr = any(u.kind == Kind.SCREENSHOT for u in units)
@@ -158,7 +171,7 @@ def make_chunk(draft: Draft, header: str, index: int, doc: DocumentContext,
                count: Callable[[str], int]) -> dict:
     units = draft.units
     body = nfc(draft.body)
-    embed_text = f"{header}\n{body}" if header and body else body
+    embed_text = guards.redact_names(f"{header}\n{body}" if header and body else body)[0]  # backstop
     shots = [u for u in units if u.kind == Kind.SCREENSHOT]
     pages = [u.page for u in units]
     return {
@@ -172,7 +185,8 @@ def make_chunk(draft: Draft, header: str, index: int, doc: DocumentContext,
         "missing_ocr": sum(1 for u in units if u.kind == Kind.PLACEHOLDER),
         "duplicate_screenshots": sum(1 for u in shots if u.duplicate_of_md5),
         "tokens": count(embed_text),
-        "embed_text": embed_text, "display_text": draft.display,
+        "embed_text": embed_text,
+        "display_text": guards.redact_names(draft.display)[0],
         "source_sha256": doc.sha256,
         "char_start": min(u.start for u in units), "char_end": max(u.end for u in units),
     }
@@ -183,7 +197,7 @@ class Chunker:
         self.settings, self.count = settings, count
 
     def header(self, stem: str, section: str) -> str:
-        return context_header(stem, section) if self.settings.context_header else ""
+        return guards.redact_names(context_header(stem, section))[0] if self.settings.context_header else ""
 
     def room_for(self, header: str) -> Callable[[str], int]:
         """Tokens left in the budget for a chunk body under this header."""
@@ -281,7 +295,8 @@ def chunk_document(path: Path, images, doc: DocumentContext, chunker: Chunker,
     toc = find_table_of_contents(units)
     counts.toc_pages_dropped = sorted(toc.pages)
     units = assign_sections([u for u in units if u.page not in toc.pages], strategy_for(doc.doc_type, toc))
-    units = link_screenshots(units, images, corpus)
+    units = link_screenshots(units, images, corpus)  # needs the OCR text as ingested
+    units, counts.name_redactions = redact_units(units)
     for index, (draft, header) in enumerate(chunker.document_drafts(units, doc.stem, counts)):
         chunk = make_chunk(draft, header, index, doc, chunker.count)
         counts.missing_ocr += chunk["missing_ocr"]
@@ -324,7 +339,7 @@ def summary(run: ChunkRun) -> str:
         lines.append(f"  {doc}: {c.chunks} chunks, contents pages dropped {c.toc_pages_dropped or '-'}, "
                      f"duplicates {c.duplicates}, repeated screenshots {c.duplicate_screenshots}, "
                      f"missing OCR {c.missing_ocr}, PII rejected {c.pii_rejections}, "
-                     f"phone flags {c.phone_flags}, oversize {c.oversize}")
+                     f"phone flags {c.phone_flags}, names redacted {c.name_redactions}, oversize {c.oversize}")
     lines += [f"Excluded: {e['document']} ({e['reason']})" for e in run.excluded]
     lines += [f"Rejected: {r['chunk_id']} [{r['rule']}] {r['field']} @{r['start']}+{r['length']}"
               for r in run.rejected]
