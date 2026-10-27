@@ -261,9 +261,10 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
     # Later stages register their own commands (argument wiring lives with each stage).
     from rag_ingest.chunking.commands import register as register_chunking
     from rag_ingest.retrieval.eval_commands import register as register_eval
+    from rag_ingest.retrieval.ask_commands import register as register_ask
     from rag_ingest.retrieval.index_commands import register as register_index
     from rag_ingest.databases.commands import register as register_databases
-    for register in (register_chunking, register_index, register_eval, register_databases):
+    for register in (register_chunking, register_index, register_eval, register_databases, register_ask):
         register(add, paths)
     return parser
 
