@@ -5,7 +5,8 @@ from pathlib import Path
 import pytest
 
 from rag_ingest.chunking import ChunkSettings, CorpusConfig, chunk_corpus, write_run
-from rag_ingest.chunking.guards import scan, valid_thai_id
+from rag_ingest.chunking import guards
+from rag_ingest.chunking.guards import redact_names, scan, valid_thai_id
 from rag_ingest.chunking.pipeline import exclusion_reason
 from rag_ingest.chunking.sources import DocumentImages
 from rag_ingest.tokens import approximate_tokens
@@ -156,14 +157,14 @@ def test_word_sections_and_tables(corpus):
     assert word[0]["doc_type"] == "docx"
     table = next(c for c in word if "อนุมัติแล้ว" in c["embed_text"])
     assert table["section"] == "บทนำ › ขั้นตอนอนุมัติ"
-    assert "ชื่อ: คำขอ ก, สถานะ: อนุมัติแล้ว" in table["embed_text"]
+    assert "ชื่อ: [ชื่อ] ก, สถานะ: อนุมัติแล้ว" in table["embed_text"]  # flatten makes a "ชื่อ" column a label
     kept = next(c for c in chunks_of(run(corpus, tables="keep"), "คู่มือเขต") if "อนุมัติแล้ว" in c["embed_text"])
     assert "| คำขอ ก | อนุมัติแล้ว |" in kept["embed_text"]
 
 
 def test_html_table_in_screenshot_flattened(corpus):
     chunk = next(c for c in run(corpus, screenshot_tables="flatten").chunks if "หน้าจอหลัก" in c["embed_text"])
-    assert "ลำดับ: 1, ชื่อ: สมชาย" in chunk["embed_text"]
+    assert "ลำดับ: 1, ชื่อ: [ชื่อ]" in chunk["embed_text"]  # the name cell is redacted
     assert "<table>" not in chunk["embed_text"]
 
 
@@ -245,6 +246,114 @@ def test_valid_thai_id_rejected_and_never_written(corpus, tmp_path):
     rejected = [json.loads(line) for line in (tmp_path / "out" / "rejected.jsonl").read_text(encoding="utf-8").splitlines()]
     assert rejected[0]["rule"] == "thai_national_id"
     assert set(rejected[0]) >= {"start", "length", "field"}
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("00840 : นายสมศักดิ์ รักเรียน\nตำแหน่ง: ผู้จัดการสาขา", "00840 : [ชื่อ]\nตำแหน่ง: ผู้จัดการสาขา"),
+    ("ผู้ประสบเหตุ น.ส. สมหญิง ใจดี ได้รับบาดเจ็บ", "ผู้ประสบเหตุ [ชื่อ] ได้รับบาดเจ็บ"),
+    ("นางสาวมาลี", "[ชื่อ]"),
+    ("นายแพทย์สมชาย รักษา", "[ชื่อ]"),
+    ("นายจ้างต้องแจ้งภายใน 48 ชั่วโมง", "นายจ้างต้องแจ้งภายใน 48 ชั่วโมง"),
+    ("นายทะเบียน นายกรัฐมนตรี นางพยาบาล นางสาว", "นายทะเบียน นายกรัฐมนตรี นางพยาบาล นางสาว"),
+])
+def test_names_redacted_ordinary_words_kept(text, expected):
+    assert redact_names(text)[0] == expected
+
+
+def test_name_never_reaches_chunks_or_reports(corpus, tmp_path):
+    text = (corpus.ingest_dir / "คู่มือเขต.md").read_text(encoding="utf-8")
+    (corpus.ingest_dir / "คู่มือเขต.md").write_text(text + "\nผู้ใช้ นายสมชาย ใจดี เข้าระบบ\n", encoding="utf-8")
+    result = run(corpus)
+    assert result.documents["คู่มือเขต"].name_redactions == 1
+    write_run(result, tmp_path / "out", {"counter": "approximate"})
+    for name in ("chunks.jsonl", "manifest.json"):
+        assert "สมชาย" not in (tmp_path / "out" / name).read_text(encoding="utf-8")
+    assert any("[ชื่อ]" in c["embed_text"] and "[ชื่อ]" in c["display_text"] for c in result.chunks)
+
+
+def test_overlap_cut_inside_a_name_does_not_keep_the_surname(corpus):
+    # The overlap is whole space-separated phrases of the last line, so it can start at the surname.
+    words = " ".join(f"คำ{i}" for i in range(60))
+    text = (corpus.ingest_dir / "คู่มือเขต.md").read_text(encoding="utf-8")
+    (corpus.ingest_dir / "คู่มือเขต.md").write_text(
+        text + f"\n\n{words} นายสมชาย ใจดี\n\nข้อความถัดไป\n", encoding="utf-8")
+    for max_tokens in range(30, 90, 5):
+        for overlap in range(1, 12):
+            for chunk in run(corpus, max_tokens=max_tokens, overlap=overlap).chunks:
+                assert "ใจดี" not in chunk["embed_text"] + chunk["display_text"]
+
+
+def test_name_formed_only_by_rendering_is_redacted(corpus):
+    # Screenshot cleaning turns the checkbox glyph into a space: "นาย☐สมชาย" only then reads as a name.
+    text = (corpus.ingest_dir / "คู่มือเขต.md").read_text(encoding="utf-8")
+    (corpus.ingest_dir / "คู่มือเขต.md").write_text(
+        text + "\n\n[ภาพหน้าจอ]\nผู้ใช้ นาย☐สมชาย ใจดี\n[/ภาพหน้าจอ]\n", encoding="utf-8")
+    for chunk in run(corpus).chunks:
+        assert "สมชาย" not in chunk["embed_text"] + chunk["display_text"]
+
+
+def test_name_in_document_name_is_not_in_the_context_header(corpus):
+    (corpus.ingest_dir / "คู่มือ นายสมชาย.md").write_text("# บทนำ\n\nข้อความทั่วไป\n", encoding="utf-8")
+    chunks = chunks_of(run(corpus), "คู่มือ นายสมชาย")
+    assert chunks and all("สมชาย" not in c["embed_text"] for c in chunks)
+
+
+@pytest.fixture
+def denylist():
+    """Install a name deny-list for one test, then remove it (it is module state)."""
+    def install(*names):
+        guards.set_name_denylist(names)
+    yield install
+    guards.set_name_denylist([])
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("ชื่อผู้เขียนรายงาน : สมศักดิ์ รักเรียน\nตำแหน่ง : ผู้จัดการ", "ชื่อผู้เขียนรายงาน : [ชื่อ]\nตำแหน่ง : ผู้จัดการ"),
+    ("ชื่อ-สกุล: สมหญิง ใจดี", "ชื่อ-สกุล: [ชื่อ]"),
+    ("ชื่อ : -\nตำแหน่ง : -", "ชื่อ : -\nตำแหน่ง : -"),                      # an empty form field
+    ("ชื่อสาขา : สาขาใหญ่ เพชรบูรณ์", "ชื่อสาขา : สาขาใหญ่ เพชรบูรณ์"),        # not a person's label
+    ("ชื่อ : นายสมชาย ใจดี", "ชื่อ : [ชื่อ]"),                               # title and label together
+])
+def test_label_rule(text, expected):
+    assert redact_names(text)[0] == expected
+
+
+def test_denylist_redacts_bare_names_and_merges_neighbours(denylist):
+    denylist("สมศักดิ์", "รักเรียน", "John")
+    assert redact_names("006-เพชรบูรณ์\nสมศักดิ์ รักเรียน\nเมษายน")[0] == "006-เพชรบูรณ์\n[ชื่อ]\nเมษายน"
+    assert redact_names("ผู้รับ: รักเรียน")[0] == "ผู้รับ: [ชื่อ]"
+    assert redact_names("by john")[0] == "by [ชื่อ]"
+    assert redact_names("ไม่มีชื่อ")[0] == "ไม่มีชื่อ"
+
+
+def test_denylist_rejects_entries_that_would_hit_ordinary_text(denylist):
+    with pytest.raises(ValueError, match="at least"):
+        guards.set_name_denylist(["สม"])
+
+
+def test_denylist_file_skips_comments_and_blank_lines(tmp_path, denylist):
+    path = tmp_path / "names.txt"
+    path.write_text("# people\n\nสมศักดิ์\n  รักเรียน  \n", encoding="utf-8")
+    assert guards.load_name_denylist(path) == 2
+    assert redact_names("สมศักดิ์")[0] == "[ชื่อ]"
+
+
+def test_denylisted_name_never_reaches_chunks_or_reports(corpus, tmp_path, denylist):
+    denylist("รักเรียน")
+    text = (corpus.ingest_dir / "คู่มือเขต.md").read_text(encoding="utf-8")
+    (corpus.ingest_dir / "คู่มือเขต.md").write_text(text + "\n006-เพชรบูรณ์\nสมศักดิ์ รักเรียน\n", encoding="utf-8")
+    result = run(corpus)
+    write_run(result, tmp_path / "out", {"counter": "approximate"})
+    for name in ("chunks.jsonl", "manifest.json"):
+        assert "รักเรียน" not in (tmp_path / "out" / name).read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("นาย จ้าง", "[ชื่อ]"),                                  # a space after the title: a name, not a compound
+    ("นาย๑๒๓", "นาย๑๒๓"),                                    # Thai digits are not name characters
+])
+def test_name_rule_edges(text, expected):
+    assert redact_names(text)[0] == expected
 
 
 def test_excluded_documents_skipped_and_reported(corpus):

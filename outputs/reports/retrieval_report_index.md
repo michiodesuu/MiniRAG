@@ -8,23 +8,23 @@ Recall@k and MRR count answerable questions; *threshold* is the top score below 
 
 | configuration | chunks | R@1 | R@3 | R@5 | MRR | role acc | threshold | false answer | answerable refused | ms/query | embed s |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| BAAI-bge-m3__1a6e93b0 (qdrant) | 18 | 0.69 | 0.88 | 0.96 | 0.80 | 0.96 | 0.57 | 0.00 | 0.04 | 208 | 0.0 |
+| BAAI-bge-m3__1a6e93b0 | 18 | 0.69 | 0.88 | 0.96 | 0.80 | 0.96 | 0.57 | 0.00 | 0.04 | 442 | 0.0 |
 
 ## Best configuration per question type
 
 | type | questions | configuration | R@1 | R@3 | R@5 | MRR |
 |---|---|---|---|---|---|---|
-| cross_role | 6 | BAAI-bge-m3__1a6e93b0 (qdrant) | 0.67 | 0.67 | 0.83 | 0.71 |
-| screenshot_only | 6 | BAAI-bge-m3__1a6e93b0 (qdrant) | 1.00 | 1.00 | 1.00 | 1.00 |
-| text | 14 | BAAI-bge-m3__1a6e93b0 (qdrant) | 0.57 | 0.93 | 1.00 | 0.76 |
+| cross_role | 6 | BAAI-bge-m3__1a6e93b0 | 0.67 | 0.67 | 0.83 | 0.71 |
+| screenshot_only | 6 | BAAI-bge-m3__1a6e93b0 | 1.00 | 1.00 | 1.00 | 1.00 |
+| text | 14 | BAAI-bge-m3__1a6e93b0 | 0.57 | 0.93 | 1.00 | 0.76 |
 
 ## No-answer questions: best "not found" threshold
 
 | configuration | threshold | balanced accuracy | false answer | answerable refused |
 |---|---|---|---|---|
-| BAAI-bge-m3__1a6e93b0 (qdrant) | 0.57 | 0.98 | 0.00 | 0.04 |
+| BAAI-bge-m3__1a6e93b0 | 0.57 | 0.98 | 0.00 | 0.04 |
 
-## Per question: BAAI-bge-m3__1a6e93b0 (qdrant)
+## Per question: BAAI-bge-m3__1a6e93b0
 
 | id | type | first relevant rank | top score | top role |
 |---|---|---|---|---|
