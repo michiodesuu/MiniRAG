@@ -31,7 +31,8 @@ from rag_ingest.config import ENCODING
 from rag_ingest.embeddings import create_embedder
 from rag_ingest.embeddings.cache import EmbeddingCache, embed_with_cache
 from rag_ingest.embeddings.profiles import profile
-from rag_ingest.retrieval.vectorstore import Hit, NumpyVectorStore
+from rag_ingest.retrieval.hybrid import BM25Index, reciprocal_rank_fusion
+from rag_ingest.retrieval.vectorstore import TEXT_FIELDS, Hit, NumpyVectorStore
 
 MANIFEST, CHUNKS_FILE, CACHE_DIR = "manifest.json", "chunks.jsonl", "cache"
 
@@ -159,12 +160,30 @@ class LoadedIndex:
     manifest: dict
     store: NumpyVectorStore
     texts: dict[str, str]  # chunk_id -> display_text
+    bm25: BM25Index | None = None
 
     def embedder_spec(self) -> EmbedderSpec:
         return EmbedderSpec.from_manifest(self.manifest["embedder"])
 
     def search(self, query_vector, k: int, filters: dict | None = None) -> list[Hit]:
         return self.store.search(query_vector, k, filters)
+
+    def hybrid_search(
+        self,
+        query: str,
+        query_vector,
+        k: int = 10,
+        filters: dict | None = None,
+        candidate_k: int | None = None,
+        k_rrf: int = 60,
+    ) -> list[Hit]:
+        """Hybrid search combining Dense Vector Search and Sparse BM25 with RRF."""
+        pool_k = candidate_k or max(k * 2, 20)
+        dense_hits = self.search(query_vector, k=pool_k, filters=filters)
+        if self.bm25 is None:
+            return dense_hits[:k]
+        bm25_hits = self.bm25.search(query, k=pool_k, filters=filters)
+        return reciprocal_rank_fusion([dense_hits, bm25_hits], k_rrf=k_rrf, top_k=k)
 
 
 def load_index(folder: Path, ingest_dir: Path) -> LoadedIndex:
@@ -174,5 +193,13 @@ def load_index(folder: Path, ingest_dir: Path) -> LoadedIndex:
         raise StaleIndexError("Index is stale; run `rag-ingest chunk` and `rag-ingest embed` again:\n  "
                               + "\n  ".join(reasons))
     chunks = read_jsonl(Path(manifest["chunks_dir"]) / CHUNKS_FILE)
-    return LoadedIndex(folder, manifest, NumpyVectorStore.load(folder),
-                       {c["chunk_id"]: c["display_text"] for c in chunks})
+    texts = {c["chunk_id"]: c["display_text"] for c in chunks}
+    bm25 = BM25Index().fit(
+        (
+            c["chunk_id"],
+            c.get("embed_text") or c.get("display_text", ""),
+            {k: v for k, v in c.items() if k not in TEXT_FIELDS},
+        )
+        for c in chunks
+    )
+    return LoadedIndex(folder, manifest, NumpyVectorStore.load(folder), texts, bm25=bm25)

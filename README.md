@@ -94,8 +94,27 @@ every OCR spelling; git-ignored because it is personal data; see `data/name_deny
 `--name-denylist FILE`). Documents in `config.EXCLUDED_DOCUMENTS` are never read. `embed` caches vectors in
 `outputs/index/cache/` (not committed); `search` and `eval-retrieval` refuse an index
 whose source files changed. Models, licences and the exact text-to-vector method:
-note.md 2.17. The embedding API backend reads `EMBED_API_URL`, `EMBED_API_MODEL`,
-`EMBED_API_KEY`.
+note.md 2.17. The embedding API backend reads `EMBED_API_URL`, `EMBEDDING_MODEL`
+(`EMBED_API_MODEL` is also accepted as an override), and `EMBED_API_KEY`.
+Internal reranking uses a Cohere-compatible API endpoint from `RERANK_API_URL`,
+with `RERANK_MODEL` and optional `RERANK_API_KEY`. Grounded chat uses an
+OpenAI-compatible `/v1/chat/completions` endpoint from `CHAT_API_URL`, with
+`CHAT_MODEL` and optional `CHAT_API_KEY`. Put these settings in the project
+`.env`; the CLI reads it without overriding environment variables already set.
+
+The end-to-end command rewrites follow-up questions using owner-scoped chat
+history, retrieves with dense + BM25/RRF, applies the verified-document and
+role ACL from PostgreSQL, reranks authorized chunks, then generates a cited
+answer:
+```
+rag-ingest ask "แก้ไขรายการที่ยังไม่อนุมัติได้อย่างไร" --user-id employee-123 --role branch_manager
+rag-ingest ask "แล้วถ้าอนุมัติแล้วล่ะ" --user-id employee-123 --role branch_manager --conversation-id 4e5e3b2f-example
+```
+The first call prints a conversation ID to pass to later turns. In production,
+`--user-id` and `--role` must come from a trusted identity/authentication layer,
+not directly from untrusted client input. Configure a
+full Cohere-compatible rerank endpoint in `RERANK_API_URL` and a full
+OpenAI-compatible chat-completions endpoint in `CHAT_API_URL`.
 
 ### Databases (PostgreSQL + Qdrant)
 ```
@@ -105,6 +124,8 @@ docker compose up -d            # postgres:17 + qdrant, data in named volumes, b
 rag-ingest load                 # migrations run first; then the newest index under outputs/index
 ```
 - **PostgreSQL** holds `documents` (id, name, source path, content hash, role, doc type, status verified/unverified, ingested time) and `chunks` (chunk id, index run, document id, section, pages, type text/table/screenshot, text, token count, embedding model). Migrations: `src/rag_ingest/databases/migrations/`.
+- **Conversation memory** stores owner-scoped conversations and user/assistant turns in PostgreSQL; every history lookup checks both conversation ID and owner ID.
+- Retrieval ACL checks use PostgreSQL as the authority: only chunks from `verified` documents whose assigned `role` matches the caller are eligible for reranking or answer generation.
 - **Qdrant** holds one collection per index run (named like the run folder, `BAAI-bge-m3__1a6e93b0`), cosine, 1024 dims for BGE-M3. Point id = uuid5(chunk id); payload = chunk id, document, role, doc type, type, kind, section, pages. The document id links the two.
 - **Idempotent:** an unchanged document (same content hash, same chunk ids in both stores) is skipped; a changed one replaces its old chunks, in this run and in older runs' collections.
 - **All or nothing per document:** if Qdrant or the PostgreSQL commit fails, the transaction rolls back and the document's previous points are restored; the other documents still load and the command exits 1.
