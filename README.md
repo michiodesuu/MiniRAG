@@ -91,8 +91,10 @@ national ID (exit code 1; positions only in `outputs/chunks/rejected.jsonl`).
 Documents in `config.EXCLUDED_DOCUMENTS` are never read. `embed` caches vectors in
 `outputs/index/cache/` (not committed); `search` and `eval-retrieval` refuse an index
 whose source files changed. Models, licences and the exact text-to-vector method:
-note.md 2.17. The embedding API backend reads `EMBED_API_URL`, `EMBED_API_MODEL`,
-`EMBED_API_KEY`.
+note.md 2.17. The embedding API backend reads `EMBED_API_URL`, `EMBEDDING_MODEL`
+(`EMBED_API_MODEL` is also accepted as an override), and `EMBED_API_KEY`.
+Internal reranking uses a Cohere-compatible API endpoint from `RERANK_API_URL`,
+with `RERANK_MODEL` and optional `RERANK_API_KEY`.
 
 ### Databases (PostgreSQL + Qdrant)
 ```
@@ -102,6 +104,7 @@ docker compose up -d            # postgres:17 + qdrant, data in named volumes, b
 rag-ingest load                 # migrations run first; then the newest index under outputs/index
 ```
 - **PostgreSQL** holds `documents` (id, name, source path, content hash, role, doc type, status verified/unverified, ingested time) and `chunks` (chunk id, index run, document id, section, pages, type text/table/screenshot, text, token count, embedding model). Migrations: `src/rag_ingest/databases/migrations/`.
+- Retrieval ACL checks use PostgreSQL as the authority: only chunks from `verified` documents whose assigned `role` matches the caller are eligible for reranking or answer generation.
 - **Qdrant** holds one collection per index run (named like the run folder, `BAAI-bge-m3__1a6e93b0`), cosine, 1024 dims for BGE-M3. Point id = uuid5(chunk id); payload = chunk id, document, role, doc type, type, kind, section, pages. The document id links the two.
 - **Idempotent:** an unchanged document (same content hash, same chunk ids in both stores) is skipped; a changed one replaces its old chunks, in this run and in older runs' collections.
 - **All or nothing per document:** if Qdrant or the PostgreSQL commit fails, the transaction rolls back and the document's previous points are restored; the other documents still load and the command exits 1.

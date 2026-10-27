@@ -74,6 +74,20 @@ class PostgresChunkStore:
     def all_chunk_ids(self) -> list[str]:
         return [r["chunk_id"] for r in self.conn.execute("SELECT chunk_id FROM chunks ORDER BY chunk_id")]
 
+    def authorized_chunk_ids(self, role: str, index_run: str, chunk_ids: list[str]) -> set[str]:
+        """Return candidates from verified documents assigned to the caller's role."""
+        if not role:
+            raise ValueError("A caller role is required for ACL filtering")
+        if not chunk_ids:
+            return set()
+        rows = self.conn.execute(
+            "SELECT c.chunk_id FROM chunks c JOIN documents d ON d.id = c.document_id "
+            "WHERE d.status = 'verified' AND d.role = %s AND c.index_run = %s "
+            "AND c.chunk_id = ANY(%s)",
+            (role, index_run, chunk_ids),
+        )
+        return {row["chunk_id"] for row in rows}
+
     def index_runs(self, document_id: str) -> list[str]:
         rows = self.conn.execute("SELECT DISTINCT index_run FROM chunks WHERE document_id = %s ORDER BY 1",
                                  (document_id,))

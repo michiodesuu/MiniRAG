@@ -40,6 +40,19 @@ class MemoryChunkStore:
     def all_chunk_ids(self) -> list[str]:
         return sorted(c for _, c in self.chunks)
 
+    def authorized_chunk_ids(self, role: str, index_run: str, chunk_ids: list[str]) -> set[str]:
+        if not role:
+            raise ValueError("A caller role is required for ACL filtering")
+        candidates = set(chunk_ids)
+        return {
+            chunk_id
+            for (run, chunk_id), chunk in self.chunks.items()
+            if run == index_run
+            and chunk_id in candidates
+            and self.docs[chunk["document_id"]]["status"] == "verified"
+            and self.docs[chunk["document_id"]]["role"] == role
+        }
+
     def index_runs(self, document_id: str) -> list[str]:
         return sorted({run for (run, _), row in self.chunks.items() if row["document_id"] == document_id})
 
