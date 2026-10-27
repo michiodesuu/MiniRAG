@@ -271,6 +271,7 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> None:
     sys.stdout.reconfigure(encoding=ENCODING)  # Thai garbles on the default Windows console
+    from rag_ingest.databases.settings import read_env_file
     paths = Paths.default()
     from rag_ingest.databases.settings import read_env_file
     read_env_file(paths.root / ".env")

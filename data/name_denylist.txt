@@ -1,0 +1,7 @@
+# local, git-ignored: names found in the corpus (given names and surnames, every OCR spelling)
+ชัชฎมิ
+ชัชฎมี
+ชัชภูมิ
+ชัยภูมิ
+จิตรบำรุง
+จิตบำรุง
