@@ -270,6 +270,26 @@ def test_name_never_reaches_chunks_or_reports(corpus, tmp_path):
     assert any("[ชื่อ]" in c["embed_text"] and "[ชื่อ]" in c["display_text"] for c in result.chunks)
 
 
+def test_overlap_cut_inside_a_name_does_not_keep_the_surname(corpus):
+    # The overlap is whole space-separated phrases of the last line, so it can start at the surname.
+    words = " ".join(f"คำ{i}" for i in range(60))
+    text = (corpus.ingest_dir / "คู่มือเขต.md").read_text(encoding="utf-8")
+    (corpus.ingest_dir / "คู่มือเขต.md").write_text(
+        text + f"\n\n{words} นายสมชาย ใจดี\n\nข้อความถัดไป\n", encoding="utf-8")
+    for max_tokens in range(30, 90, 5):
+        for overlap in range(1, 12):
+            for chunk in run(corpus, max_tokens=max_tokens, overlap=overlap).chunks:
+                assert "ใจดี" not in chunk["embed_text"] + chunk["display_text"]
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("นาย จ้าง", "[ชื่อ]"),                                  # a space after the title: a name, not a compound
+    ("นาย๑๒๓", "นาย๑๒๓"),                                    # Thai digits are not name characters
+])
+def test_name_rule_edges(text, expected):
+    assert redact_names(text)[0] == expected
+
+
 def test_excluded_documents_skipped_and_reported(corpus):
     config = CorpusConfig(corpus.ingest_dir, corpus.documents_dir, {"คู่มือสาขา.pdf": "ข้อมูลส่วนบุคคล"},
                           frozenset({"คู่มือเขต"}), corpus.roles)

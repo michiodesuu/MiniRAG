@@ -34,9 +34,11 @@ scans every chunk again afterwards.
 
 Names are redacted, not rejected: a Thai title (นาย, นาง, นางสาว, น.ส., ...) plus the
 word after it, and one more word if a space follows (a surname), becomes
-NAME_REDACTED in both embed_text and display_text, so neither the vectors nor the
-databases hold the name. Thai has no spaces, so a title is also the start of
-ordinary words (นายจ้าง = employer): NOT_NAMES lists the ones to leave alone.
+NAME_REDACTED. The pipeline redacts every unit before packing, so embed_text,
+display_text, the overlap and the section all hold the redacted text, and a chunk
+split or an overlap cut can never keep half a name. Thai has no spaces, so a title
+is also the start of ordinary words (นายจ้าง = employer): NOT_NAMES lists the ones
+to leave alone, but only when no space follows the title.
 shortcut: a name without a title, or an ordinary word not in NOT_NAMES, is
 missed or caught wrongly; upgrade to a Thai NER model if that matters.
 
@@ -174,8 +176,11 @@ def _is_phone(groups: list[Group]) -> bool:
 NAME_REDACTED = "[ชื่อ]"
 NAME_TITLES = ("นางสาว", "นายแพทย์", "นาย", "นาง", "น.ส.", "ด.ช.", "ด.ญ.", "เด็กชาย", "เด็กหญิง")
 NOT_NAMES = ("จ้าง", "ทะเบียน", "อำเภอ", "กรัฐมนตรี", "หน้า", "ทุน", "ช่าง", "พยาบาล", "แบบ", "สาว", "แพทย์")
-_NAME = re.compile(
-    rf"(?:{'|'.join(map(re.escape, NAME_TITLES))})[ \t]?(?!{'|'.join(NOT_NAMES)})[ก-๙]{{2,}}(?:[ \t][ก-๙]{{2,}})?")
+THAI_LETTERS = "\u0e01-\u0e3a\u0e40-\u0e4e"  # consonants, vowels, tone marks; not Thai digits
+_TITLE = "|".join(map(re.escape, NAME_TITLES))
+_WORD = rf"[{THAI_LETTERS}]{{2,}}"
+# NOT_NAMES only applies with no space after the title: a compound word has none.
+_NAME = re.compile(rf"(?:{_TITLE})(?:(?!{'|'.join(NOT_NAMES)}){_WORD}|[ \t]{_WORD})(?:[ \t]{_WORD})?")
 
 
 def redact_names(text: str) -> tuple[str, int]:
