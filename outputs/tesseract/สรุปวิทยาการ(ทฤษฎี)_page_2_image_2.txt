@@ -1,0 +1,24 @@
+- Oo MHs- ๐ฮะสจุป - Microsoft Word วซ - ซม %	confidence=0.7000
+@ ๐๐ Ax สน |[ โพิง |@ ๓ | ฝี 3 ะ |@ ๑ |g om] + : a	confidence=0.5904
+BPM น้า๓ทแทรกออกแบบเค้าโครงหน้ากระดาย	confidence=0.8400
+คารส่งจดหมายจีวิวมุมมอง	confidence=0.9191
+< CS (0 @ hitps//classroom.google.com/u/0/c/NDewODI2MzcSNTRa/m... tr QB i r "Angsana New (หัวเรืองแบ 1 ฯ 14 Ae |	confidence=0.6186
+BI Uvaex, x des oon	confidence=0.4440
+. A-Y- Ara KK ~ แก้ไข ”	confidence=0.5337
+ded % a	confidence=0.5133
+Math.round(11.5); Math.pow(2,3); Math.pow(5,2); Math.random();	confidence=0.4525
+การเปรียบเทียบ	confidence=0.9392
+การเขียนโปรแกรมแบบทางเลือก	confidence=0.9514
+คัวดําเนินการตรรกะ	confidence=0.8994
+ให้ล =0 ๒ =1	confidence=0.8867
+ตัวดําเนินการเครื่องหมายตัวอย่าง	confidence=0.9413
+% โดยเงื่อนไขมักเป็น	confidence=0.9320
+การเปรียบเทียบที่ให้	confidence=0.9388
+๑ผลลัพธ์เป็นค่า & a&b	confidence=0.9229
+‘true (จริง ) หรือ | al|b	confidence=0.8558
+“false” (tna) s	confidence=0.7467
+1 ๒	confidence=0.7900
+ตรรกะ	confidence=0.9300
+& -——+—— + 10%	confidence=0.7750
+หน้า 2 จาก 2 [ปธีไทย	confidence=0.8483
+เลสล 2.	confidence=0.0975
