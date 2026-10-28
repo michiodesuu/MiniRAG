@@ -1,0 +1,2 @@
+enenUesu	confidence=0.7116
+D	confidence=0.5680

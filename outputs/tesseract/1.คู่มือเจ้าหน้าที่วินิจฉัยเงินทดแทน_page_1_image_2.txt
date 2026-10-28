@@ -1,0 +1,11 @@
+กองทุนเงินทดแทน	confidence=0.9500
+e-service wef	confidence=0.8650
+ข้อมูลส่วนตัว	confidence=0.9425
+[7 เแจ้งการประสบอันตราย 7	confidence=0.8914
+Ce รกาณายเลขประจําตัวประชาชน * วันที่ประสบอันตราย *	confidence=0.8686
+จ 1 124030011) 18/05/2563	confidence=0.3700
+©) ประวัติการแจ้งประสบอันตราย	confidence=0.9192
+@# กรอก	confidence=0.8960
+ติดต่อ	confidence=0.9383
+Copyright © 2020 สํานักงานประกันสังคม version : 1.0.0	confidence=0.9400
+ข้อตกลงและเงื่อนไขการใช้บริการ	confidence=0.9468

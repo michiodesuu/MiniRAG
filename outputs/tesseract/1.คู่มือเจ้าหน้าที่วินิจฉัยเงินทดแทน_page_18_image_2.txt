@@ -1,0 +1,3 @@
+Upload BookBank	confidence=0.9250
+Upload หน้าบัญชีธนาคาร (Book Bank) * | Choose File | No file chosen	confidence=0.9354
+Preview	confidence=0.9600
