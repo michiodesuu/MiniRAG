@@ -1,0 +1,10 @@
+instructions	confidence=0.6853
+ chomicals monu	confidence=0.3020
+.hal	confidence=0.1276
+.อ	confidence=0.1114
+...อ	confidence=0.0350
+.าr	confidence=0.0019
+...	confidence=0.1407
+ display all chemicals	confidence=0.7373
+chumical	confidence=0.1461
+acatakan da	confidence=0.0662

@@ -1,0 +1,1 @@
+ smoke aye	confidence=0.3539

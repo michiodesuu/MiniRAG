@@ -1,0 +1,5 @@
+ค้นหาดัวนปือหรือ บn	confidence=0.0779
+เชปเาบ	confidence=0.0054
+.รเาารร	confidence=0.0007
+สา	confidence=0.0422
+าา	confidence=0.0337

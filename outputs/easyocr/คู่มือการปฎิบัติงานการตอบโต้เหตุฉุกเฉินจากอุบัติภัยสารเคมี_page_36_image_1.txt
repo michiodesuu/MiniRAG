@@ -1,0 +1,2 @@
+กรมควบคุมมลพิษ	confidence=0.9068
+poluno comtpol pdptata	confidence=0.0663

@@ -1,0 +1,6 @@
+create groups of chemicala	confidence=0.3945
+tondas accss	confidence=0.0391
+.อ.	confidence=0.0085
+.ร.ร..ร..าวา	confidence=0.0011
+.nnam	confidence=0.0975
+ehamu	confidence=0.0121

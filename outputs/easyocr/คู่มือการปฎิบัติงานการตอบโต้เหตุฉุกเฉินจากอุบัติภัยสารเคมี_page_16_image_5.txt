@@ -1,0 +1,6 @@
+สาาาาาารทรรกา	confidence=0.0004
+อะาอรา	confidence=0.0055
+อาโกรรรนา	confidence=0.0007
+า	confidence=0.0929
+รนน	confidence=0.0381
+.า	confidence=0.1395

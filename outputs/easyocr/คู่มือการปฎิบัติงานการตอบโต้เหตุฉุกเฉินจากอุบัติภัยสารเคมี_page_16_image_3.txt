@@ -1,0 +1,9 @@
+ thai meteorolonical	confidence=0.3534
+.anยย	confidence=0.0211
+ uolactlon data	confidence=0.0292
+อn tปกาย	confidence=0.0030
+เาา	confidence=0.0345
+.กา	confidence=0.0764
+mt xaร	confidence=0.0094
+aอรออ	confidence=0.0002
+ส.า.รสเา	confidence=0.0001

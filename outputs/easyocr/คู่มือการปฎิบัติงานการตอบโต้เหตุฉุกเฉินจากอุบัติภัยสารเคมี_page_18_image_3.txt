@@ -1,0 +1,15 @@
+toxic threat zone	confidence=0.6801
+300	confidence=0.9841
+1od	confidence=0.1834
+wind	confidence=0.9711
+1od	confidence=0.1834
+200	confidence=0.9410
+200	confidence=0.9999
+400	confidence=0.8335
+600	confidence=0.9921
+vards	confidence=0.9064
+greater than 1ooo ppm (erp6-3)	confidence=0.6465
+greater than 15o ppm (erpg-2)	confidence=0.5243
+greater than 5o ppm (erp6-1)	confidence=0.6683
+wind direction confidence lines	confidence=0.7607
+vards	confidence=0.6803

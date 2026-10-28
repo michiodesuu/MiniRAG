@@ -1,0 +1,84 @@
+สีรุป - microsoft word	confidence=0.5668
+ออร	confidence=0.6757
+ไฟล์	confidence=0.3864
+หน้านรก	confidence=0.7903
+;=-	confidence=0.2822
+สิภแบ	confidence=0.1011
+เค้าโครงหน้ากระดาษ	confidence=0.5566
+การอ้างอัง	confidence=0.5964
+การสิงลลหมาย	confidence=0.2851
+มุมมอง	confidence=0.8840
+e  s.	confidence=0.1625
+ https:/ /classroom google.com/u/o/c/ndcwodi2mzc5ntra/m...	confidence=0.3694
+angsana new [หัว!เรือง!.ยi	confidence=0.2593
+:=	confidence=0.2073
+ehd	confidence=0.9070
+end	confidence=0.3291
+i yู	confidence=0.2594
+abe  x._	confidence=0.3391
+= = =|ส	confidence=0.3627
+๔$4 330181	confidence=0.1532
+เการเขียนโปรแกรมเพือแก้ปัญหา-ทางเลือก(ซับซ้อน).pdf	confidence=0.4759
+สี่ไตล์	confidence=0.6231
+การ	confidence=0.9903
+a	confidence=0.9803
+aa -	confidence=0.7702
+e- a.	confidence=0.1273
+แก้ไย	confidence=0.7433
+330191 วัทยาการค่านวณ	confidence=0.1558
+ทน่วยที	confidence=0.8139
+การเขียทโปรแกรมเพื่อแก้ปัญหาฺพูสอนะ สหัสสขับพุ่มบานเย็น	confidence=0.1414
+หลีปบอร์ล	confidence=0.1784
+ฟอนส์	confidence=0.3980
+ย่อหน้า	confidence=0.9386
+สสล์	confidence=0.3875
+math round[*]; มากกวา	confidence=0.2808
+ปัดขืน นอยกวา	confidence=0.5530
+.5 ปัดลง	confidence=0.6893
+ math.pouls4); x*	confidence=0.2512
+การเขียนโปรแกรมแบบทางเลือก	confidence=0.7891
+ math.random{); สุมตัวเลขเป็นทศนิยมไมเกิน	confidence=0.4684
+ตย.	confidence=0.8236
+ตัวดำเนินการเปรียบเทียบ	confidence=0.8075
+ math.pj; math sqit/4); math abs/-5); math. ceil[6.5); math ceil'3.2);	confidence=0.1899
+f โดยเงื่อนไข มักเป็น	confidence=0.2395
+ ให้ a = 2, b = 3	confidence=0.5039
+ math.ceil[-3.2]; math floor'10.5); math.floor[12.8]; math floor|-12.8];	confidence=0.1390
+การเปรียบเทียบ ทีให้	confidence=0.3799
+การเปรียบเทียบ	confidence=0.8631
+ เครืองหมาย	confidence=0.6722
+ตัวอย่าง	confidence=0.9991
+ math.round|11.5]; math.p9|2,3); mathp9!5,2]; math random[);	confidence=0.2325
+ผลลัพธ์เป็นค่า	confidence=0.7620
+ มากกว่า	confidence=0.2896
+a > b	confidence=0.8933
+การเปริยบเทียบ	confidence=0.8034
+ "true" (จริง) หรือ	confidence=0.4569
+น้อยกว่า	confidence=0.8105
+a < b	confidence=0.8764
+"false" (เท็จ)	confidence=0.9592
+ มากกว่าหรือเท่ากับ	confidence=0.6253
+>= b	confidence=0.6336
+น้อยกว่าหรือเท่ากับ	confidence=0.7901
+a <= b	confidence=0.5479
+ เท่ากับ	confidence=0.4226
+a == b	confidence=0.6161
+ ไม่เท่ากับ	confidence=0.4310
+a != b	confidence=0.1907
+ว30191 วัทยาการค่านวณ	confidence=0.4329
+หน่วยที	confidence=0.7059
+การเขียนโปรนกรมเพือนทัปัญทา ผู้สอน: สทัสส์ขัย พุ่มบานเย็น	confidence=0.2227
+หน้า	confidence=0.5970
+4i	confidence=0.8831
+หน่า	confidence=0.4481
+อาส1	confidence=0.1487
+152 อา	confidence=0.1190
+eiie	confidence=0.0653
+e	confidence=0.9950
+100 x	confidence=0.2850
+18:59	confidence=0.9932
+p#   e	confidence=0.1083
+&^." @ :))	confidence=0.0777
+ไทย	confidence=0.7474
+19/2/2563	confidence=0.8053
+=ิ	confidence=0.7868

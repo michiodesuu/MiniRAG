@@ -1,0 +1,3 @@
+.าa.aata	confidence=0.0020
+...อา	confidence=0.0149
+tundatot	confidence=0.0277

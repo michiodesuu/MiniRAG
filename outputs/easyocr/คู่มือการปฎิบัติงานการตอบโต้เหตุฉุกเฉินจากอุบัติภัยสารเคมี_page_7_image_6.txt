@@ -1,0 +1,3 @@
+atha	confidence=0.2120
+ยินดีต้อนรับ	confidence=0.4763
+..อ	confidence=0.0132

@@ -1,0 +1,7 @@
+ จุดที่	confidence=0.7123
+ศนย์วีปัสสนาวัด	confidence=0.4895
+มทาชาตฺเขาข้อย	confidence=0.2017
+ไร่แฝลทีพย์	confidence=0.4514
+คำอธิบายสัญลักษณ์	confidence=0.8342
+ บริเวณพื้นที่ล้กลอบทิ้งกากของเสีย	confidence=0.4135
+google	confidence=0.9991

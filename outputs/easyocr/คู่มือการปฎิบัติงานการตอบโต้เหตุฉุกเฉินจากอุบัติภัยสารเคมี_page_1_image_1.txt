@@ -1,0 +1,9 @@
+ คู่มือปฏิบัติงาน	confidence=0.4609
+ (work  iiaiiua[)	confidence=0.1221
+การตอบโต้เหตฉุกเฉิน	confidence=0.4628
+จากอุบัติภัยสารเคมีและวัตถุอันตราย	confidence=0.6619
+กรมควบคมมลพิษ	confidence=0.9961
+ปี	confidence=0.9891
+2568	confidence=0.9977
+กรมควบคุมมลพิษ	confidence=0.7906
+ pollution control depaatment	confidence=0.5712

@@ -1,0 +1,1 @@
+gi	confidence=0.1307

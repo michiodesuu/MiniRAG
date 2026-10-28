@@ -1,0 +1,13 @@
+ foreign location input	confidence=0.7289
+ country name:	confidence=0.8763
+thall and	confidence=0.7952
+ ofset from local stanldard time to gmt: -7.00	confidence=0.2184
+ hours	confidence=0.8435
+jeastern hemisphere is a negative offset]	confidence=0.4849
+is current model time standard or daylight savings	confidence=0.7510
+ time	confidence=0.9011
+ standard time	confidence=0.7709
+ daylight savings time	confidence=0.8936
+ok	confidence=0.9999
+ cancel	confidence=0.9419
+ help	confidence=0.9805

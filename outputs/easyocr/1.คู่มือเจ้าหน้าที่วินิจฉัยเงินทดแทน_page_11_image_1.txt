@@ -1,0 +1,1 @@
+ upload เอกสาร	confidence=0.8118
