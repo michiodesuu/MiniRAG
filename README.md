@@ -132,6 +132,16 @@ rag-ingest load                 # migrations run first; then the newest index un
 - **Never loaded:** chunks in `rejected.jsonl` (Thai national IDs), excluded documents (`config.EXCLUDED_DOCUMENTS`, the chunk manifest's `excluded`), chunks not in the current `chunks.jsonl`. Such an index is refused whole, as is a stale index or one whose manifest fails the embedder allow-list.
 - `--status verified|unverified` sets the document status; without it a stored status is kept.
 
+### Next: HTTP API (not started)
+Planned as a thin layer over what `rag-ingest ask` already does (`retrieval/ask_commands.py` `run_ask`); no new
+retrieval logic. Reuse `rewrite_query` (`retrieval/conversation.py`), the hybrid search and ACL filter
+(`retrieval/hybrid.py`, `retrieval/access.py`), `RerankerClient` (`retrieval/reranker.py`) and
+`generate_grounded_answer` (`retrieval/answer.py`). Suggested endpoints: `POST /ask`, `POST /search`, `GET /health`.
+User id and role must come from a verified token, never from the request body. Settings: `API_HOST`, `API_PORT`,
+`API_AUTH_TOKEN` (commented in `.env.example`). Put the web framework in a new `api` extra in `pyproject.toml`.
+Not in git, so set up again on each PC: `.env`, `outputs/index/` (rebuild with `embed` + `load`, or point both PCs
+at the same Qdrant/PostgreSQL), `data/name_denylist.txt`.
+
 ### Word documents
 Put `.docx` files in `data/raw/docx/`; every command handles both formats. Headings become
 `#` lines, numbered lists keep their numbers (`1.`, `2.1`, `ก)`), tables become

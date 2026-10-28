@@ -487,6 +487,12 @@ Unchanged: bge-m3 (`DEFAULT_MODEL`, tied with WangchanX again, best role accurac
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.
 - Tesseract (see 2.6) is a good second opinion where it reads text, but not a replacement for the vision model: 7/27 images came back empty, and it reads far fewer lines on large screenshots.
 
+### 2.24 Hand-off before the API work (2026-10-28, branch `feature/regenerate-ingest-index`)
+- `outputs/ingest/` regenerated with the EasyOCR source chain (images still needing OCR 188 -> 114) and `outputs/easyocr/` committed (342 images). `outputs/trocr/` (rejected experiment, 2.23) is deliberately not committed.
+- **Next: HTTP API** (see README "Next: HTTP API"). Not started: no web framework in the repo yet. It wraps `run_ask`; nothing new in retrieval.
+- **Not in git (recreate on the other PC):** `.env` (copy `.env.example`, keys from the password manager), `outputs/index/` (`embed` then `load`, or share one Qdrant/PostgreSQL), `data/name_denylist.txt`.
+- **Ports (docker compose):** PostgreSQL `127.0.0.1:5432`, Qdrant `127.0.0.1:6333`, both localhost only; override with `POSTGRES_PORT` / `QDRANT_PORT`. Both `POSTGRES_PASSWORD` and `QDRANT_API_KEY` are required.
+
 ---
 
 ## 3. What has NOT been done
