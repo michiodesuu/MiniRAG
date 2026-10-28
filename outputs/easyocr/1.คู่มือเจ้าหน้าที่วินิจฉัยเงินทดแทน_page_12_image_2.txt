@@ -1,0 +1,2 @@
+preuigw	confidence=0.1443
+ข้อมูล	confidence=0.9918

@@ -1,0 +1,17 @@
+...	confidence=0.0451
+รกากาา	confidence=0.0284
+tadeวอ	confidence=0.0156
+ai[e3aว<	confidence=0.0014
+..อ	confidence=0.0328
+.รา	confidence=0.0034
+ต.	confidence=0.0185
+chtn	confidence=0.1184
+.	confidence=0.1186
+อรร.	confidence=0.0180
+รา.	confidence=0.0675
+aae	confidence=0.0194
+.ระอาอาาา	confidence=0.0125
+alncนร.	confidence=0.0034
+ป	confidence=0.1389
+าารเาสราเ	confidence=0.0299
+วอบนโ	confidence=0.0067

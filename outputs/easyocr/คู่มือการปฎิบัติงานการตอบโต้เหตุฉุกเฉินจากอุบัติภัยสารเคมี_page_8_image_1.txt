@@ -1,0 +1,16 @@
+ chuminal	confidence=0.1130
+aอ	confidence=0.0213
+ราาร..	confidence=0.0034
+nulakahid	confidence=0.0570
+mana acid	confidence=0.0229
+nculf anmritt	confidence=0.0130
+กหาน	confidence=0.0076
+aeaเoฎ td	confidence=0.0042
+.ราเน	confidence=0.0092
+สร.า.ร.....ร.าราา	confidence=0.0002
+acantatdndd	confidence=0.0010
+accuisallcule acld	confidence=0.0235
+.สร.สา	confidence=0.0018
+acramids	confidence=0.3917
+.am nta	confidence=0.0094
+aamonitrile	confidence=0.2349

@@ -1,0 +1,5 @@
+see how chemicals may	confidence=0.7403
+readt if mixed	confidence=0.3895
+...	confidence=0.0234
+aเ	confidence=0.0370
+.สาณรย	confidence=0.0029

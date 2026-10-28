@@ -1,0 +1,16 @@
+เตส	confidence=0.0024
+ส.	confidence=0.0107
+ตอาา	confidence=0.0008
++te	confidence=0.0009
+ร	confidence=0.0130
+ptatit anlrrin	confidence=0.0338
+อ	confidence=0.0153
+aat	confidence=0.0017
+รสาา	confidence=0.0101
+..รราสาสรสา	confidence=0.0000
+รบaโร	confidence=0.0114
+อร..รง	confidence=0.0011
+eaa	confidence=0.0034
+.-	confidence=0.0041
+d	confidence=0.0329
+alt aad	confidence=0.0121

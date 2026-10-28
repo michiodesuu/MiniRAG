@@ -1,0 +1,4 @@
+ ส่งคำขอลบ	confidence=0.6696
+ต้องการลบข้อมูลใช่หรือไม่?	confidence=0.8666
+ตกลง!	confidence=0.9292
+ยคเลิก	confidence=0.4670

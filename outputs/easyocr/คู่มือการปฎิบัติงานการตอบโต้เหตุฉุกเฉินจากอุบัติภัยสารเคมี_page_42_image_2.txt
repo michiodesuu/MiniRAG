@@ -1,0 +1,12 @@
+toxic threat zone	confidence=0.8138
+ kilometers	confidence=0.9661
+1.5	confidence=0.9910
+o.5	confidence=0.4136
+ wind	confidence=0.5242
+o.5	confidence=0.6169
+1.5	confidence=0.9314
+ kilometers	confidence=0.7897
+ greater than 5700 ppm (aegl-3 [60 min])	confidence=0.6507
+ greater than 3200 ppm (aegl-2 [60 min])	confidence=0.8443
+ greater than 2oo ppm (aegl-1 [60 min])	confidence=0.6005
+ wind direction confidence lines	confidence=0.7981

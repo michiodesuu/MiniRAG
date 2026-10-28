@@ -1,0 +1,6 @@
+ลบรายการอุบัติเหตุ	confidence=0.7939
+ต้องการลบข้อมูลใช่หรือไม่	confidence=0.8385
+การ	confidence=0.9801
+การ	confidence=0.6973
+ตกลง!	confidence=0.9986
+ ยกเลิก	confidence=0.4878

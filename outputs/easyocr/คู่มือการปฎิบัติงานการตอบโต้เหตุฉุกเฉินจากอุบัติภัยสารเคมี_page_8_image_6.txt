@@ -1,0 +1,6 @@
+see phrsical properties response	confidence=0.1166
+allet	confidence=0.0012
+ส	confidence=0.0845
+ama	confidence=0.0514
+zhluเ	confidence=0.0134
+atonn	confidence=0.0006

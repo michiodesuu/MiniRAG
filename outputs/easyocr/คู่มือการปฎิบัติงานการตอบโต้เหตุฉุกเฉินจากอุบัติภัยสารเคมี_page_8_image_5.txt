@@ -1,0 +1,12 @@
+aa	confidence=0.0861
+a3	confidence=0.0988
+ae	confidence=0.1820
+ท.าสร	confidence=0.0040
+a	confidence=0.0198
+='2	confidence=0.0058
+aana	confidence=0.0144
+.	confidence=0.2767
+...ร	confidence=0.0022
+aาสา	confidence=0.0032
+นวxะา	confidence=0.0051
+สรา	confidence=0.0027

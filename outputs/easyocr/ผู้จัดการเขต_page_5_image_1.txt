@@ -1,0 +1,9 @@
+เลือกสาบา	confidence=0.8783
+qd6 -เพชริบูรณํ	confidence=0.3180
+ประเภทของรายการ	confidence=0.5489
+ทั่งหมค	confidence=0.5755
+รายเคือน	confidence=0.8778
+รายวัน	confidence=0.6405
+เมษายน	confidence=0.8819
+2567	confidence=0.9999
+เ!ออกรายงาน	confidence=0.4150

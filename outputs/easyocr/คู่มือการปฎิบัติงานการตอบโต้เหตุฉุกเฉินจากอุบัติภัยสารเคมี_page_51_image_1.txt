@@ -1,0 +1,9 @@
+จดที ๓	confidence=0.8098
+จุดที ๒	confidence=0.7752
+สภาา	confidence=0.1213
+เทเตีเษาอา	confidence=0.0104
+z	confidence=0.1113
+คำอริบายสัญลักษณ์	confidence=0.7049
+บริเวณพื้นที่ลักลอบท้งกากยองเลีย	confidence=0.4330
+google	confidence=0.8568
+จุดที่	confidence=0.7279

@@ -1,0 +1,2 @@
+upng	confidence=0.2754
+iacte layer	confidence=0.3460
