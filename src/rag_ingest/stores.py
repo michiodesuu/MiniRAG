@@ -127,6 +127,10 @@ class LineStore:
         # NaN (missing/bad confidence) never passes the threshold.
         return [l.text for l in self.lines(stem) if l.text and l.confidence >= min_confidence]
 
+    def mean_confidence(self, stem: str) -> float:
+        known = [l.confidence for l in self.lines(stem) if not math.isnan(l.confidence)]
+        return sum(known) / len(known) if known else 0.0
+
     def text(self, stem: str) -> str:
         return "\n".join(l.text for l in self.lines(stem))
 
