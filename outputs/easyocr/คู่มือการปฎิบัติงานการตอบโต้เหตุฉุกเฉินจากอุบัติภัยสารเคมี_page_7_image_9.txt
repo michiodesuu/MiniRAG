@@ -1,0 +1,9 @@
+.าอาร	confidence=0.1000
+กา..าริ-ารนนาารรา	confidence=0.0002
+วเรรา	confidence=0.0006
+..รนาอาอา	confidence=0.0003
+เมงาาเา	confidence=0.0010
+การประเบินกวานเบวนวาทบ้อนทลิง	confidence=0.0538
+ทวาลอง	confidence=0.0435
+สร	confidence=0.0180
+วรวาอ	confidence=0.0008

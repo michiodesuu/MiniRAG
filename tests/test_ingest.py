@@ -9,7 +9,7 @@ from rag_ingest.ocr_eval.compare import hint_label
 from rag_ingest.ingest import Ingestor, OcrCache, OcrSourceChain, run_ingest
 from rag_ingest.models import ImageRef
 from rag_ingest.models import EmbeddedImage, Page, TextBlock
-from rag_ingest.stores import VisionStore
+from rag_ingest.stores import LineStore, VisionStore
 from rag_ingest.textproc import NO_TEXT_MARK
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -123,6 +123,17 @@ def test_benchmark_scores_and_summary():
 
 
 def test_hint_label():
-    assert hint_label({"settings": {"paddle_hint": True, "tesseract_hint": True}}) == "P+T"
+    assert hint_label({"settings": {"easyocr_hint": True, "tesseract_hint": True}}) == "E+T"
+    assert hint_label({"settings": {"paddle_hint": True}}) == "P"  # results saved before EasyOCR
     assert hint_label({"settings": {"tesseract_hint": True}}) == "T"
     assert hint_label({}) == "-"
+
+
+def test_line_source_skips_images_read_as_noise(paths):
+    store = LineStore(paths.method("easyocr"))
+    store.folder.mkdir()
+    store.path("form").write_text("ชื่อ\tconfidence=0.60\nวันที่\tconfidence=0.50\n", encoding="utf-8")
+    store.path("photo").write_text("xQz\tconfidence=0.02\nLL\tconfidence=0.10\n", encoding="utf-8")
+    chain = OcrSourceChain([store])
+    assert chain.lookup("form")[:2] == ("ชื่อ\nวันที่", "easyocr")
+    assert chain.lookup("photo") == (None, None, [])

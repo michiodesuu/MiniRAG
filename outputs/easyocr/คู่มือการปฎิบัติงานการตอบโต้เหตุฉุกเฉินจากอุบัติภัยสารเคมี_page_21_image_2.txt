@@ -1,0 +1,4 @@
+ปก.	confidence=0.9920
+กาาทมหเาททกาพา	confidence=0.0028
+เพิษ	confidence=0.8370
+ria	confidence=0.0053

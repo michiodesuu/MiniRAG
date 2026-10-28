@@ -1,0 +1,9 @@
+เบจร์ไทรพนทอทเอม	confidence=0.1376
+ฬาวเทาเกรมเทงมหานครหรสเนว์	confidence=0.0003
+อบสิกับฎราานากนทาออกะมาวนกบ	confidence=0.0009
+เกาาาา	confidence=0.0449
+สาายาาราราา	confidence=0.0140
+...า	confidence=0.0179
+.	confidence=0.2168
+เนเอเนนาอาง	confidence=0.0062
+...าบ	confidence=0.0130

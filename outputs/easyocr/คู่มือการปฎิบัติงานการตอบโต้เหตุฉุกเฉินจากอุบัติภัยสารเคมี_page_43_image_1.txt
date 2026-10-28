@@ -1,0 +1,13 @@
+ source strength {evaporation	confidence=0.5810
+ kilograms/ minute	confidence=0.7750
+ 2,000	confidence=0.8885
+1,500	confidence=0.9942
+1,000	confidence=0.7459
+5o0	confidence=0.5182
+1o	confidence=0.7051
+20	confidence=0.9979
+30	confidence=0.8109
+40	confidence=0.9613
+50	confidence=0.6082
+minutes	confidence=0.9928
+aate)	confidence=0.5548

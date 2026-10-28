@@ -1,0 +1,2 @@
+nol upper	confidence=0.3089
+smoke.	confidence=0.5360

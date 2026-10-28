@@ -44,8 +44,8 @@ def engine_options(args, paths: Paths) -> dict:
     check_vision_flags(args)
     if args.engine == "tesseract":
         return {"upscale": args.upscale, "psm": args.psm}
-    if args.engine == "paddle":
-        return {}
+    if args.engine == "easyocr":
+        return {"upscale": args.upscale}
     vision = {"paths": paths, "hint_source": args.hint, "upscale": args.upscale,
               "prompt": paths.resolve(args.prompt) if args.prompt else None, "tile": args.tile}
     if args.engine == "ollama":
@@ -196,19 +196,19 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
     p.add_argument(OUTPUT_DIR_FLAG, default=rel(paths.outputs))
 
     p = add("ocr", cmd_ocr, "Run one OCR engine on one image or a folder.")
-    p.add_argument("--engine", choices=["tesseract", "paddle", "ollama", "api"], required=True)
+    p.add_argument("--engine", choices=["tesseract", "easyocr", "ollama", "api"], required=True)
     target = p.add_mutually_exclusive_group()
     target.add_argument("--image", help="One image instead of the whole folder.")
     target.add_argument("--images-dir", default=rel(paths.images))
     p.add_argument(OUTPUT_DIR_FLAG, help="Default: the engine's folder "
-                "(tesseract, ocr, or vision for ollama/api).")
+                "(tesseract, easyocr, or vision for ollama/api).")
     p.add_argument("--skip-existing", action="store_true", help="Resume: skip images with a result.")
     p.add_argument("--upscale", type=int, default=0, metavar="PX",
                 help="Enlarge images whose shorter side is below PX (max 4x).")
     p.add_argument("--psm", type=int, default=3, help="Tesseract page segmentation mode.")
-    p.add_argument("--hint", nargs="?", const="paddle", choices=["paddle", "tesseract", "both"],
+    p.add_argument("--hint", nargs="?", const="easyocr", choices=["easyocr", "tesseract", "both"],
                 help="Vision engines: add confident line-OCR results to the prompt "
-                        "(default source: paddle).")
+                        "(default source: easyocr).")
     p.add_argument("--prompt", metavar="FILE",
                    help="Vision engines: prompt file (default prompts/thai_document_ocr.txt). "
                         "Also: prompts/thai_document_ocr_compact.txt, or _full.txt (9k tokens, "

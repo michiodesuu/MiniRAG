@@ -1,0 +1,14 @@
+.	confidence=0.0165
+อาอารรา.	confidence=0.0000
+acetaldehyde	confidence=0.9508
+chamical inenttier	confidence=0.1288
+chiahumbct	confidence=0.0504
+.	confidence=0.2146
+กา.	confidence=0.0012
+ตรร.	confidence=0.0003
+รายางทายเnรtอเนออ	confidence=0.0000
+.อ	confidence=0.0202
+ potid	confidence=0.1306
+รว	confidence=0.0127
+ntecs umbrr	confidence=0.1471
+exrosure  etnes	confidence=0.0768

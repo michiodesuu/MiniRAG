@@ -1,0 +1,17 @@
+ height ofthe tank opening	confidence=0.4696
+lig. level_	confidence=0.4495
+the bottom df the leak is:	confidence=0.4819
+15.0	confidence=0.6939
+cm	confidence=0.8341
+above the bottom df the tank	confidence=0.4672
+or	confidence=0.9984
+75.0	confidence=0.9499
+% of	confidence=0.8058
+way to	confidence=0.8635
+top dt	confidence=0.7541
+the tank	confidence=0.9679
+ok	confidence=1.0000
+cancel	confidence=0.9607
+ help	confidence=0.8925
+ the	confidence=0.3566
+the	confidence=0.9968

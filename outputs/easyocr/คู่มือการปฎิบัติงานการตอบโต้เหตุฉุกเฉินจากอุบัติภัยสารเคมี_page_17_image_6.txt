@@ -1,0 +1,10 @@
+11:22 =	confidence=0.1772
+สมุทรปราการ	confidence=0.4491
+t4] 8	confidence=0.0022
+75?87	confidence=0.0614
+ากรสราl	confidence=0.0047
+thl	confidence=0.0292
+กtรง	confidence=0.0295
+อ^วไ	confidence=0.0236
+อง	confidence=0.1928
+วม.	confidence=0.0084

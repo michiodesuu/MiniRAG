@@ -3,7 +3,7 @@
 Extract accurate text from Thai PDF and Word (.docx) documents with embedded
 screenshots, for RAG ingestion. The documents' own text is used directly
 (PDF text layer, Word paragraphs/tables); only the screenshots are OCR'd, and
-PaddleOCR, Tesseract, a local vision model (Ollama `qwen2.5vl:3b`) and the
+EasyOCR, Tesseract, a local vision model (Ollama `qwen2.5vl:3b`) and the
 Typhoon OCR API are compared for that.
 
 Full status, results and plan: [note.md](note.md).
@@ -12,7 +12,7 @@ Full status, results and plan: [note.md](note.md).
 ```
 uv pip install --python .venv/bin/python -e ".[tesseract,api,dev]"   # Windows: .venv/Scripts/python.exe
 ```
-Extras: `docx` (Word input), `tesseract`, `paddle` (~1 GB), `ollama`, `api`, `dev`; install only what you use.
+Extras: `docx` (Word input), `tesseract`, `easyocr` (pulls in PyTorch), `ollama`, `api`, `dev`; install only what you use.
 Tesseract needs the binary with Thai data (`brew install tesseract tesseract-lang`, or winget on Windows).
 For the local vision model: `ollama pull qwen2.5vl:3b`.
 Typhoon / other OpenAI-compatible API: set `OCR_API_URL`, `OCR_API_MODEL` (and `OCR_API_KEY` if needed) in `.env` (see `.env.example`) or the shell.
@@ -47,7 +47,7 @@ screenshot) are flattened into one picture, so what was hidden stays hidden.
 ```
 rag-ingest inspect                          # text chars + images per page
 rag-ingest extract-images                   # data/raw/**/*.pdf|*.docx -> outputs/images/
-rag-ingest ocr --engine api                 # or tesseract | paddle | ollama  (--hint, --upscale, --skip-existing)
+rag-ingest ocr --engine api                 # or tesseract | easyocr | ollama  (--hint, --upscale, --skip-existing)
 rag-ingest review --dir outputs/vision_hint # correct a model's results
 rag-ingest review --blank                   # type ground truth from the image alone -> outputs/ground_truth/
 rag-ingest benchmark                        # CER + failures per method -> outputs/reports/benchmark_report.md
@@ -131,6 +131,16 @@ rag-ingest load                 # migrations run first; then the newest index un
 - **All or nothing per document:** if Qdrant or the PostgreSQL commit fails, the transaction rolls back and the document's previous points are restored; the other documents still load and the command exits 1.
 - **Never loaded:** chunks in `rejected.jsonl` (Thai national IDs), excluded documents (`config.EXCLUDED_DOCUMENTS`, the chunk manifest's `excluded`), chunks not in the current `chunks.jsonl`. Such an index is refused whole, as is a stale index or one whose manifest fails the embedder allow-list.
 - `--status verified|unverified` sets the document status; without it a stored status is kept.
+
+### Next: HTTP API (not started)
+Planned as a thin layer over what `rag-ingest ask` already does (`retrieval/ask_commands.py` `run_ask`); no new
+retrieval logic. Reuse `rewrite_query` (`retrieval/conversation.py`), the hybrid search and ACL filter
+(`retrieval/hybrid.py`, `retrieval/access.py`), `RerankerClient` (`retrieval/reranker.py`) and
+`generate_grounded_answer` (`retrieval/answer.py`). Suggested endpoints: `POST /ask`, `POST /search`, `GET /health`.
+User id and role must come from a verified token, never from the request body. Settings: `API_HOST`, `API_PORT`,
+`API_AUTH_TOKEN` (commented in `.env.example`). Put the web framework in a new `api` extra in `pyproject.toml`.
+Not in git, so set up again on each PC: `.env`, `outputs/index/` (rebuild with `embed` + `load`, or point both PCs
+at the same Qdrant/PostgreSQL), `data/name_denylist.txt`.
 
 ### Word documents
 Put `.docx` files in `data/raw/docx/`; every command handles both formats. Headings become

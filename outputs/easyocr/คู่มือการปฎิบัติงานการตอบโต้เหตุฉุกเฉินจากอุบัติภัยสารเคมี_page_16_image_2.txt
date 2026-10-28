@@ -1,0 +1,8 @@
+เปาal mcteoralanteal	confidence=0.0145
+denartm ent	confidence=0.0883
+atnmatl aathan anatam	confidence=0.0305
+นรร	confidence=0.0029
+เารวะรเงว	confidence=0.0001
+3..-	confidence=0.1156
+...า	confidence=0.0653
+..บ	confidence=0.0477

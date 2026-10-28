@@ -36,7 +36,7 @@ class OcrLine:
 class Recognition:
     """What an OCR engine returns for one image."""
     text: str
-    lines: list[OcrLine] | None = None  # line engines (Tesseract, PaddleOCR) only
+    lines: list[OcrLine] | None = None  # line engines (Tesseract, EasyOCR) only
     model: str = ""
     settings: dict = field(default_factory=dict)
     prompt_file: Path | None = None  # vision engines: the prompt actually sent

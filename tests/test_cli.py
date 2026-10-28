@@ -22,7 +22,8 @@ def test_engine_options(paths, monkeypatch):
     monkeypatch.setenv("OCR_API_KEY", "k")
     assert engine_options(parse(paths, "--engine", "tesseract", "--psm", "6"), paths) == \
         {"upscale": 0, "psm": 6}
-    assert engine_options(parse(paths, "--engine", "paddle"), paths) == {}
+    assert engine_options(parse(paths, "--engine", "easyocr", "--upscale", "800"), paths) == \
+        {"upscale": 800}
     ollama = engine_options(parse(paths, "--engine", "ollama", "--hint", "both"), paths)
     assert ollama["hint_source"] == "both" and ollama["model"] == "qwen2.5vl:3b"
     api = engine_options(parse(paths, "--engine", "api", "--api-url", "https://x/v1",

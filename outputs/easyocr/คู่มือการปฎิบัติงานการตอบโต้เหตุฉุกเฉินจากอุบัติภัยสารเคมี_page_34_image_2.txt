@@ -1,0 +1,1 @@
+hof upper	confidence=0.5649

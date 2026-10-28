@@ -470,10 +470,28 @@ Unchanged: bge-m3 (`DEFAULT_MODEL`, tied with WangchanX again, best role accurac
 - A document removed from the corpus is not deleted from the databases by `load` (it only adds/replaces); `delete_document` exists on both stores for that.
 - Hybrid search, reranking, ACL and conversation tables are out of scope here.
 
+### 2.23 PaddleOCR replaced by EasyOCR (2026-10-28, branch `feature/ocr-easyocr`)
+
+- **Why:** PaddleOCR garbled the Thai in stylised or small screenshots (e.g. `BLEWMTNRSELUN11` for the form on `1.คู่มือ…_page_3_image_1`) and needs ~1 GB of models. EasyOCR (`th` + `en`) read the same image almost completely (names, dates, account number, salary, "ตำแหน่งงาน") in ~10 s on CPU, with composed `ำ`. Its English words come out lower case.
+- **Code:** `engines/paddle.py` removed, `engines/easyocr.py` added (`EasyOcrEngine`, `--engine easyocr`, `--upscale` supported). Results go to `outputs/easyocr/` as `text<TAB>confidence=0.xxxx`, the same format as before. `--hint` now defaults to `easyocr`; `HINT_FOLDERS`, `METHODS` (benchmark column) and `rag-ingest compare` follow. The extra is `easyocr` (was `paddle`); `requirements.txt` lost `paddleocr`/`paddlepaddle`/`paddlex` and gained `easyocr`, `torch`, `torchvision` and its small dependencies.
+- **Old results kept:** `outputs/ocr/` (PaddleOCR) stays as a legacy benchmark column, and `hint_label` still reads `paddle_hint` from vision results saved before this change (shown as `P`; new runs record `easyocr_hint`, shown as `E`).
+- **Not done:** `outputs/easyocr/` is not generated yet, so the vision `--hint` and the benchmark have no EasyOCR numbers; transitive packages that only Paddle needed are still in `requirements.txt` (e.g. `bce-python-sdk`, `modelscope`, `aistudio-sdk`).
+- **Run on all 342 images (2026-10-28):** 150 have text, 192 are empty. The 59 empties with a shorter side >= 200 px that I looked at (12 sampled) are photos and diagrams with no text; the rest are small icons. On the 27 images PaddleOCR also ran, EasyOCR returns 7 empty vs 5, 711 lines vs 735. Results: `outputs/easyocr/`.
+- **Benchmark vs ground truth (18 images; 3 by a person, 15 by Claude):** mean CER easyocr 0.251, tesseract 0.291, PaddleOCR (`ocr`) 0.319; pipeline 0.164, vision_typhoon 0.225. On the 3 human-checked images easyocr 0.256 vs PaddleOCR 0.244 (too few to separate). 3-gram recall easyocr 0.787.
+- **thai-trocr tried and rejected (experiment, not in the repo):** EasyOCR boxes -> `openthaigpt/thai-trocr` reads each crop. Mean CER 0.398 (worse than EasyOCR 0.251 on 14 of 18 images, better on 1), 3-gram recall 0.626. It fixes some words (`006-เพชรบูรณ์` where EasyOCR gave `qd6 -เพชริบูรณํ`) but loses text overall. Cause not investigated (64-token cap, box crops, or merged lines are possible). The author-reported CER 0.124 vs 0.298 did not carry over to these screenshots.
+- **Ingest chain:** `DEFAULT_SOURCES` is now `vision_typhoon`, `vision_hint`, `easyocr`, so images the vision runs did not cover get EasyOCR text. A line source is used for an image only if its mean line confidence is >= 0.35 (`LINE_MIN_MEAN_CONFIDENCE`): of the 121 images it would newly fill, 51 were photos read as noise (mean < 0.3), while every ground-truth screenshot is >= 0.40. Dropping low-confidence *lines* instead was far worse (CER 0.25 -> 0.48 at 0.5), so the cut is per image. Dry run (not written to `outputs/ingest/`): images still needing OCR 188 -> 114. `outputs/ingest/` and the index are **not regenerated** yet. The pipeline benchmark row is unchanged (0.164) because the 18 scored images already come from the vision sources. `outputs/reports/benchmark_report.md` regenerated with the `easyocr` column.
+- **Tests:** engines, CLI and hint-label tests updated. `tests/test_hybrid_search.py::test_thai_tokenizer_handles_thai_and_english` and `tests/test_chunking.py::test_real_ingest_output_if_present` fail on `main` too (not caused by this change).
+
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.
 - Tesseract (see 2.6) is a good second opinion where it reads text, but not a replacement for the vision model: 7/27 images came back empty, and it reads far fewer lines on large screenshots.
+
+### 2.24 Hand-off before the API work (2026-10-28, branch `feature/regenerate-ingest-index`)
+- `outputs/ingest/` regenerated with the EasyOCR source chain (images still needing OCR 188 -> 114) and `outputs/easyocr/` committed (342 images). `outputs/trocr/` (rejected experiment, 2.23) is deliberately not committed.
+- **Next: HTTP API** (see README "Next: HTTP API"). Not started: no web framework in the repo yet. It wraps `run_ask`; nothing new in retrieval.
+- **Not in git (recreate on the other PC):** `.env` (copy `.env.example`, keys from the password manager), `outputs/index/` (`embed` then `load`, or share one Qdrant/PostgreSQL), `data/name_denylist.txt`.
+- **Ports (docker compose):** PostgreSQL `127.0.0.1:5432`, Qdrant `127.0.0.1:6333`, both localhost only; override with `POSTGRES_PORT` / `QDRANT_PORT`. Both `POSTGRES_PASSWORD` and `QDRANT_API_KEY` are required.
 
 ---
 

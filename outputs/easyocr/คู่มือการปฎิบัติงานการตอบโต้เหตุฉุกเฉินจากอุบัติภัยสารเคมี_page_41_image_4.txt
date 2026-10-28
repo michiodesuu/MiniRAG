@@ -1,0 +1,15 @@
+t chemica.	confidence=0.5726
+state and temperature	confidence=0.7601
+enter state of the chemical:	confidence=0.8495
+ help	confidence=0.6236
+tank contains liquid	confidence=0.8979
+tank contains gas only	confidence=0.4507
+ unknown	confidence=0.8488
+enter the temperature within the tank:	confidence=0.9548
+ help	confidence=0.9746
+ chemical stored at ambient temperature	confidence=0.6741
+ chemical stored at	confidence=0.9181
+3d	confidence=0.6056
+degrees	confidence=0.9990
+ok	confidence=0.9998
+cancel	confidence=0.7839

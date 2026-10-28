@@ -1,0 +1,3 @@
+find response information from the	confidence=0.6685
+สอ	confidence=0.0144
+sudedan	confidence=0.0115

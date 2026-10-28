@@ -18,8 +18,10 @@ from rag_ingest.models import EmbeddedImage, Page
 from rag_ingest.quality import rejection
 from rag_ingest.stores import ResultStore
 
-DEFAULT_SOURCES = ("vision_typhoon", "vision_hint")
+# Best model first; EasyOCR last so images the vision runs did not cover still get text.
+DEFAULT_SOURCES = ("vision_typhoon", "vision_hint", "easyocr")
 ICON_MAX_SIDE = 120
+LINE_MIN_MEAN_CONFIDENCE = 0.35
 SCREENSHOT = "[ภาพหน้าจอ]\n{text}\n[/ภาพหน้าจอ]"
 MISSING_OCR = "[ภาพหน้าจอ: ยังไม่ได้ OCR ({stem})]"
 
@@ -47,8 +49,17 @@ class OcrSourceChain:
     """Result folders in priority order (Chain of Responsibility): first usable text wins."""
 
     def __init__(self, stores: list[ResultStore]):
-        self.sources = [(store.name, store.final_texts()) for store in stores
+        self.sources = [(store.name, self._usable(store)) for store in stores
                         if store.folder.exists()]
+
+    @staticmethod
+    def _usable(store: ResultStore) -> dict[str, str]:
+        texts = store.final_texts()
+        if store.kind != "lines":
+            return texts
+        # A photo read as noise has a low mean confidence; real screenshots in the
+        # ground truth are >= 0.40. shortcut: one cut for all line engines, tune per engine if another is added.
+        return {s: t for s, t in texts.items() if store.mean_confidence(s) >= LINE_MIN_MEAN_CONFIDENCE}
 
     def lookup(self, stem: str) -> tuple[str | None, str | None, list[dict]]:
         """(text, source, rejections) for one image."""

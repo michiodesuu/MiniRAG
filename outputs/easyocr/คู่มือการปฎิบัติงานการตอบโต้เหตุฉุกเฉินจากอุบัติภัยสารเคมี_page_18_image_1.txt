@@ -1,0 +1,12 @@
+ทิศทางคม	confidence=0.5237
+เหนือลม	confidence=0.9052
+ใต้ลม	confidence=0.8252
+เขตปกป้องสาธารณชน	confidence=0.7459
+1/2 ของ	confidence=0.6991
+ระยะใต้ลม	confidence=0.8957
+เขตกันแยก	confidence=0.7830
+เบืองด้น	confidence=0.3844
+ระยะใต้ลม	confidence=0.9977
+1/2 ของ	confidence=0.8789
+ไทล	confidence=0.6321
+ระยะใต้ลม	confidence=0.6866

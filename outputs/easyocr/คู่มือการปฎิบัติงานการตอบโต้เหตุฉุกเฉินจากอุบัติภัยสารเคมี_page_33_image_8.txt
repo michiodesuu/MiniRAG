@@ -1,0 +1,1 @@
+บ	confidence=0.2215
