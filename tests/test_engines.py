@@ -40,29 +40,29 @@ def test_unknown_engine():
 
 def test_registry_does_not_import_heavy_libraries():
     code = ("import sys, rag_ingest.engines, rag_ingest.cli; "
-            "print([m for m in ('paddleocr', 'ollama', 'httpx', 'pytesseract') if m in sys.modules])")
+            "print([m for m in ('easyocr', 'ollama', 'httpx', 'pytesseract') if m in sys.modules])")
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert out.stdout.strip() == "[]"
 
 
 def test_hints_single_source_unlabelled_both_labelled(paths):
-    write_lines(paths, "ocr", "img", [("paddle line", 0.9), ("low", 0.3)])
+    write_lines(paths, "easyocr", "img", [("easy line", 0.9), ("low", 0.3)])
     write_lines(paths, "tesseract", "img", [("tess line", 0.85)])
 
-    assert _hint_provider(paths, "paddle").hint("img") == ("paddle line", ["paddle"])
+    assert _hint_provider(paths, "easyocr").hint("img") == ("easy line", ["easyocr"])
     assert _hint_provider(paths, "both").hint("img") == (
-        "[paddle OCR]\npaddle line\n\n[tesseract OCR]\ntess line", ["paddle", "tesseract"])
+        "[easyocr OCR]\neasy line\n\n[tesseract OCR]\ntess line", ["easyocr", "tesseract"])
     assert HintProvider({}).hint("img") == (None, [])
     # Only one source has confident lines -> no label, like a single source.
     write_lines(paths, "tesseract", "img", [("tess line", 0.1)])
-    assert _hint_provider(paths, "both").hint("img") == ("paddle line", ["paddle"])
+    assert _hint_provider(paths, "both").hint("img") == ("easy line", ["easyocr"])
 
 
 def test_vision_engine_prompt_settings_and_upscale(paths, make_image):
     image = make_image("img.png", size=(100, 50))
-    write_lines(paths, "ocr", "img", [("hint", 0.95)])
+    write_lines(paths, "easyocr", "img", [("hint", 0.95)])
     transport = FakeTransport()
-    engine = VisionEngine(transport, "PROMPT", _hint_provider(paths, "paddle"), upscale=200)
+    engine = VisionEngine(transport, "PROMPT", _hint_provider(paths, "easyocr"), upscale=200)
 
     result = engine.recognize(image)
 
@@ -70,7 +70,7 @@ def test_vision_engine_prompt_settings_and_upscale(paths, make_image):
     assert prompt == "PROMPT" + HINT_INTRO + "hint"
     assert sent[:4] == b"\x89PNG"
     assert result.text == "อ่านได้" and result.model == "fake-model"
-    assert result.settings == {"backend": "fake", "temperature": 0, "paddle_hint": True,
+    assert result.settings == {"backend": "fake", "temperature": 0, "easyocr_hint": True,
                                "tesseract_hint": False, "upscale_min_side": 200}
 
 
@@ -205,4 +205,4 @@ def test_strips_without_text_are_left_out(tmp_path):
 
 def test_tiling_refuses_hints(paths):
     with pytest.raises(ValueError):
-        VisionEngine(FakeTransport(), "P", _hint_provider(paths, "paddle"), tile_height=200)
+        VisionEngine(FakeTransport(), "P", _hint_provider(paths, "easyocr"), tile_height=200)

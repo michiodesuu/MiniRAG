@@ -7,9 +7,9 @@ from rag_ingest.stores import VisionStore
 
 
 def hint_label(record: dict) -> str:
-    """Which OCR hints actually reached the prompt: P, T, P+T or '-'."""
+    """Which OCR hints actually reached the prompt: E, T, E+T or '-' (P = PaddleOCR, old runs)."""
     settings = record.get("settings", {})
-    used = [tag for tag, key in (("P", "paddle_hint"), ("T", "tesseract_hint"))
+    used = [tag for tag, key in (("P", "paddle_hint"), ("E", "easyocr_hint"), ("T", "tesseract_hint"))
             if settings.get(key)]
     return "+".join(used) or "-"
 
@@ -55,7 +55,7 @@ def _table(rows: list[Row], label_a: str, label_b: str) -> list[str]:
              "|---|---|---|---|---|---|---|---|"]
     lines += [f"| {r.stem} | {r.similarity:.2f} | {len(r.text_a)} | {len(r.text_b)} "
               f"| {_fmt(r.cer_a)} | {_fmt(r.cer_b)} | {r.hint_a} | {r.hint_b} |" for r in rows]
-    lines.append("\nHint columns: P = PaddleOCR, T = Tesseract reached the prompt; - = none.")
+    lines.append("\nHint columns: E = EasyOCR, T = Tesseract (P = PaddleOCR, old runs) reached the prompt; - = none.")
     return lines
 
 

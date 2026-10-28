@@ -470,6 +470,14 @@ Unchanged: bge-m3 (`DEFAULT_MODEL`, tied with WangchanX again, best role accurac
 - A document removed from the corpus is not deleted from the databases by `load` (it only adds/replaces); `delete_document` exists on both stores for that.
 - Hybrid search, reranking, ACL and conversation tables are out of scope here.
 
+### 2.23 PaddleOCR replaced by EasyOCR (2026-10-28, branch `feature/ocr-easyocr`)
+
+- **Why:** PaddleOCR garbled the Thai in stylised or small screenshots (e.g. `BLEWMTNRSELUN11` for the form on `1.คู่มือ…_page_3_image_1`) and needs ~1 GB of models. EasyOCR (`th` + `en`) read the same image almost completely (names, dates, account number, salary, "ตำแหน่งงาน") in ~10 s on CPU, with composed `ำ`. Its English words come out lower case.
+- **Code:** `engines/paddle.py` removed, `engines/easyocr.py` added (`EasyOcrEngine`, `--engine easyocr`, `--upscale` supported). Results go to `outputs/easyocr/` as `text<TAB>confidence=0.xxxx`, the same format as before. `--hint` now defaults to `easyocr`; `HINT_FOLDERS`, `METHODS` (benchmark column) and `rag-ingest compare` follow. The extra is `easyocr` (was `paddle`); `requirements.txt` lost `paddleocr`/`paddlepaddle`/`paddlex` and gained `easyocr`, `torch`, `torchvision` and its small dependencies.
+- **Old results kept:** `outputs/ocr/` (PaddleOCR) stays as a legacy benchmark column, and `hint_label` still reads `paddle_hint` from vision results saved before this change (shown as `P`; new runs record `easyocr_hint`, shown as `E`).
+- **Not done:** `outputs/easyocr/` is not generated yet, so the vision `--hint` and the benchmark have no EasyOCR numbers; transitive packages that only Paddle needed are still in `requirements.txt` (e.g. `bce-python-sdk`, `modelscope`, `aistudio-sdk`).
+- **Tests:** engines, CLI and hint-label tests updated. `tests/test_hybrid_search.py::test_thai_tokenizer_handles_thai_and_english` and `tests/test_chunking.py::test_real_ingest_output_if_present` fail on `main` too (not caused by this change).
+
 ### 2.5 Findings
 - The `--hint` is applied unevenly: in 3 of the first 6 hint results `paddle_hint` was `false`, because no PaddleOCR line reached confidence 0.8. Those images effectively got only temperature 0 + upscale.
 - PaddleOCR output is poor on some images (e.g. first sample had confidences 0.36–0.72 with garbage text), so it is a weak hint source.

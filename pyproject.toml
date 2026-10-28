@@ -9,9 +9,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Install only the engines you use; PaddleOCR alone pulls in ~1 GB.
+# Install only the engines you use; EasyOCR pulls in PyTorch.
 tesseract = ["pytesseract"]
-paddle = ["paddleocr"]
+easyocr = ["easyocr"]
 ollama = ["ollama"]
 api = ["httpx"]
 docx = ["python-docx"]   # Word (.docx) input; small, pure Python + lxml

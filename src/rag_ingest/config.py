@@ -99,13 +99,14 @@ METHODS = (
     Method("vision_hint", "vision"),
     Method("vision_both", "vision"),
     Method("vision_typhoon", "vision"),
-    Method("ocr", "lines"),        # PaddleOCR
+    Method("ocr", "lines"),        # legacy PaddleOCR results (engine removed)
+    Method("easyocr", "lines"),
     Method("tesseract", "lines"),
 )
 METHODS_BY_NAME = {m.name: m for m in METHODS}
 
 # Default places the vision engine takes hint lines from (--hint-source).
-HINT_FOLDERS = {"paddle": "ocr", "tesseract": "tesseract"}
+HINT_FOLDERS = {"easyocr": "easyocr", "tesseract": "tesseract"}
 
 # Source files whose text must never be chunked, embedded or reported
 # (file name -> reason). Keyed by file name, not stem: the unredacted PDF and

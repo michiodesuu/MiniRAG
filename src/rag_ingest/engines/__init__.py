@@ -1,7 +1,7 @@
 """OCR engines behind one interface (Strategy), created by name (Factory).
 
 Engines import their heavy libraries only when constructed, so a run that
-uses Tesseract never loads PaddleOCR or the Ollama client into memory.
+uses Tesseract never loads EasyOCR or the Ollama client into memory.
 """
 from importlib import import_module
 from pathlib import Path
@@ -20,7 +20,7 @@ class OcrEngine(Protocol):
 # name -> "module:factory"; resolved lazily by create_engine.
 ENGINES = {
     "tesseract": "rag_ingest.engines.tesseract:TesseractEngine",
-    "paddle": "rag_ingest.engines.paddle:PaddleEngine",
+    "easyocr": "rag_ingest.engines.easyocr:EasyOcrEngine",
     "ollama": "rag_ingest.engines.vision:ollama_engine",
     "api": "rag_ingest.engines.vision:api_engine",
 }

@@ -139,7 +139,7 @@ class VisionEngine:
             settings={
                 **self.transport.settings(),
                 "temperature": TEMPERATURE,
-                "paddle_hint": "paddle" in used,
+                "easyocr_hint": "easyocr" in used,
                 "tesseract_hint": "tesseract" in used,
                 "upscale_min_side": self.upscale,
                 **({"tile_height": self.tile_height, "tiles": tiles} if self.tile_height else {}),

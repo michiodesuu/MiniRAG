@@ -3,7 +3,7 @@
 Extract accurate text from Thai PDF and Word (.docx) documents with embedded
 screenshots, for RAG ingestion. The documents' own text is used directly
 (PDF text layer, Word paragraphs/tables); only the screenshots are OCR'd, and
-PaddleOCR, Tesseract, a local vision model (Ollama `qwen2.5vl:3b`) and the
+EasyOCR, Tesseract, a local vision model (Ollama `qwen2.5vl:3b`) and the
 Typhoon OCR API are compared for that.
 
 Full status, results and plan: [note.md](note.md).
@@ -12,7 +12,7 @@ Full status, results and plan: [note.md](note.md).
 ```
 uv pip install --python .venv/bin/python -e ".[tesseract,api,dev]"   # Windows: .venv/Scripts/python.exe
 ```
-Extras: `docx` (Word input), `tesseract`, `paddle` (~1 GB), `ollama`, `api`, `dev`; install only what you use.
+Extras: `docx` (Word input), `tesseract`, `easyocr` (pulls in PyTorch), `ollama`, `api`, `dev`; install only what you use.
 Tesseract needs the binary with Thai data (`brew install tesseract tesseract-lang`, or winget on Windows).
 For the local vision model: `ollama pull qwen2.5vl:3b`.
 Typhoon / other OpenAI-compatible API: set `OCR_API_URL`, `OCR_API_MODEL` (and `OCR_API_KEY` if needed) in `.env` (see `.env.example`) or the shell.
@@ -47,7 +47,7 @@ screenshot) are flattened into one picture, so what was hidden stays hidden.
 ```
 rag-ingest inspect                          # text chars + images per page
 rag-ingest extract-images                   # data/raw/**/*.pdf|*.docx -> outputs/images/
-rag-ingest ocr --engine api                 # or tesseract | paddle | ollama  (--hint, --upscale, --skip-existing)
+rag-ingest ocr --engine api                 # or tesseract | easyocr | ollama  (--hint, --upscale, --skip-existing)
 rag-ingest review --dir outputs/vision_hint # correct a model's results
 rag-ingest review --blank                   # type ground truth from the image alone -> outputs/ground_truth/
 rag-ingest benchmark                        # CER + failures per method -> outputs/reports/benchmark_report.md

@@ -123,6 +123,7 @@ def test_benchmark_scores_and_summary():
 
 
 def test_hint_label():
-    assert hint_label({"settings": {"paddle_hint": True, "tesseract_hint": True}}) == "P+T"
+    assert hint_label({"settings": {"easyocr_hint": True, "tesseract_hint": True}}) == "E+T"
+    assert hint_label({"settings": {"paddle_hint": True}}) == "P"  # results saved before EasyOCR
     assert hint_label({"settings": {"tesseract_hint": True}}) == "T"
     assert hint_label({}) == "-"

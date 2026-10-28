@@ -88,7 +88,7 @@ class VisionStore:
 
 
 class LineStore:
-    """Line-by-line results with confidence (PaddleOCR, Tesseract)."""
+    """Line-by-line results with confidence (EasyOCR, Tesseract)."""
     kind = "lines"
 
     def __init__(self, folder: Path):
