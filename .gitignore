@@ -6,3 +6,4 @@ __pycache__/
 outputs/index/
 .env
 data/name_denylist.txt
+outputs/trocr/
