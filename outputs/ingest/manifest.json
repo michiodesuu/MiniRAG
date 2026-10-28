@@ -19,7 +19,8 @@
       998
     ],
     "md5": "d9afc6a47432d925b7fc23071e710660",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_2_image_1",
@@ -30,7 +31,8 @@
       1953
     ],
     "md5": "627bc6042cddc60700760bbe99dc2ee8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_3_image_1",
@@ -41,7 +43,8 @@
       2140
     ],
     "md5": "f0b1737d19b4e49c48a636a9e173c4a2",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_3_image_2",
@@ -74,7 +77,8 @@
       1389
     ],
     "md5": "2b3ec2f39f33d44aedf1d83fa43546af",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_5_image_1",
@@ -85,7 +89,8 @@
       1272
     ],
     "md5": "b4d40b68df73ab9fb0b66c2e273751ea",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_6_image_1",
@@ -96,7 +101,8 @@
       1045
     ],
     "md5": "a2b0507595419c53e29f53ac65cdf38c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_6_image_2",
@@ -107,7 +113,8 @@
       648
     ],
     "md5": "43fd996792b1c8ffecbbe4f2bf5476fe",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_7_image_1",
@@ -118,7 +125,8 @@
       652
     ],
     "md5": "5cd3e40380454a87154c53c92523311d",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_7_image_2",
@@ -129,7 +137,8 @@
       1050
     ],
     "md5": "8ad9bb7d3823ee2543f04cb9d7778c71",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_8_image_1",
@@ -140,7 +149,8 @@
       2282
     ],
     "md5": "27b367127cc66eafd6f8fe33c3566b3f",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_8_image_2",
@@ -184,7 +194,8 @@
       2328
     ],
     "md5": "8e3e30e5ae258f256a0c5751225fe73e",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_10_image_1",
@@ -195,7 +206,8 @@
       1798
     ],
     "md5": "7a4b4b679b867d123da8b5b5c20f2e41",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_11_image_1",
@@ -217,7 +229,8 @@
       1412
     ],
     "md5": "456f6919c70a6abc33955b19d55ae319",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_12_image_1",
@@ -228,7 +241,8 @@
       1413
     ],
     "md5": "f03b378fcc48cf14c1387e2a989fba3c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_12_image_2",
@@ -250,7 +264,8 @@
       1870
     ],
     "md5": "ad0e9d970f5e74a7a6cde1d15d0ae8af",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_14_image_1",
@@ -261,7 +276,8 @@
       1063
     ],
     "md5": "a9dda79417dece04bd88876314efcc30",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_14_image_2",
@@ -272,7 +288,8 @@
       1058
     ],
     "md5": "e680a8f23f4cd8c757fde049702d0cbd",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_15_image_1",
@@ -283,7 +300,8 @@
       650
     ],
     "md5": "cf15b884e552706667aec4fc7aa6319e",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_15_image_2",
@@ -294,7 +312,8 @@
       936
     ],
     "md5": "d37b3932dba358b0fa34aa38b1a8c07d",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_16_image_1",
@@ -305,7 +324,8 @@
       1369
     ],
     "md5": "16e8ab1a9fdcfe0d9a16d44462333847",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_17_image_1",
@@ -316,7 +336,8 @@
       2066
     ],
     "md5": "c9d4b8195047fda11a01196235947290",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_18_image_1",
@@ -327,7 +348,8 @@
       1221
     ],
     "md5": "7abf1c098d20ee14b97b66928e983f1b",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_18_image_2",
@@ -338,7 +360,8 @@
       1070
     ],
     "md5": "fc9def63f9e850f752272f80bf926000",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_19_image_1",
@@ -349,7 +372,8 @@
       1241
     ],
     "md5": "6fcfac098cda7fd91064f294c0283e27",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_19_image_2",
@@ -371,7 +395,8 @@
       982
     ],
     "md5": "c55d261f46f288933340a799d4f265a4",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_20_image_1",
@@ -382,7 +407,8 @@
       1114
     ],
     "md5": "112f0ec032adbe9aa9bc29d7fdc16e6b",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_20_image_2",
@@ -393,7 +419,8 @@
       1048
     ],
     "md5": "c11658daebb73eebc80d0945c0b6bb92",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "สรุปวิทยาการ(ทฤษฎี)_page_2_image_1",
@@ -404,7 +431,8 @@
       768
     ],
     "md5": "888f339928bd5b7d1e4a5e4cffdd9cf7",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "สรุปวิทยาการ(ทฤษฎี)_page_2_image_2",
@@ -415,7 +443,8 @@
       768
     ],
     "md5": "db6cb4db745b50397fa4d923623d29fe",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "32_File_ตัวอย่างใบเสร็จรับเงิน_22082560201256__page_1_image_1",
@@ -426,7 +455,8 @@
       1289
     ],
     "md5": "0486d9e92d8c29a4dc49d11b521c25dc",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_1_image_1",
@@ -437,7 +467,8 @@
       2000
     ],
     "md5": "9f4b7ef272e1bf595b92dd8c98f3c6f4",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_2_image_1",
@@ -999,7 +1030,8 @@
       871
     ],
     "md5": "48da9bfd573fff0dd2426004f8da7572",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_16_image_5",
@@ -1109,7 +1141,8 @@
       454
     ],
     "md5": "bc1728e39b087a65e4a44f1a47792be8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_18_image_2",
@@ -1120,7 +1153,8 @@
       794
     ],
     "md5": "94c372c135bf37b6d0c25856860dbb02",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_18_image_3",
@@ -1131,7 +1165,8 @@
       356
     ],
     "md5": "678d7643d941c509c47cb1ebb7401132",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_18_image_4",
@@ -1175,7 +1210,8 @@
       771
     ],
     "md5": "bcbe25c7268bc6c61048e2b290e887a9",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_20_image_2",
@@ -1384,7 +1420,8 @@
       287
     ],
     "md5": "10c56137159d2925d806c0c9b27928e3",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_21_image_3",
@@ -1472,7 +1509,8 @@
       720
     ],
     "md5": "b7d17983020229f616df8eed6dcd4955",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_24_image_3",
@@ -1648,7 +1686,8 @@
       316
     ],
     "md5": "aec98383ec1ef8a3b295a76f0379f683",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_9",
@@ -1681,7 +1720,8 @@
       317
     ],
     "md5": "5c5a50c2ca7a721d19ea6d42ee355820",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_12",
@@ -1758,7 +1798,8 @@
       316
     ],
     "md5": "822b35d7829c76028cee0774220f1bcb",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_6",
@@ -1769,7 +1810,8 @@
       321
     ],
     "md5": "93a3a58478136193ccc75942a07d817f",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_7",
@@ -1802,7 +1844,8 @@
       321
     ],
     "md5": "5a67bda9b663f8f79a66bebb11304b11",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_10",
@@ -1868,7 +1911,8 @@
       326
     ],
     "md5": "21ad28b59c2edbef5585f40a5cd05f24",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_3",
@@ -1912,7 +1956,8 @@
       323
     ],
     "md5": "c336ea01d8d771fb36e9ce574b5cf8ff",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_7",
@@ -2143,7 +2188,8 @@
       136
     ],
     "md5": "9a31e831dd4429fc817cee81b0d72068",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_36_image_2",
@@ -2176,7 +2222,8 @@
       1040
     ],
     "md5": "37f4559ae2d86edc462859938fcc0b67",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_37_image_3",
@@ -2199,7 +2246,8 @@
     ],
     "md5": "9a31e831dd4429fc817cee81b0d72068",
     "status": "duplicate",
-    "duplicate_of": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_36_image_1"
+    "duplicate_of": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_36_image_1",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_38_image_2",
@@ -2221,7 +2269,8 @@
       431
     ],
     "md5": "78c23cd4e030a5bde5a9a69736db92d1",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_39_image_2",
@@ -2232,7 +2281,8 @@
       552
     ],
     "md5": "f732507b4035d6666a5beec9c1661842",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_39_image_3",
@@ -2254,7 +2304,8 @@
       405
     ],
     "md5": "7be03c22408a7db8c924d1cc66f1ce8c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_40_image_2",
@@ -2265,7 +2316,8 @@
       405
     ],
     "md5": "6e9160c25257534ba3addec2954467fa",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_40_image_3",
@@ -2276,7 +2328,8 @@
       482
     ],
     "md5": "0e17c320b5283cb30c4e35ef6ad5700b",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_40_image_4",
@@ -2287,7 +2340,8 @@
       490
     ],
     "md5": "86a96c92b84948ade4da57b59dbb999c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_40_image_5",
@@ -2298,7 +2352,8 @@
       344
     ],
     "md5": "7ab9f89418f1089d457315b574c287c7",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_40_image_6",
@@ -2320,7 +2375,8 @@
       373
     ],
     "md5": "914d272b44523b310cf8a613d948f873",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_41_image_2",
@@ -2331,7 +2387,8 @@
       486
     ],
     "md5": "43ca1322e0ff6c3815658737b16318aa",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_41_image_3",
@@ -2342,7 +2399,8 @@
       288
     ],
     "md5": "c1ecc53357f4b0ae146885bc48993758",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_41_image_4",
@@ -2353,7 +2411,8 @@
       392
     ],
     "md5": "00dcf3a8f9bba678aa0e04dcc0ef19a3",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_41_image_5",
@@ -2364,7 +2423,8 @@
       327
     ],
     "md5": "c03e0c2bc95104897565c8604a7720cf",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_41_image_6",
@@ -2387,7 +2447,8 @@
     ],
     "md5": "c1ecc53357f4b0ae146885bc48993758",
     "status": "duplicate",
-    "duplicate_of": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_41_image_3"
+    "duplicate_of": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_41_image_3",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_42_image_2",
@@ -2398,7 +2459,8 @@
       567
     ],
     "md5": "3856f0f970cc9dc6bdf876ce7dd24bbe",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_42_image_3",
@@ -2409,7 +2471,8 @@
       414
     ],
     "md5": "6cec9810a620b41e25fd4b897f11a7a0",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_42_image_4",
@@ -2431,7 +2494,8 @@
       313
     ],
     "md5": "d1b8474bc73ec1ddc1bf6f7699cf162b",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_43_image_2",
@@ -2629,7 +2693,8 @@
       839
     ],
     "md5": "ea60ba060a13d3b4e0d1a9362ecab066",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_48_image_2",
@@ -2739,7 +2804,8 @@
       461
     ],
     "md5": "69c4e407fc7e23d1af8944fd7c3a83b0",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_51_image_2",
@@ -2750,7 +2816,8 @@
       461
     ],
     "md5": "6502c875f700d32282d03b87f36bba4a",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_51_image_3",
@@ -2784,7 +2851,8 @@
     ],
     "md5": "9a31e831dd4429fc817cee81b0d72068",
     "status": "duplicate",
-    "duplicate_of": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_36_image_1"
+    "duplicate_of": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_36_image_1",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_53_image_2",
@@ -2894,7 +2962,8 @@
       713
     ],
     "md5": "6e850146f800d723f8fb7cf237664938",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_57_image_2",
@@ -2916,7 +2985,8 @@
       713
     ],
     "md5": "1e8c7d2c005cf6d059ee9c4fe3598a80",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_58_image_2",
@@ -3290,7 +3360,8 @@
       1293
     ],
     "md5": "5c4198dd4850d91e2141dfbe27b36fec",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_88_image_2",
@@ -3312,7 +3383,8 @@
       1389
     ],
     "md5": "4b908737b15fa23602906ab2b9b45078",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_89_image_2",
@@ -3334,7 +3406,8 @@
       1389
     ],
     "md5": "1462114bfeb291ca454b4afcebeda2fa",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_90_image_2",
@@ -3356,7 +3429,8 @@
       1406
     ],
     "md5": "703e7f7dd87bf1817a46eef36b56ecf1",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_91_image_2",
@@ -3378,7 +3452,8 @@
       1403
     ],
     "md5": "2779eea7f1d5db09227c3fa6a1380500",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_92_image_2",
@@ -3400,7 +3475,8 @@
       1400
     ],
     "md5": "33a60033db535435abebaa29a7ff6016",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_93_image_2",
@@ -3455,7 +3531,8 @@
       2000
     ],
     "md5": "78868b0b0fd7be119f03bc022c0e094d",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "easyocr"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_96_image_2",
