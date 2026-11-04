@@ -60,6 +60,21 @@ rag-ingest eval-retrieval [--grid]          # -> outputs/reports/retrieval_repor
 rag-ingest load [--dry-run]                 # newest index -> PostgreSQL + Qdrant (docker compose up -d)
 rag-ingest eval-retrieval --backend qdrant  # the same evaluation, searched in Qdrant
 ```
+### Data layers
+The folders follow the bronze / silver / gold (medallion) idea; the folder names stay as they are.
+
+| Layer | Folders | Command |
+|---|---|---|
+| Bronze: raw, kept as produced | `data/raw/`, `outputs/images/`, one folder per OCR method (`easyocr/`, `vision_typhoon/`, `vision_hint/`, ...) | `extract-images`, `ocr` |
+| Silver: cleaned, best source chosen per image | `outputs/ingest/*.md` + `manifest.json` | `ingest` |
+| Gold: ready to query | `outputs/chunks/`, `outputs/index/`, PostgreSQL + Qdrant | `chunk`, `embed`, `load` |
+
+Rules:
+- Bronze is never edited or overwritten by a later step. A new OCR run (for example the local Typhoon fallback) goes to its own folder.
+- Silver and gold are rebuilt from the layer below; nothing is fixed by hand in them. Corrections go through `review` into the bronze result or `outputs/ground_truth/`.
+- Each result records where it came from (engine, model, whether the fallback was used), and items that fail the rules are kept in `rejected.jsonl`, not dropped.
+- Steps can be re-run; `ocr --skip-existing` resumes.
+
 ### OCR prompts
 | file | tokens* | use |
 |---|---|---|
