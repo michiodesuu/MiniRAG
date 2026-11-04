@@ -103,7 +103,10 @@ class FallbackTransport:
             try:
                 return self.primary.complete(prompt, image)
             except self.errors as exc:
-                print(f"API unavailable ({exc!r}); using {self.fallback.model} via Ollama.", flush=True)
+                # Type and status only: an exception's text can carry the request URL.
+                status = getattr(getattr(exc, "response", None), "status_code", None)
+                why = type(exc).__name__ + (f" {status}" if status else "")
+                print(f"API unavailable ({why}); using {self.fallback.model} via Ollama.", flush=True)
                 self.active = self.fallback
         return self.fallback.complete(prompt, image)
 
