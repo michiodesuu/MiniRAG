@@ -28,3 +28,15 @@
 {"id": "q28", "question": "เบิกค่ารักษาพยาบาลจากกองทุนเงินทดแทนต้องใช้เอกสารอะไร", "expected": [], "role": null, "type": "no_answer", "notes": "belongs to the excluded compensation manual; must not be answerable from the index"}
 {"id": "q29", "question": "พนักงานมีวันลาพักร้อนกี่วันต่อปี", "expected": [], "role": null, "type": "no_answer", "notes": "HR policy, not in these manuals"}
 {"id": "q30", "question": "ติดต่อฝ่ายไอทีเรื่องระบบล่มได้ที่เบอร์อะไร", "expected": [], "role": null, "type": "no_answer", "notes": "not covered"}
+{"id": "q31", "question": "ต้องบันทึกความคืบหน้าในแบบฟอร์มรายงานความคืบหน้าภายในกี่ชั่วโมง", "expected": [{"document": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี", "page": 27}], "role": null, "type": "text", "notes": "๖ ชั่วโมง"}
+{"id": "q32", "question": "โปรแกรม ALOHA ใช้ทำอะไร", "expected": [{"document": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี", "page": 39}], "role": null, "type": "text", "notes": "ALOHA, p39"}
+{"id": "q33", "question": "ข้อมูลสถานที่เกิดเหตุที่ต้องกรอกลงโปรแกรม ALOHA มีอะไรบ้าง", "expected": [{"document": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี", "page": 40}], "role": null, "type": "text", "notes": "การบันทึกข้อมูลลงใน ALOHA"}
+{"id": "q34", "question": "หมวกนิรภัยใช้ป้องกันอะไร", "expected": [{"document": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี", "page": 54}], "role": null, "type": "text", "notes": "หมวกนิรภัย, p54"}
+{"id": "q35", "question": "แผนที่แสดงระยะกั้นเขตได้จากแอปพลิเคชันอะไร", "expected": [{"document": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี", "page": 18}], "role": null, "type": "text", "notes": "ERG4Thai, p18"}
+{"id": "q36", "question": "การกำจัดสารเคมีที่รั่วไหลต้องพิจารณาอะไรบ้าง", "expected": [{"document": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี", "page": 13}], "role": null, "type": "text", "notes": "Section 13 การกำจัด"}
+{"id": "q37", "question": "ค่าขีดจำกัดการรับสัมผัสสไตรีนทางการหายใจแบบเฉียบพลันเป็นเท่าไร", "expected": [{"document": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี", "page": 69}], "role": null, "type": "text", "notes": "Styrene row, Thai digits; hard"}
+{"id": "q38", "question": "ก่อนลงพื้นที่ต้องเตรียมการเผชิญเหตุอย่างไร", "expected": [{"document": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี", "page": 15}], "role": null, "type": "text", "notes": "เตรียมการเผชิญเหตุ p15"}
+{"id": "q39", "question": "พีทาโกรัสได้ชื่อว่าเป็นอะไร", "expected": [{"document": "สรุปวิทยาการ(ทฤษฎี)", "page": 1}], "role": null, "type": "text", "notes": "บิดาแห่งตัวเลข"}
+{"id": "q40", "question": "Math.round ปัดขึ้นเมื่อค่ามากกว่าเท่าไร", "expected": [{"document": "สรุปวิทยาการ(ทฤษฎี)", "page": 2}], "role": null, "type": "text", "notes": "ปัดขึ้น/ปัดลง p2"}
+{"id": "q41", "question": "ค่าชุดป้องกันสารเคมีราคาเท่าไร", "expected": [], "role": null, "type": "no_answer", "notes": "price not in corpus"}
+{"id": "q42", "question": "ขั้นตอนการขอลาป่วยของพนักงานทำอย่างไร", "expected": [], "role": null, "type": "no_answer", "notes": "HR policy, not in corpus"}

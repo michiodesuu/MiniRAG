@@ -1,5 +1,7 @@
 """Parity gate: plain dense search on Qdrant reproduces the numpy index on the
-30-question set (BGE-M3, the committed chunks), R@5 0.96 and MRR 0.80.
+42-question set (BGE-M3, all 183 chunks: both manuals, the chemical-emergency manual and
+the computing summary), R@5 0.92 and MRR 0.77. (Before the corpus grew from 18 to 183 chunks the
+30 questions scored R@5 0.96 and MRR 0.80.)
 
 Needs the BGE-M3 index under outputs/index (not committed) and the model in the
 local Hugging Face cache; skipped otherwise. Runs on Qdrant's local mode, and
@@ -78,6 +80,6 @@ def test_qdrant_reproduces_numpy(numpy_side, name, client):
             assert [h.score for h in got] == pytest.approx([h.score for h in want], abs=1e-4), q.id
         n, d = metrics(numpy_results), metrics(qdrant_results)
         assert (d.recall, d.mrr) == (n.recall, n.mrr)
-        assert round(d.recall[5], 2) == 0.96 and round(d.mrr, 2) == 0.80
+        assert round(d.recall[5], 2) == 0.92 and round(d.mrr, 2) == 0.77
     finally:
         store.drop()
