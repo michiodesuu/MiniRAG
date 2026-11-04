@@ -23,6 +23,7 @@ ENGINES = {
     "easyocr": "rag_ingest.engines.easyocr:EasyOcrEngine",
     "ollama": "rag_ingest.engines.vision:ollama_engine",
     "api": "rag_ingest.engines.vision:api_engine",
+    "typhoon": "rag_ingest.engines.vision:typhoon_engine",
 }
 
 

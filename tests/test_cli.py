@@ -57,3 +57,10 @@ def test_env_file_supplies_ocr_api_defaults(paths, tmp_path, monkeypatch):
     read_env_file(env)
     args = parse(paths, "--engine", "api")
     assert (args.api_url, args.api_model) == ("https://x/v1", "m")
+
+
+def test_typhoon_engine_options(paths):
+    assert engine_options(parse(paths, "--engine", "typhoon", "--api-url", ""), paths)["local"] is False
+    opts = engine_options(parse(paths, "--engine", "typhoon", "--local", "--api-url", "https://x/v1",
+                                "--api-model", "m"), paths)
+    assert opts["local"] is True and "url" not in opts

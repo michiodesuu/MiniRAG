@@ -206,3 +206,32 @@ def test_strips_without_text_are_left_out(tmp_path):
 def test_tiling_refuses_hints(paths):
     with pytest.raises(ValueError):
         VisionEngine(FakeTransport(), "P", _hint_provider(paths, "easyocr"), tile_height=200)
+
+
+class DeadTransport:
+    model = "api-model"
+
+    def complete(self, prompt, image):
+        raise ConnectionError("down")
+
+    def settings(self):
+        return {"backend": "api"}
+
+
+def test_fallback_transport_switches_once_and_sticks():
+    from rag_ingest.engines.vision import FallbackTransport
+
+    local = FakeTransport()
+    t = FallbackTransport(DeadTransport(), local, (ConnectionError,))
+    assert t.complete("p", b"i") == "อ่านได้"
+    assert t.complete("p", b"i") == "อ่านได้"
+    assert len(local.calls) == 2 and t.model == "fake-model"
+    assert t.settings() == {"backend": "fake", "fallback": True}
+
+
+def test_typhoon_engine_local_when_no_api(paths):
+    from rag_ingest.engines.vision import TYPHOON_LOCAL_MODEL
+
+    engine = create_engine("typhoon", paths=paths)
+    assert engine.transport.model == TYPHOON_LOCAL_MODEL
+    assert engine.default_output == "vision_typhoon"

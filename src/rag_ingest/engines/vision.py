@@ -86,6 +86,31 @@ class OpenAICompatibleTransport:
         return {"backend": "api"}
 
 
+class FallbackTransport:
+    """Primary transport (company API); on a network/HTTP error switch to the fallback
+    (local Ollama) and stay there, so a dead API costs one timeout, not one per image."""
+
+    def __init__(self, primary: Transport, fallback: Transport, errors: tuple[type[Exception], ...]):
+        self.primary, self.fallback, self.errors = primary, fallback, errors
+        self.active = primary
+
+    @property
+    def model(self) -> str:
+        return self.active.model
+
+    def complete(self, prompt: str, image: bytes) -> str:
+        if self.active is self.primary:
+            try:
+                return self.primary.complete(prompt, image)
+            except self.errors as exc:
+                print(f"API unavailable ({exc!r}); using {self.fallback.model} via Ollama.", flush=True)
+                self.active = self.fallback
+        return self.fallback.complete(prompt, image)
+
+    def settings(self) -> dict:
+        return {**self.active.settings(), "fallback": self.active is self.fallback}
+
+
 class HintProvider:
     """Confident lines from line-OCR results, added to the prompt as a reference."""
 
@@ -175,3 +200,24 @@ def api_engine(paths: Paths, url: str, model: str, key: str | None = None,
                prompt: Path | None = None, tile: int = 0) -> VisionEngine:
     return _vision_engine(OpenAICompatibleTransport(url, model, key), paths, hint_source,
                           upscale, prompt, tile)
+
+
+TYPHOON_LOCAL_MODEL = "scb10x/typhoon-ocr1.5-3b"
+
+
+def typhoon_engine(paths: Paths, url: str | None = None, model: str | None = None,
+                   key: str | None = None, local: bool = False,
+                   local_model: str = TYPHOON_LOCAL_MODEL, num_ctx: int = 8192,
+                   hint_source: str | None = None, upscale: int = 0,
+                   prompt: Path | None = None, tile: int = 0) -> VisionEngine:
+    """Typhoon OCR: company API first, local Ollama when the API is unset or unreachable."""
+    import httpx
+
+    ollama = OllamaTransport(local_model, num_ctx)
+    if local or not (url and model):
+        transport: Transport = ollama
+    else:
+        transport = FallbackTransport(OpenAICompatibleTransport(url, model, key), ollama, (httpx.HTTPError,))
+    engine = _vision_engine(transport, paths, hint_source, upscale, prompt, tile)
+    engine.default_output = "vision_typhoon"
+    return engine
