@@ -17,10 +17,13 @@ import base64
 from rag_ingest.config import ENCODING, HINT_FOLDERS, Paths
 from rag_ingest.imaging import image_bytes, load_rgb, png_bytes, strips
 from rag_ingest.models import Recognition
+from rag_ingest.quality import rejection
 from rag_ingest.stores import LineStore
 from rag_ingest.textproc import NO_TEXT_MARK
 
 TEMPERATURE = 0
+# Strip height for the retry of a rejected read; 300 fixed both Typhoon loops seen so far.
+RETRY_TILE_HEIGHT = 300
 HINT_MIN_CONFIDENCE = 0.8
 HINT_INTRO = ("\n\nREFERENCE (separate OCR engines read these lines; they may be "
               "wrong or incomplete, so trust the image over them):\n")
@@ -144,10 +147,10 @@ class VisionEngine:
         self.transport, self.prompt, self.hints, self.upscale = transport, prompt, hints, upscale
         self.prompt_file, self.tile_height = prompt_file, tile_height
 
-    def _read_strips(self, image: Path) -> tuple[str, int]:
+    def _read_strips(self, image: Path, tile_height: int) -> tuple[str, int]:
         """(joined text, number of strips). Strips with nothing readable are left
         out, unless no strip has text."""
-        parts = strips(load_rgb(image, self.upscale), self.tile_height)
+        parts = strips(load_rgb(image, self.upscale), tile_height)
         if len(parts) == 1:
             return self.transport.complete(self.prompt, image_bytes(image, self.upscale)), 1
         texts = [self.transport.complete(self.prompt, png_bytes(part)) for part in parts]
@@ -157,10 +160,15 @@ class VisionEngine:
     def recognize(self, image: Path) -> Recognition:
         hint, used = self.hints.hint(image.stem) if self.hints else (None, [])
         if self.tile_height:
-            text, tiles = self._read_strips(image)
+            text, tiles = self._read_strips(image, self.tile_height)
         else:
             prompt = self.prompt + (HINT_INTRO + hint if hint else "")
             text, tiles = self.transport.complete(prompt, image_bytes(image, self.upscale)), 1
+        retried = False
+        if not self.tile_height and rejection(text):
+            # temperature is 0, so a plain retry repeats the failure; smaller strips change the input.
+            text, tiles = self._read_strips(image, RETRY_TILE_HEIGHT)
+            retried = True
         return Recognition(
             text=text,
             model=self.transport.model,
@@ -171,6 +179,7 @@ class VisionEngine:
                 "tesseract_hint": "tesseract" in used,
                 "upscale_min_side": self.upscale,
                 **({"tile_height": self.tile_height, "tiles": tiles} if self.tile_height else {}),
+                **({"retried_with_tiles": tiles} if retried else {}),
             },
             prompt_file=self.prompt_file,
         )

@@ -112,6 +112,18 @@ def test_vision_store_accepts_engine_output(paths, make_image):
     assert VisionStore(paths.method("vision"), paths).texts() == {"img": "อ่านได้"}
 
 
+def test_rejected_read_is_retried_with_strips(make_image):
+    class LoopsOnce(FakeTransport):
+        def complete(self, prompt, image):
+            super().complete(prompt, image)
+            return "ตรวจสอบ\n" * 30 if len(self.calls) == 1 else "อ่านได้"
+
+    transport = LoopsOnce()
+    result = VisionEngine(transport, "P").recognize(make_image("img.png"))
+    assert result.text == "อ่านได้"
+    assert "retried_with_tiles" in result.settings and len(transport.calls) >= 2
+
+
 def test_tesseract_engine_reads_text(make_image):
     pytest.importorskip("pytesseract")
     try:
