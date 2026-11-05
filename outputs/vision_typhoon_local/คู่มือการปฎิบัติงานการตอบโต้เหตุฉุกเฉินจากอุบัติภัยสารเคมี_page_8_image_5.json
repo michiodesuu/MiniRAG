@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_5.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Search for chemicals by name,\nCAS number, or UN/NA number\n\nCAMEO (Chemical Information)\n\nName (For CAS Number)\n<input type=\"text\" value=\"Example Name\" placeholder=\"Enter chemical name here...\"></input>\nSearch\n\nCAS Number (dropdown options)\n<select><option>1700-62-5</option></select>\nSearch\n\nUN/HAH Number (4-digit number)\n<input type=\"text\" value=\"8398-121\" placeholder=\"Enter UN/HAH number here...\"></input>\nSearch\n\nNeed room to enter? Try the advanced options button.",
+  "review_status": "pending"
+}

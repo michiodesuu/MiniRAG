@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_11.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "แผนที่การกำหนดระยะกั้นเขต UN 1975\n\n<figure>\nA map displaying land plots and boundaries, likely related to land use or natural areas. Several plots are outlined in different colors: light blue (blue), green (green), red (red), yellow (orange/yellow), and white/gray (white). There is a prominent red polygonal shape with a small blue circular icon inside, possibly indicating a specific location or type of plot. A legend on the right side provides information about these plots:\n- \"ที่ดินรัฐพิสูจน์ ไม่ครอบครอง\" (State-owned land, not occupied)\n- \"การกระจายขนาดเล็ก ช่วงกลางวัน เขตกีฬาแห่งประเทศไทย &gt; 30 กม., เขตภาคใต้ตอนบน &gt; 0.1 ตร.กม.\" (Small size, midday period, Thai Sports Park &gt; 30 km², Southern Region on the top &gt; 0.1 sq.km.)\n- \"ที่ดินส่วนตัว\" (Private land)\nThe map also shows a section labeled \"อุทยานแห่งชาติ\" (National Park) with an image of a forested area.\n</figure>\n\n*   **ที่ดินรัฐพิสูจน์ ไม่ครอบครอง**\n    *   การกระจายขนาดเล็ก ช่วงกลางวัน เขตกีฬาแห่งประเทศไทย &gt; 30 กม., เขตภาคใต้ตอนบน &gt; 0.1 ตร.กม.\n*   **ที่ดินส่วนตัว**\n    *   อุทยานแห่งชาติ",
+  "review_status": "pending"
+}

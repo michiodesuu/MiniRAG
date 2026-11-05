@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_16_image_3.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Thai Meteorological Department Collection Data by Time Slot\n\nCollection Data by Time Slot\n\nRegion: [dropdown selected]\nStation: 0037 Bangna Agrometeorological Station [dropdown selected]\nInterval: [dropdown selected]\nTime: [dropdown selected]\nDate: MM/DD/YYYY\nHr: Min:\n[button]Select Date Range\n\n<table><tr><td>Wind Speed (km/h)</td></tr><tr><td>Wind Dir (deg)</td></tr><tr><td>Wind Dur (Dh)</td></tr><tr><td>Wind Max/Min (mm/s)</td></tr></table>\n\n0037 Bangna Agrometeorological Station",
+  "review_status": "pending"
+}

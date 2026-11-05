@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_3.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "1:45 น.\n\nChemicals\n\nAcet Cancel\n\n*   Acetaldehyde\n    *   Acetic aldehyde, Ethanol, Ethyl alcoholdehyde\n*   Acetic acid\n    *   Acetic acid (aqueous), Ethanoic acid, Glacial acetic...\n*   Acetic anhydride\n    *   Acetic acid anhydride, Acetic oxide, Acetyl oxide, ...\n*   Acetone\n*   Acetone cyanohydrin\n*   Acetonitrile\n*   2-Acetylaminofluorene\n    *   2-AAF, 2-Acetaminofluorene, 2-FAA, 2-Fluorenyl...\n*   Acetylene\n\nq w e r t y u i o p\na s d f g h j k l\nZ X C V B N M\n123 space Search",
+  "review_status": "pending"
+}

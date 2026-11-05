@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_9_image_4.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "NIOSH Pocket Guide to Chemical Hazards\n\nDEPARTMENT OF HEALTH AND HUMAN SERVICES\nCenters for Disease Control and Prevention\nNational Institute for Occupational Safety and Health\n\nSeptember 2007\n\nDHHS (NIOSH) Publication No. 2005-149\n\nFirst Printing - September 2005\nSecond Printing - August 2006, with minor technical changes\nThird Printing - September 2007, with minor technical changes",
+  "review_status": "pending"
+}

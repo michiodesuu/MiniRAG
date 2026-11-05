@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/f30aab73-42a2-4919-b152-9b60f282d992/scratchpad/docx_images/1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_1_image_2.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "กองทุนเงินทดแทน\n\ne-service wcf\n\nข้อมูลส่วนตัว\n\nแจ้งการประสบอันตราย\n\nคัดตามผลการแจ้งประสบอันตราย\n\nประวัติการแจ้งประสบอันตราย\n\nติดต่อ\n\nระบบแจ้งการประสบอันตราย เนื่องจากการทำงาน e-compensate\nข้อทดสอบเจน นามสกุลเจนแล้ว\n\n## แจ้งการประสบอันตราย\n\nเลขประจำตัวประชาชน *\n12403001\n\nวันที่ประสบอันตราย *\n18/05/2563\n\nกรอกข้อมูล ล้างข้อมูล\n\nCopyright © 2020 สำนักงานประกันสังคม version : 1.0.0\nข้อตกลงและเงื่อนไขการใช้บริการ",
+  "review_status": "pending"
+}

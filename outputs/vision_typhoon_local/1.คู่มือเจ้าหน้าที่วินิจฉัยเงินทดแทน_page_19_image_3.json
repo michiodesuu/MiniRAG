@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/f30aab73-42a2-4919-b152-9b60f282d992/scratchpad/docx_images/1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_19_image_3.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "ค้นหาเอกสารเพิ่มเติมรับแจ้งประสบอันตราย ECPS ECPS0002\n\nต้นหา\nECPS CODE:\nเลขที่ประสบอันตราย :\nเลขที่บัตรประจำตัวประชาชน :\nเลขบัญชีนายจ้าง :\nวันที่รับแจ้ง : ถึง\n\nค้นหา\n\nผลการค้นหา\nข้อมูลการประสบอันตราย ECPS202000212\n\n<table><tr><td>เลขที่ประสบอันตราย :</td><td>: 101063/00001/00 ECPS202000212</td></tr><tr><td>ชื่อ-สกุล ผู้ประสบอันตราย :</td><td>: นายสุระขัย</td></tr></table>\n\nวันที่รับแจ้ง : 18/05/2563\nวันที่ประสบอันตราย : 18/05/2563\n\nข้อมูลเอกสารเพิ่มเติม\nประเภทเอกสาร\n☐ ใบรับรองเงินเดือน(ECPS)\n☐ ภาพประกอบ(ECPS)\n☐ หน้าบัญชีธนาคาร(ECPS)\n☐ เวชระเบียน(ECPS)\n☐ ใบรับรองแพทย์(ECPS)\n\nแก้ไข บันทึก ยกเลิก รายละเอียด\n\nข้อมูลที่ 1 - 1 จาก 1 รายการ หน้าที่ 1 จาก",
+  "review_status": "pending"
+}

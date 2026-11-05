@@ -20,7 +20,7 @@
     ],
     "md5": "d9afc6a47432d925b7fc23071e710660",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_2_image_1",
@@ -32,7 +32,7 @@
     ],
     "md5": "627bc6042cddc60700760bbe99dc2ee8",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_3_image_1",
@@ -44,7 +44,7 @@
     ],
     "md5": "f0b1737d19b4e49c48a636a9e173c4a2",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_3_image_2",
@@ -78,7 +78,7 @@
     ],
     "md5": "2b3ec2f39f33d44aedf1d83fa43546af",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_5_image_1",
@@ -90,7 +90,7 @@
     ],
     "md5": "b4d40b68df73ab9fb0b66c2e273751ea",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_6_image_1",
@@ -102,7 +102,7 @@
     ],
     "md5": "a2b0507595419c53e29f53ac65cdf38c",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_6_image_2",
@@ -126,7 +126,7 @@
     ],
     "md5": "5cd3e40380454a87154c53c92523311d",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_7_image_2",
@@ -138,7 +138,7 @@
     ],
     "md5": "8ad9bb7d3823ee2543f04cb9d7778c71",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_8_image_1",
@@ -150,7 +150,7 @@
     ],
     "md5": "27b367127cc66eafd6f8fe33c3566b3f",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_8_image_2",
@@ -195,7 +195,7 @@
     ],
     "md5": "8e3e30e5ae258f256a0c5751225fe73e",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_10_image_1",
@@ -207,7 +207,7 @@
     ],
     "md5": "7a4b4b679b867d123da8b5b5c20f2e41",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_11_image_1",
@@ -230,7 +230,7 @@
     ],
     "md5": "456f6919c70a6abc33955b19d55ae319",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_12_image_1",
@@ -242,7 +242,7 @@
     ],
     "md5": "f03b378fcc48cf14c1387e2a989fba3c",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_12_image_2",
@@ -265,7 +265,7 @@
     ],
     "md5": "ad0e9d970f5e74a7a6cde1d15d0ae8af",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_14_image_1",
@@ -277,7 +277,7 @@
     ],
     "md5": "a9dda79417dece04bd88876314efcc30",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_14_image_2",
@@ -289,7 +289,7 @@
     ],
     "md5": "e680a8f23f4cd8c757fde049702d0cbd",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_15_image_1",
@@ -313,7 +313,7 @@
     ],
     "md5": "d37b3932dba358b0fa34aa38b1a8c07d",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_16_image_1",
@@ -325,7 +325,7 @@
     ],
     "md5": "16e8ab1a9fdcfe0d9a16d44462333847",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_17_image_1",
@@ -337,7 +337,7 @@
     ],
     "md5": "c9d4b8195047fda11a01196235947290",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_18_image_1",
@@ -349,7 +349,7 @@
     ],
     "md5": "7abf1c098d20ee14b97b66928e983f1b",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_18_image_2",
@@ -361,7 +361,7 @@
     ],
     "md5": "fc9def63f9e850f752272f80bf926000",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_19_image_1",
@@ -373,7 +373,7 @@
     ],
     "md5": "6fcfac098cda7fd91064f294c0283e27",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_19_image_2",
@@ -396,7 +396,7 @@
     ],
     "md5": "c55d261f46f288933340a799d4f265a4",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_20_image_1",
@@ -408,7 +408,7 @@
     ],
     "md5": "112f0ec032adbe9aa9bc29d7fdc16e6b",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_20_image_2",
@@ -420,7 +420,7 @@
     ],
     "md5": "c11658daebb73eebc80d0945c0b6bb92",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "สรุปวิทยาการ(ทฤษฎี)_page_2_image_1",
@@ -432,7 +432,7 @@
     ],
     "md5": "888f339928bd5b7d1e4a5e4cffdd9cf7",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "สรุปวิทยาการ(ทฤษฎี)_page_2_image_2",
@@ -444,7 +444,7 @@
     ],
     "md5": "db6cb4db745b50397fa4d923623d29fe",
     "status": "ocr",
-    "source": "easyocr"
+    "source": "vision_typhoon_local"
   },
   {
     "image": "32_File_ตัวอย่างใบเสร็จรับเงิน_22082560201256__page_1_image_1",
@@ -490,7 +490,8 @@
       225
     ],
     "md5": "4afc2861ecb77a281e612e9816f79ea2",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_2_image_3",
@@ -502,7 +503,8 @@
     ],
     "md5": "4afc2861ecb77a281e612e9816f79ea2",
     "status": "duplicate",
-    "duplicate_of": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_2_image_2"
+    "duplicate_of": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_2_image_2",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_3_image_1",
@@ -524,7 +526,8 @@
       1907
     ],
     "md5": "f513bc9353b069282062028db30de875",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_3_image_3",
@@ -535,7 +538,8 @@
       201
     ],
     "md5": "5f5ecdb76b09a9b12dc33e871e60b122",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_5_image_1",
@@ -590,7 +594,8 @@
       221
     ],
     "md5": "22927922bfe0ec3b4801cf86aeadce9b",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_4",
@@ -612,7 +617,8 @@
       316
     ],
     "md5": "b1552db9ba76fa58243f4faf66b08d2d",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_6",
@@ -623,7 +629,8 @@
       288
     ],
     "md5": "0f4ecb5bc1c5ca4c70fdc365cb762b49",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_7",
@@ -634,7 +641,8 @@
       297
     ],
     "md5": "4ef8493670b8f2b7a749652e56df093a",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_8",
@@ -645,7 +653,8 @@
       308
     ],
     "md5": "7d0eeb32fc950a25511df706308973a8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_9",
@@ -656,7 +665,8 @@
       321
     ],
     "md5": "a015ec1751cfb593bc6580da345c5df8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_10",
@@ -667,7 +677,8 @@
       321
     ],
     "md5": "35306a3b22ad4f08bc613179e60a5c73",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_11",
@@ -678,7 +689,8 @@
       308
     ],
     "md5": "c2a46d55f03bccc9d601f159ea70e344",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_12",
@@ -689,7 +701,8 @@
       316
     ],
     "md5": "a2a3a9395057318006591cd3accdcacc",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_13",
@@ -722,7 +735,8 @@
       401
     ],
     "md5": "0aeec0bcdc0ef94988daa3f7a8fd5d17",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_2",
@@ -733,7 +747,8 @@
       401
     ],
     "md5": "3dee52abdc45cdf7e2a1756c5db2e432",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_3",
@@ -744,7 +759,8 @@
       397
     ],
     "md5": "4cf695a6f107a17d786d49b6081e590e",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_4",
@@ -755,7 +771,8 @@
       398
     ],
     "md5": "c15516d7cad62daea31c088603e69199",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_5",
@@ -766,7 +783,8 @@
       351
     ],
     "md5": "c8a326201c44ec60edcfbfaa8ad4a99c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_6",
@@ -777,7 +795,8 @@
       356
     ],
     "md5": "fcdc8d1568d090afcb57ccd2be0852be",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_7",
@@ -788,7 +807,8 @@
       351
     ],
     "md5": "17eca17db6cc3786d843407735c1d87a",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_8",
@@ -799,7 +819,8 @@
       397
     ],
     "md5": "ac31bac304090dc1d91f240b8f875962",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_9",
@@ -810,7 +831,8 @@
       401
     ],
     "md5": "daf4e7ba20f1778d6b426a89a6f0c340",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_10",
@@ -832,7 +854,8 @@
       730
     ],
     "md5": "4cdc0dba884266081ac351009a4f77c1",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_9_image_2",
@@ -843,7 +866,8 @@
       401
     ],
     "md5": "1aaafde207543f968418f722667376b5",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_9_image_3",
@@ -854,7 +878,8 @@
       393
     ],
     "md5": "cb8a9f571cb870e5a873f7af18e01cc8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_9_image_4",
@@ -865,7 +890,8 @@
       402
     ],
     "md5": "a6ad579370f659715e50f652c06b6827",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_9_image_5",
@@ -876,7 +902,8 @@
       396
     ],
     "md5": "99e526df4d0e7ef1b391f7af6f7f13a9",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_9_image_6",
@@ -942,7 +969,8 @@
       312
     ],
     "md5": "4cab3bd6a183da4ef009b1267673b839",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_14_image_2",
@@ -964,7 +992,8 @@
       233
     ],
     "md5": "2b8af3c5f65c72f5595ccde79e9c9e26",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_15_image_2",
@@ -975,7 +1004,8 @@
       518
     ],
     "md5": "c7d64d82aebe8594fce02c93772a6743",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_15_image_3",
@@ -997,7 +1027,8 @@
       315
     ],
     "md5": "08e69965956419726821c152380c2f9d",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_16_image_2",
@@ -1008,7 +1039,8 @@
       313
     ],
     "md5": "d8387c963ae72c77c3f055b07abd3a4c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_16_image_3",
@@ -1019,7 +1051,8 @@
       316
     ],
     "md5": "42b840b0c53e08954d5d197005f64594",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_16_image_4",
@@ -1042,7 +1075,8 @@
       290
     ],
     "md5": "84e5d6e8ad3f3400ef553d1df76c391f",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_16_image_6",
@@ -1064,7 +1098,8 @@
       229
     ],
     "md5": "8c051ccdb948f8fc3ae134f831bb4fbb",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_17_image_2",
@@ -1075,7 +1110,8 @@
       254
     ],
     "md5": "5c3e6a76b10c8142b4584c821595ad79",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_17_image_3",
@@ -1086,7 +1122,8 @@
       234
     ],
     "md5": "f2fc48fca2129ccd714981eea8f9adda",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_17_image_4",
@@ -1097,7 +1134,8 @@
       234
     ],
     "md5": "d9655a2768add00fc93919d3721cab9b",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_17_image_5",
@@ -1108,7 +1146,8 @@
       576
     ],
     "md5": "f61b0213bce6dfeb90f0dd251991fc25",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_17_image_6",
@@ -1119,7 +1158,8 @@
       576
     ],
     "md5": "73472ac04f5720ccf61ddb182227f202",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_17_image_7",
@@ -1188,7 +1228,8 @@
       158
     ],
     "md5": "6cc76bc73267bca8e552192edd60414c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_19_image_2",
@@ -1266,6 +1307,12 @@
       120
     ],
     "md5": "20471b07f76d57803437827f256c72fe",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -1277,7 +1324,8 @@
       129
     ],
     "md5": "67090c83aa15c88fd88845689176b259",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_20_image_8",
@@ -1299,6 +1347,12 @@
       127
     ],
     "md5": "1fbd2c10542233d1791a340d1f02cb68",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -1310,7 +1364,8 @@
       297
     ],
     "md5": "a7bdd596afd7111b6df86da329f55291",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_20_image_11",
@@ -1321,7 +1376,8 @@
       237
     ],
     "md5": "a67137392d7026526251ef06f14349c8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_20_image_12",
@@ -1332,6 +1388,12 @@
       188
     ],
     "md5": "fda6b5e69f59dce35bf1540cd9e37e9f",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -1343,7 +1405,8 @@
       197
     ],
     "md5": "406e0b3d6e59e416e95714b4a5604520",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_20_image_14",
@@ -1354,6 +1417,12 @@
       195
     ],
     "md5": "98778f0dbb2cdf721205dc80d9153aa9",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -1365,7 +1434,8 @@
       197
     ],
     "md5": "083a489e51324a426534bf331d587daf",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_20_image_16",
@@ -1376,7 +1446,8 @@
       189
     ],
     "md5": "1f2cdc20a8d0e27c43ccda21cef722c9",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_20_image_17",
@@ -1387,7 +1458,8 @@
       197
     ],
     "md5": "30794f42577a6f5cac573983efd457a6",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_20_image_18",
@@ -1409,7 +1481,8 @@
       288
     ],
     "md5": "94944f5f5d44bfd03da13c2959def36c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_21_image_2",
@@ -1432,7 +1505,8 @@
       295
     ],
     "md5": "80e30e32ca61351f7aa9ac39091cdf28",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_21_image_4",
@@ -1454,7 +1528,8 @@
       225
     ],
     "md5": "9f75983c2f3bdaca3dcd3bd6e86c68cc",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_22_image_2",
@@ -1476,7 +1551,8 @@
       462
     ],
     "md5": "7d3d298d603e9c1a647ffe7bfd49dbb8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_23_image_2",
@@ -1498,7 +1574,8 @@
       400
     ],
     "md5": "05bd5b2b259c390cd70af31dbc29d102",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_24_image_2",
@@ -1609,7 +1686,8 @@
       313
     ],
     "md5": "1eb1863e8a5747ba189016db5d4a960c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_2",
@@ -1620,7 +1698,8 @@
       319
     ],
     "md5": "ffd3f2ab979def8d733858c530324ed5",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_3",
@@ -1631,7 +1710,8 @@
       308
     ],
     "md5": "b3260c3c8a3b96260691a6ebeb39f047",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_4",
@@ -1642,7 +1722,8 @@
       318
     ],
     "md5": "8e6b9afbeeb8bc43b154d8dad582fe92",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_5",
@@ -1653,7 +1734,8 @@
       304
     ],
     "md5": "65beafdbf8b5fb4e9541f7f448dc5849",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_6",
@@ -1664,7 +1746,8 @@
       323
     ],
     "md5": "6af1b433c572710ad0612c279e53fc85",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_7",
@@ -1675,7 +1758,8 @@
       323
     ],
     "md5": "418188530838666869deb67621e9a0b6",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_8",
@@ -1698,7 +1782,8 @@
       312
     ],
     "md5": "18a8c79a0279b9998ef8225b82c11946",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_10",
@@ -1709,7 +1794,8 @@
       321
     ],
     "md5": "3c470beff33acd7478fdd27b6fa37861",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_11",
@@ -1732,7 +1818,8 @@
       318
     ],
     "md5": "c84abaa640ca76ad4593611d0529fb2c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_32_image_13",
@@ -1754,7 +1841,8 @@
       321
     ],
     "md5": "ae319385117f47aced329008121b241f",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_2",
@@ -1765,7 +1853,8 @@
       316
     ],
     "md5": "557de8447b77cfd568825148923a24ec",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_3",
@@ -1776,7 +1865,8 @@
       321
     ],
     "md5": "102defc0b4c0af69cf8b6853d8eaf3d1",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_4",
@@ -1787,7 +1877,8 @@
       317
     ],
     "md5": "cf0e909552a40fa6462f8c5cb60138ff",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_5",
@@ -1822,7 +1913,8 @@
       318
     ],
     "md5": "de2825f329d82bb2a4d8b7c0161aea5b",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_8",
@@ -1833,6 +1925,12 @@
       312
     ],
     "md5": "9d37b85914000302bbba375ba120b523",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -1856,6 +1954,12 @@
       325
     ],
     "md5": "fd7fafb264d1cfc84fe69c6cdd388f28",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -1867,7 +1971,8 @@
       323
     ],
     "md5": "3b81bf93c03be3632e5bb2b65fb624ee",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_12",
@@ -1878,7 +1983,8 @@
       321
     ],
     "md5": "eb60a1c7475994fab3ca1df10acc8199",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_33_image_13",
@@ -1900,7 +2006,8 @@
       323
     ],
     "md5": "eb48906cd5a1605374421aa9e1427f46",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_2",
@@ -1923,7 +2030,8 @@
       326
     ],
     "md5": "e7d52b47fa66aa18c66b828d167f289f",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_4",
@@ -1934,7 +2042,8 @@
       327
     ],
     "md5": "0a7dce9cdf98f4d902689d598fafb57c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_5",
@@ -1945,7 +2054,8 @@
       326
     ],
     "md5": "dbfc0d237f5a77db478c30aac2fa568b",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_6",
@@ -1968,7 +2078,8 @@
       323
     ],
     "md5": "7f0ff71413ad853b848fd8ac8e2055f2",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_8",
@@ -1979,7 +2090,8 @@
       327
     ],
     "md5": "166507905dadd4643f0a2c0a89cfacd9",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_9",
@@ -1990,7 +2102,8 @@
       329
     ],
     "md5": "5112f2de03b59be343ed8f4a4d1f793b",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_10",
@@ -2001,7 +2114,8 @@
       319
     ],
     "md5": "d5eeb1d4b595d5aff776a6fef899c1dd",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_11",
@@ -2012,7 +2126,8 @@
       319
     ],
     "md5": "97151f0cecb1faa97158477cf92beaa0",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_12",
@@ -2023,7 +2138,8 @@
       323
     ],
     "md5": "56abaaea502ade044d82e540b5d3c1f8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_13",
@@ -2045,7 +2161,8 @@
       323
     ],
     "md5": "c6eff6ea5469037471338357fefe216a",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_2",
@@ -2056,7 +2173,8 @@
       319
     ],
     "md5": "86fc03053cb91b0780c3622c0427ea01",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_3",
@@ -2067,7 +2185,8 @@
       324
     ],
     "md5": "11887e39c11d37f1eaac413106fcbac8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_4",
@@ -2078,7 +2197,8 @@
       319
     ],
     "md5": "5ed89684d819f93204601b2b02d998c7",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_5",
@@ -2089,7 +2209,8 @@
       319
     ],
     "md5": "0936cf1895665b2f9a6703578aada1a3",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_6",
@@ -2100,7 +2221,8 @@
       325
     ],
     "md5": "d59e2474f1b0868289c4cb13f12aae09",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_7",
@@ -2111,7 +2233,8 @@
       319
     ],
     "md5": "95f50aa6f02309dbb93ade52901f4502",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_8",
@@ -2122,7 +2245,8 @@
       316
     ],
     "md5": "982227c2d3fd46c0035227fe84dbe6ba",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_9",
@@ -2133,7 +2257,8 @@
       322
     ],
     "md5": "3ee415ce53c467928fe9dce026fbb646",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_10",
@@ -2144,7 +2269,8 @@
       323
     ],
     "md5": "1894d245b1b866d82c65ef46b9e9d34c",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_11",
@@ -2155,7 +2281,8 @@
       321
     ],
     "md5": "6564591260ba640ef683a9ce2630a26a",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_35_image_12",
@@ -2166,6 +2293,12 @@
       323
     ],
     "md5": "054e6ab968d7b69a3ec461876d7f1d0b",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -2517,7 +2650,8 @@
       695
     ],
     "md5": "dde158c75a99e7ca9a1a46b96bd992c5",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_44_image_2",
@@ -2539,7 +2673,8 @@
       777
     ],
     "md5": "8b5e3feb01ee4f06f70fb81c6e14ebfa",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_44_image_4",
@@ -2561,7 +2696,8 @@
       283
     ],
     "md5": "ffdc8c4eb83473e4b13f36d435dcdc11",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_44_image_6",
@@ -2572,7 +2708,8 @@
       639
     ],
     "md5": "214acf44123a5839a24d487a871ec43a",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_44_image_7",
@@ -2583,7 +2720,8 @@
       324
     ],
     "md5": "21111e619c55bb43ca142d1bc51c1385",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_44_image_8",
@@ -2594,7 +2732,8 @@
       354
     ],
     "md5": "b885d78977a474dcf6a45c2a51488c97",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_44_image_9",
@@ -2605,7 +2744,8 @@
       203
     ],
     "md5": "926f11cf6fcfb520f256e41018bbb60d",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_44_image_10",
@@ -2616,7 +2756,8 @@
       202
     ],
     "md5": "88138ebe4eda2adb8d987f8b53692caf",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_44_image_11",
@@ -2627,6 +2768,12 @@
       307
     ],
     "md5": "1516c7df9663a362ce1d010779c89069",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -2638,7 +2785,8 @@
       270
     ],
     "md5": "6bbf2144141da62d7e1e2ca8c1a7f2d8",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_44_image_13",
@@ -2874,7 +3022,8 @@
       263
     ],
     "md5": "5812ecbf7d5ccfff1276219a1719dff7",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_54_image_2",
@@ -2896,6 +3045,12 @@
       349
     ],
     "md5": "63a93f54bce6f9d17a44a248cc12bf07",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -2907,7 +3062,8 @@
       348
     ],
     "md5": "b3362d7ee832ebecfe15253c32ad473d",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_55_image_3",
@@ -2918,6 +3074,12 @@
       420
     ],
     "md5": "ed089eb18ae68e2bae5ef92e32011f6d",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -2940,6 +3102,12 @@
       330
     ],
     "md5": "e987de44b812bcc7e75a084627c368b8",
+    "rejected": [
+      {
+        "source": "vision_typhoon_local",
+        "reason": "no_text_marker"
+      }
+    ],
     "status": "needs_ocr"
   },
   {
@@ -3173,7 +3341,8 @@
       376
     ],
     "md5": "23403d0a1d3ec0e6665c1188db0bf311",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_74_image_2",
@@ -3498,7 +3667,8 @@
       1389
     ],
     "md5": "723d6c2582474bbe1835bd7cc60f231a",
-    "status": "needs_ocr"
+    "status": "ocr",
+    "source": "vision_typhoon_local"
   },
   {
     "image": "คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_94_image_2",

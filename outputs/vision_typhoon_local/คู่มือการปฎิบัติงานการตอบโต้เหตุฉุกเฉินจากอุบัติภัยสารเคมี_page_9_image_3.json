@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_9_image_3.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Acetaldehyde\n\nChemical Identifier\n\nCAS Number: 75-07-9\nFormula: C2H4O2\nSynonyms and Trade Names: Acetic anhydride, Ethanol, Ethyl alcoholate\nDOT ID &amp; Guide: 1389 129\nRTECS Number: A61925000\n\nExposure Metrics\n\nIDLH: C (2005 ppm) Sec. 75470",
+  "review_status": "pending"
+}

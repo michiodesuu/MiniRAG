@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_34_image_3.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "[Image 0x0 to 1284x673]\n[59x58]กิจกรรมส่งเสริมการเลี้ยงลูกด้วยนมแม่บ้านและพัฒนาทักษะทางเพศของเด็กหญิงในชุมชน\n[108x42]โครงการ : โครงการพัฒนาศักยภาพเด็กและเยาวชนไทยสู่ห่วงใยโลก\n[367x59]ผู้รับผิดชอบกิจกรรม: นางสาวสมใจ สุวรรณรัตน์",
+  "review_status": "pending"
+}

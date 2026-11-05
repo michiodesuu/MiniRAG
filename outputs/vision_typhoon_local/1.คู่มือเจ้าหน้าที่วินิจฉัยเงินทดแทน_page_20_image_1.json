@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/f30aab73-42a2-4919-b152-9b60f282d992/scratchpad/docx_images/1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_20_image_1.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Upload ใบแจ้งหนี้\n\nจำนวนเงินค่ารักษากึ่งหมด: 40000\nใบแจ้งหนี้: 40cd3d98039b7719219df2f81842a8d1.jpg\n\nกลับ | ยืนยันข้อมูล\n\nเปลี่ยนรหัสผ่าน\nติดต่อ\n\nค้นหา | ล้างข้อมูล\n\n<table><tr><td>ลำดับ</td><td>ECPS CODE</td><td>เลขที่ประสบอันตราย</td><td>ชื่อ-นามสกุล</td><td>เลขประจำตัวประชาชน</td><td>สถานะ</td></tr><tr><td>1</td><td>ECP5202000212</td><td>10106300001</td><td>นายสุระชัย รัตนวิทย์</td><td>1240300</td><td>อนุมัติ</td></tr></table>\n\nUpload ใบแจ้งหนี้ | ดูรายละเอียด",
+  "review_status": "pending"
+}

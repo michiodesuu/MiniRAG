@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_16_image_5.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "[Image 0x-1 to 634x257]\n[Image -8x269 to 643x256]\n[Image 643x269 to 1000x256]\n[Image 1000x269 to 1357x256]\n[Image 1357x269 to 1614x256]\n[Image 1614x269 to 1871x256]\n[Image 1871x269 to 2128x256]\n[Image 2128x269 to 2385x256]\n[Image 2385x269 to 2642x256]\n[Image 2642x269 to 2900x256]\n[Image 2900x269 to 3157x256]\n[Image 3157x269 to 3414x256]\n[Image 3414x269 to 3671x256]\n[Image 3671x269 to 3928x256]\n[Image 3928x269 to 4185x256]\n[Image 4185x269 to 4442x256]\n[Image 4442x269 to 4700x256]\n[Image 4700x269 to 4957x256]\n[Image 4957x269 to 5214x256]\n[Image 5214x269 to 5471x256]\n[Image 5471x269 to 5728x256]\n[Image 5728x269 to 6085x256]\n[Image 6085x269 to 6342x256]",
+  "review_status": "pending"
+}
