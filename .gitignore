@@ -7,3 +7,4 @@ outputs/index/
 outputs/trocr/
 .env
 data/name_denylist.txt
+outputs/trocr/
