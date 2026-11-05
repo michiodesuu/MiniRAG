@@ -382,6 +382,22 @@ def test_renamed_copy_excluded_by_image_fingerprint():
     assert reason == "contains images of excluded file คู่มือ.pdf"
 
 
+def test_allowed_copy_passes_only_when_proven_to_be_that_file_type():
+    from rag_ingest import config
+    stem = "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน"
+    excluded = {stem + ".pdf": "unredacted"}
+    prints = {"f" * 32: stem + ".pdf"}
+
+    def reason(types, name=stem):
+        return exclusion_reason(name, DocumentImages(source_types=types, md5s={"f" * 32}), set(), excluded, prints)
+
+    assert reason({"docx"}) is None                    # listed in ALLOWED_COPIES, proven docx
+    assert reason({"docx", "pdf"}) is not None         # mixed evidence: fail closed
+    assert reason(set()) is not None                   # no evidence: fail closed
+    assert reason({"docx"}, "other name") is not None  # not allow-listed
+    assert stem + ".docx" in config.ALLOWED_COPIES
+
+
 def test_name_matching_ignores_case_and_invisible_characters():
     images = DocumentImages()
     assert exclusion_reason("Report\u200b ", images, set(), {"report.PDF": "x"}) == "x"

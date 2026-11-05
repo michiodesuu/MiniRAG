@@ -22,7 +22,7 @@ def cmd_extract_text(args, paths: Paths):
     extract_text(paths.resolve(args.docs_dir), paths.resolve(args.output_dir))
 
 
-VISION_ENGINES = ("ollama", "api")
+VISION_ENGINES = ("ollama", "api", "typhoon")
 def api_options(args) -> dict:
     if not (args.api_url and args.api_model):
         sys.exit("--engine api needs --api-url and --api-model (or OCR_API_URL / OCR_API_MODEL)")
@@ -34,7 +34,7 @@ def api_options(args) -> dict:
 def check_vision_flags(args) -> None:
     for flag in ("hint", "prompt", "tile"):
         if getattr(args, flag) and args.engine not in VISION_ENGINES:
-            sys.exit(f"--{flag} only applies to the vision engines (ollama, api)")
+            sys.exit(f"--{flag} only applies to the vision engines (ollama, api, typhoon)")
     if args.tile and args.hint:
         sys.exit("--tile cannot be combined with --hint: hint lines have no position, "
                  "so every strip would get the whole image's lines.")
@@ -50,6 +50,11 @@ def engine_options(args, paths: Paths) -> dict:
               "prompt": paths.resolve(args.prompt) if args.prompt else None, "tile": args.tile}
     if args.engine == "ollama":
         return {**vision, "model": args.model or "qwen2.5vl:3b", "num_ctx": args.num_ctx}
+    if args.engine == "typhoon":
+        # No API configured (or --local): straight to Ollama. Otherwise API, then Ollama.
+        api = {} if args.local or not args.api_url else api_options(args)
+        return {**vision, **api, "local": args.local, "num_ctx": args.num_ctx,
+                **({"local_model": args.model} if args.model else {})}
     return {**vision, **api_options(args)}
 
 
@@ -196,7 +201,7 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
     p.add_argument(OUTPUT_DIR_FLAG, default=rel(paths.outputs))
 
     p = add("ocr", cmd_ocr, "Run one OCR engine on one image or a folder.")
-    p.add_argument("--engine", choices=["tesseract", "easyocr", "ollama", "api"], required=True)
+    p.add_argument("--engine", choices=["tesseract", "easyocr", "ollama", "api", "typhoon"], required=True)
     target = p.add_mutually_exclusive_group()
     target.add_argument("--image", help="One image instead of the whole folder.")
     target.add_argument("--images-dir", default=rel(paths.images))
@@ -217,6 +222,8 @@ def build_parser(paths: Paths) -> argparse.ArgumentParser:
                    help="Vision engines: cut images taller than about PX (after --upscale) into "
                         "strips of about PX at blank rows; one model call per strip. Not with --hint.")
     p.add_argument("--model", help="Ollama model (default qwen2.5vl:3b).")
+    p.add_argument("--local", action="store_true",
+                   help="typhoon engine: skip the API and use local Ollama (scb10x/typhoon-ocr1.5-3b).")
     p.add_argument("--num-ctx", type=int, default=8192, help="Ollama context size.")
     p.add_argument("--api-url", default=os.environ.get("OCR_API_URL"),
                 help="Full /v1/chat/completions URL (or env OCR_API_URL).")

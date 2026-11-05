@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/f30aab73-42a2-4919-b152-9b60f282d992/scratchpad/docx_images/1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_13_image_1.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "# ระบบแจ้งการประสบอันตราย เนื่องจากการทำงาน e-compensate\n\nสมหญิง ใจดี\n\n## ข้อมูลโรงพยาบาล\n\nรหัสโรงพยาบาล: 10101\nชื่อโรงพยาบาล: โรงพยาบาลศิริราช\n\n## ดาวน์โหลดเอกสาร กท. 44\n\n### ข้อมูลการประสบอันตราย\n\nECPS CODE: ECPS202000212\nเลขที่ประสบอันตราย: 10106300001\nเลขประจำตัวประชาชน: 124030013:\nชื่อ-นามสกุล: นายสุระชัย\nวันที่ประสบอันตราย: 18 พฤษภาคม 2563\nสาเหตุการประสบอันตราย: ขาขวาหัก\nรพ.ที่เข้ารับรักษา: โรงพยาบาลศิริราช\nเลขที่บัญชีนายจ้าง: 1000023729\nชื่อสถานประกอบการ: เอื้อวิทยา\nสาขา: 000000\n\n## ข้อมูลส่วนตัว\n\n### เอกสารที่ส่งมาทั้งหมด\n\n<table><tr><td>ลำดับ</td><td>ชื่อไฟล์</td><td>รายละเอียด</td></tr><tr><td>1</td><td>3.jpg</td><td>เวชระเบียน</td></tr><tr><td>2</td><td>cartoon2.jpg</td><td>ใบรับรองแพทย์</td></tr></table>\n\nCopyright © 2020 สำนักงานประกันสังคม version : 1.0.0\nข้อตกลงและเงื่อนไขการใช้บริการ",
+  "review_status": "pending"
+}

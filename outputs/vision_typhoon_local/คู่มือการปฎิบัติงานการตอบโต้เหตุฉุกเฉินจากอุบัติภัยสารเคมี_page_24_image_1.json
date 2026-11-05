@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_24_image_1.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Google Earth\n\nวันนี้ 17:20:54 วันจันทร์ เดือนมกราคม พุทธศักราช ปีมะโรง\n\nในพื้นที่ อ่าวบางกอกฯ\n\n☑ ติดตามข้อมูลเพิ่มเติม\n☐ สอบถามรายละเอียดโครงการ\n☐ ขอคำแนะนำการใช้งานโปรแกรม\n☐ สอบถามข้อกำหนดและเงื่อนไขการใช้งาน\n☐ โอนย้ายส่งเสริมไม่ได้\n☐ อัปเดตที่ 1 เมษายน\n☑ หนังสือมอบอำนาจตามมาตรา ๒๕ (๑) ของพระราชบัญญัติบริษัทจำกัด\n☐ ขอคำรับรองว่าไม่มีข้อผิดพลาดใดๆ\n☐ สอบถามรายละเอียดโครงการ\n\nGoogle",
+  "review_status": "pending"
+}

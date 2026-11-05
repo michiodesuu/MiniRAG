@@ -17,10 +17,13 @@ import base64
 from rag_ingest.config import ENCODING, HINT_FOLDERS, Paths
 from rag_ingest.imaging import image_bytes, load_rgb, png_bytes, strips
 from rag_ingest.models import Recognition
+from rag_ingest.quality import rejection
 from rag_ingest.stores import LineStore
 from rag_ingest.textproc import NO_TEXT_MARK
 
 TEMPERATURE = 0
+# Strip height for the retry of a rejected read; 300 fixed both Typhoon loops seen so far.
+RETRY_TILE_HEIGHT = 300
 HINT_MIN_CONFIDENCE = 0.8
 HINT_INTRO = ("\n\nREFERENCE (separate OCR engines read these lines; they may be "
               "wrong or incomplete, so trust the image over them):\n")
@@ -86,6 +89,34 @@ class OpenAICompatibleTransport:
         return {"backend": "api"}
 
 
+class FallbackTransport:
+    """Primary transport (company API); on a network/HTTP error switch to the fallback
+    (local Ollama) and stay there, so a dead API costs one timeout, not one per image."""
+
+    def __init__(self, primary: Transport, fallback: Transport, errors: tuple[type[Exception], ...]):
+        self.primary, self.fallback, self.errors = primary, fallback, errors
+        self.active = primary
+
+    @property
+    def model(self) -> str:
+        return self.active.model
+
+    def complete(self, prompt: str, image: bytes) -> str:
+        if self.active is self.primary:
+            try:
+                return self.primary.complete(prompt, image)
+            except self.errors as exc:
+                # Type and status only: an exception's text can carry the request URL.
+                status = getattr(getattr(exc, "response", None), "status_code", None)
+                why = type(exc).__name__ + (f" {status}" if status else "")
+                print(f"API unavailable ({why}); using {self.fallback.model} via Ollama.", flush=True)
+                self.active = self.fallback
+        return self.fallback.complete(prompt, image)
+
+    def settings(self) -> dict:
+        return {**self.active.settings(), "fallback": self.active is self.fallback}
+
+
 class HintProvider:
     """Confident lines from line-OCR results, added to the prompt as a reference."""
 
@@ -116,10 +147,10 @@ class VisionEngine:
         self.transport, self.prompt, self.hints, self.upscale = transport, prompt, hints, upscale
         self.prompt_file, self.tile_height = prompt_file, tile_height
 
-    def _read_strips(self, image: Path) -> tuple[str, int]:
+    def _read_strips(self, image: Path, tile_height: int) -> tuple[str, int]:
         """(joined text, number of strips). Strips with nothing readable are left
         out, unless no strip has text."""
-        parts = strips(load_rgb(image, self.upscale), self.tile_height)
+        parts = strips(load_rgb(image, self.upscale), tile_height)
         if len(parts) == 1:
             return self.transport.complete(self.prompt, image_bytes(image, self.upscale)), 1
         texts = [self.transport.complete(self.prompt, png_bytes(part)) for part in parts]
@@ -129,10 +160,15 @@ class VisionEngine:
     def recognize(self, image: Path) -> Recognition:
         hint, used = self.hints.hint(image.stem) if self.hints else (None, [])
         if self.tile_height:
-            text, tiles = self._read_strips(image)
+            text, tiles = self._read_strips(image, self.tile_height)
         else:
             prompt = self.prompt + (HINT_INTRO + hint if hint else "")
             text, tiles = self.transport.complete(prompt, image_bytes(image, self.upscale)), 1
+        retried = False
+        if not self.tile_height and rejection(text):
+            # temperature is 0, so a plain retry repeats the failure; smaller strips change the input.
+            text, tiles = self._read_strips(image, RETRY_TILE_HEIGHT)
+            retried = True
         return Recognition(
             text=text,
             model=self.transport.model,
@@ -143,6 +179,7 @@ class VisionEngine:
                 "tesseract_hint": "tesseract" in used,
                 "upscale_min_side": self.upscale,
                 **({"tile_height": self.tile_height, "tiles": tiles} if self.tile_height else {}),
+                **({"retried_with_tiles": tiles} if retried else {}),
             },
             prompt_file=self.prompt_file,
         )
@@ -175,3 +212,24 @@ def api_engine(paths: Paths, url: str, model: str, key: str | None = None,
                prompt: Path | None = None, tile: int = 0) -> VisionEngine:
     return _vision_engine(OpenAICompatibleTransport(url, model, key), paths, hint_source,
                           upscale, prompt, tile)
+
+
+TYPHOON_LOCAL_MODEL = "scb10x/typhoon-ocr1.5-3b"
+
+
+def typhoon_engine(paths: Paths, url: str | None = None, model: str | None = None,
+                   key: str | None = None, local: bool = False,
+                   local_model: str = TYPHOON_LOCAL_MODEL, num_ctx: int = 8192,
+                   hint_source: str | None = None, upscale: int = 0,
+                   prompt: Path | None = None, tile: int = 0) -> VisionEngine:
+    """Typhoon OCR: company API first, local Ollama when the API is unset or unreachable."""
+    import httpx
+
+    ollama = OllamaTransport(local_model, num_ctx)
+    if local or not (url and model):
+        transport: Transport = ollama
+    else:
+        transport = FallbackTransport(OpenAICompatibleTransport(url, model, key), ollama, (httpx.HTTPError,))
+    engine = _vision_engine(transport, paths, hint_source, upscale, prompt, tile)
+    engine.default_output = "vision_typhoon"
+    return engine

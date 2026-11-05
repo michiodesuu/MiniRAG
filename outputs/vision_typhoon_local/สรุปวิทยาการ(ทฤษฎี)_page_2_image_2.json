@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/f30aab73-42a2-4919-b152-9b60f282d992/scratchpad/docx_images/สรุปวิทยาการ(ทฤษฎี)_page_2_image_2.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "ตัวดำเนินการ ให้ a = 0 , b = 1\n\n<table><tr><td>ตัวดำเนินการ</td><td>เครื่องหมาย</td><td>ตัวอย่าง</td></tr><tr><td>&amp;</td><td>a &amp; b</td><td>\"true\" (จริง) หรือ \"false\" (เท็จ)</td></tr><tr><td>||</td><td>a || b</td><td>\"true\" (จริง) หรือ \"false\" (เท็จ)</td></tr><tr><td>!</td><td>i!b</td><td>\"true\" (จริง) หรือ \"false\" (เท็จ)</td></tr></table>\n\nMath.round(11.5); Math.log(2,3); Math.log(5,2); Math.random(); การเปรียบเทียบ\n\n<table><tr><th rowspan=\"2\">การเปรียบเทียบ<th colspan=\"2\">ค่า</th></th></tr><tr><td>มากกว่า น้อยกว่า</td><td>&gt; &lt;</td></tr><tr><td>\"true\" (จริง) หรือ \"false\" (เท็จ)</td><td>&gt;</td><td>a &amp; b</td></tr><tr><td>มากกว่าที่สุดเท่ากับ น้อยกว่าที่สุดเท่ากัน</td><td>&gt;&lt;</td><td>a || b</td></tr><tr><td>ไม่เท่ากัน</td><td>= = &amp;=</td><td>i!b</td></tr></table>\n\nตระกะ\n\n<page_number>หน้า 5 / 19</page_number>\nว30191 วิทยาการคำนวณ 1 หน่วยที่ 3 การเขียนโปรแกรมเพื่อแก้ปัญหา ผู้สอน: สหัสสัชย์ พุ่มบานเย็น\n<page_number>หน้า 2 จาก 2</page_number>\n163 คำ\nไทย",
+  "review_status": "pending"
+}

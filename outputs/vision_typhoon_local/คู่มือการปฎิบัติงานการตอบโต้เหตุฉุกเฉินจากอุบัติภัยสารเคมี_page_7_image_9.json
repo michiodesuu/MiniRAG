@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_9.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "UN 1975\nDinitrogen trioxide and ...\n\n<table><tr><td>กัณฑ์ของสิ่งแวดล้อม</td><td>กำหนดการเก็บข้อมูล</td></tr><tr><td colspan=\"2\">**การหกรั่วไหลขนาดเล็ก**</td></tr><tr><td>กัณฑ์ของสิ่งแวดล้อม</td><td>ระยะปกป้องที่ดิน</td></tr><tr><td>30 m.</td><td>D 0.1 km.<br/>C 0.5 km.</td></tr><tr><td colspan=\"2\">**การหกรั่วไหลขนาดใหญ่**</td></tr><tr><td>กัณฑ์ของสิ่งแวดล้อม</td><td>ระยะปกป้องที่ดิน</td></tr><tr><td>100 m.</td><td>D 0.5 km.<br/>C 2.2 km.</td></tr></table>\n\n**การประเมินความเร็วลมจากข้อมูลสิ่งแวดล้อม**\n<table><tr><td>กัณฑ์ของสิ่งแวดล้อม</td><td>อ่านไม่ชัด</td></tr><tr><td>ด้านทิศลม</td><td>D 30 m.</td></tr><tr><td>ระดับความเร็วลม</td><td>C 2.2 km.</td></tr></table>\n\n**การประเมินความเร็วลมจากข้อมูลสิ่งแวดล้อม (ต่อ)**\n\n<table><tr><th colspan=\"3\">กัณฑ์ของสิ่งแวดล้อม</th></tr><tr><td>ระดับความเร็วลม</td><td>D 2.2 km.</td></tr><tr><td>ระยะปกป้องที่ดิน</td><td>C 0.5 km.</td></tr></table>\n\n**การประเมินความเร็วลมจากข้อมูลสิ่งแวดล้อม (ต่อ)**\n\n<table><tr><th colspan=\"3\">กัณฑ์ของสิ่งแวดล้อม</th></tr><tr><td>ระยะปกป้องที่ดิน</td><td>D 0.1 km.</td></tr><tr><td>ระดับความเร็วลม</td><td>C 30 m.</td></tr></table>\n\n**การประเมินความเร็วลมจากข้อมูลสิ่งแวดล้อม (ต่อ)**",
+  "review_status": "pending"
+}

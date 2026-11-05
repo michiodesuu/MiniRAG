@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_16_image_1.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Thai Meteorological Department Collection Data by Time Slot\n\n06/13 01:42\n\n0037_Bangna Agrometeorological Station\n\n<table><tr><td>Time</td><th colspan=\"2\">Wind<br/>Speed (m/s)<th rowspan=\"2\">Visibility<th rowspan=\"2\">Cloud Cover<td>Air Quality</td></th></th></th></tr><tr><td>Date/Time</td><td>10 UTC</td><td>14 UTC</td><td>Dust</td></tr><tr><td>06/13 01:01</td><td>4.8</td><td>219</td><td>275.8</td><td>7.8</td></tr><tr><td>06/13 01:02</td><td>5.8</td><td>219</td><td>280.3</td><td>8.9</td></tr><tr><td>06/13 01:03</td><td>5.8</td><td>223</td><td>282.6</td><td>10.7</td></tr><tr><td>06/13 01:04</td><td>6.8</td><td>215</td><td>285.1</td><td>12.4</td></tr><tr><td>06/13 01:05</td><td>6.8</td><td>224</td><td>287.6</td><td>12.4</td></tr><tr><td>06/13 01:06</td><td>6.8</td><td>209</td><td>288.5</td><td>12.4</td></tr><tr><td>06/13 01:07</td><td>6.8</td><td>198</td><td>287.5</td><td>10.5</td></tr><tr><td>06/13 01:08</td><td>7.8</td><td>211</td><td>289.3</td><td>14.5</td></tr><tr><td>06/13 01:09</td><td>6.8</td><td>195</td><td>288.8</td><td>16.9</td></tr><tr><td>06/13 01:10</td><td>6.8</td><td>200</td><td>290</td><td>12.4</td></tr><tr><td>06/13 01:11</td><td>6.8</td><td>215</td><td>278.8</td><td>11.5</td></tr><tr><td>06/13 01:12</td><td>7.8</td><td>223</td><td>294.6</td><td>9.7</td></tr><tr><td>06/13 01:13</td><td>7.8</td><td>228</td><td>297.5</td><td>11.4</td></tr><tr><td>06/13 01:14</td><td>7.8</td><td>229</td><td>299.3</td><td>10.7</td></tr></table>",
+  "review_status": "pending"
+}

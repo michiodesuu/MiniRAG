@@ -24,6 +24,7 @@ from rag_ingest.chunking.sources import IngestOutput, find_doc_type, nfc_name, s
 from rag_ingest.chunking.tables import COLUMNS, KEEP
 from rag_ingest.chunking.text import TableFormat, context_header, nfc
 from rag_ingest.chunking.units import Kind, Unit, parse_markdown
+from rag_ingest import config
 from rag_ingest.config import ENCODING
 
 TEXT_KINDS = (Kind.TEXT, Kind.HEADING, Kind.TABLE)
@@ -88,6 +89,12 @@ def image_fingerprints(excluded_files: dict[str, str], search_root: Path) -> tup
     return prints, missing
 
 
+def _allowed_copy(stem: str, source_types) -> bool:
+    """True for a document listed in config.ALLOWED_COPIES, proven to come only from that file type."""
+    return any(Path(nfc_name(name)).stem == nfc_name(stem) and set(source_types) == {Path(name).suffix.lstrip(".")}
+               for name in config.ALLOWED_COPIES)
+
+
 def exclusion_reason(stem: str, images, cli_stems: set[str], excluded_files: dict[str, str],
                      fingerprints: dict[str, str] | None = None) -> str | None:
     """Why a document is excluded, or None. Fails closed:
@@ -96,7 +103,7 @@ def exclusion_reason(stem: str, images, cli_stems: set[str], excluded_files: dic
         other, non-excluded source types for it; a missing manifest, mixed
         evidence or a file found elsewhere (e.g. data/raw) never clears this."""
     copied = sorted({fingerprints[m] for m in images.md5s & set(fingerprints or {})})
-    if copied:
+    if copied and not _allowed_copy(stem, images.source_types):
         return f"contains images of excluded file {', '.join(copied)}"
     stem = nfc_name(stem)
     if stem in {nfc_name(s) for s in cli_stems}:

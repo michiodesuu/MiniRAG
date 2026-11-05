@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_8_image_7.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Find response information from the Emergency Response Guidebook\n\n<table><tr><td colspan=\"3\">ERG Table 1: Initial Isolation and Protective Action Distances</td></tr><tr><th rowspan=\"2\">Name of Material<th colspan=\"2\">Small Spots (from a small package or small leak)</th></th></tr><tr><td>First Isolate in Directions</td><td>Then Protect Downwind</td></tr><tr><td>Chlorine</td><td>200 ft</td><td>Day: 0.2 m/ Night: 0.7 m</td></tr><tr><th colspan=\"3\">Large Spots (from a large package or many small packages)</th></tr><tr><td>First</td><td>Then</td><td></td></tr></table>\n\nSearch MyDashboard Helpfully",
+  "review_status": "pending"
+}

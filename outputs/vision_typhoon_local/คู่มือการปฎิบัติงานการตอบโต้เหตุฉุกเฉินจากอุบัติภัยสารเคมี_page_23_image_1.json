@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_23_image_1.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "แผนที่รัศมีความเสี่ยงจากจุดเกิดเหตุ\n\n*   **BAN CHANG**\n    *   WaterSide Restaurant\n*   **Wat Huaeng Wong**\n    *   วัดห้วยเงิน\n*   **SALOMYEN VILLAGE**\n    *   พัทยา อ.เมือง\n*   **AMARON VILLAGE**\n    *   จอมพลี อ.เมือง\n*   **Phayun Beach**\n    *   หาดพญาไท\n*   **Sriracha Beach**\n    *   หาดศรีราชา\n*   **Central Rayong**\n    *   เซ็นทรัล ระยอง\n*   **NOEN PHRA SUB-DISTRICT**\n    *   ตำบลโนนพระ\n\n**Legend:**\n\n*   5 กิโลเมตร (5 Kilometers)\n*   10 กิโลเมตร ขึ้นไป (10 Kilometers and up)\n\nMap data ©2024 Google, Imagery ©2024 TerraMetrics",
+  "review_status": "pending"
+}

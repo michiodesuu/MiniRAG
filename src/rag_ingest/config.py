@@ -118,6 +118,14 @@ EXCLUDED_DOCUMENTS = {
         "use its converted .docx instead"),
 }
 
+# Files that share screenshots with an excluded file but may still be indexed (file name -> why).
+# Matches only when the ingest manifest proves the document came from that file type alone.
+ALLOWED_COPIES = {
+    "1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน.docx": (
+        "converted copy of the excluded PDF; its screenshots show first names only and no "
+        "national IDs (reviewed 2026-11-04); chunking still redacts names and rejects IDs"),
+}
+
 # Who a document is written for (stem -> role), so search can filter and the
 # evaluation can tell whether the top result came from the right role.
 DOCUMENT_ROLES = {

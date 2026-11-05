@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/f30aab73-42a2-4919-b152-9b60f282d992/scratchpad/docx_images/สรุปวิทยาการ(ทฤษฎี)_page_2_image_1.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "ตัวดำเนินการเปรียบเทียบ\n\nโดยเงื่อนไข มักเป็น การเปรียบเทียบ ที่ให้ ผลลัพธ์เป็นค่า \"true\" (จริง) หรือ \"false\" (เท็จ)\n\n<table><tr><td>การเปรียบเทียบ</td><td>เครื่องหมาย</td><td>ตัวอย่าง</td></tr><tr><td>มากกว่า</td><td>&gt;</td><td>a &gt; b</td></tr><tr><td>น้อยกว่า</td><td>&lt;</td><td>a &lt; b</td></tr><tr><td>มากกว่าหรือเท่ากับ</td><td>=&gt;</td><td>a &gt;= b</td></tr><tr><td>น้อยกว่าหรือเท่ากับ</td><td>&lt;=</td><td>a &lt;= b</td></tr><tr><td>เท่ากับ</td><td>=&amp;</td><td>a == b</td></tr><tr><td>ไม่เท่ากับ</td><td>!=</td><td>a != b</td></tr></table>\n\nว30191 วิทยาการคำนวณ 1 หน่วยที่ 3 การเขียนโปรแกรมเพื่อแก้ปัญหา ผู้สอน: สหัสสัชย์ พุ่มบานเย็น\n\nMath.round(x); มากกว่า 5 ปัดขึ้น น้อยกว่า 5 ปัดลง\nMath.pow(x,y): x**y\nMath.random(); สุ่มตัวเลขเป็นทศนิยมไม่เกิน 1\nตย.\nMath.PI; Math.sqr(4); Math.abs(-5); Math.ceil(6.5); Math ceil(3.2);\nMath.floor(10.5); Math.floor(12.8); Math.floor(-12.8);\nMath.round(11.5); Math.pow(2,3); Math.pow(5,2); Math.random(); การเปรียบเทียบ\n\nว30191 วิทยาการคำนวณ 1 หน่วยที่ 3 การเขียนโปรแกรมเพื่อแก้ปัญหา ผู้สอน: สหัสสัชย์ พุ่มบานเย็น\n<page_number>หน้า 4 / 19</page_number>\nพิมพ์",
+  "review_status": "pending"
+}

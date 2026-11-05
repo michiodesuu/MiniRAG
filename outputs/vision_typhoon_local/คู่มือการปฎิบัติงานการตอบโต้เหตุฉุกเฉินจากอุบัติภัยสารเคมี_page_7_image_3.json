@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_7_image_3.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "CAMEO Chemicals\n\nHome | Help\n---|---\nSearch Chemicals | Add to MyChemicals | Print Friendly Page |\nNew Search | <figure>\nA diamond-shaped hazard symbol with \"POTER\" written inside, indicating oxidizer.\n</figure> | <figure>\nA diamond-shaped hazard symbol with a yellow background and black exclamation mark in the center, indicating corrosive.\n</figure> | <figure>\nA diamond-shaped hazard symbol with a white background and blue cross on top, indicating poison gas/corrosive.\n</figure>\n\nModify Search\nSearch Results\n\nMyChemicals\nchemicals: 0 |\nView MyChemicals\nPredict Reactivity\n\nMobile Site\n\n## Chemical Datasheet\n\n### CHLORINE\n\n#### Chemical Identifiers\n\n<table><tr><td>CAS Number</td><td>UN/NA Number</td></tr><tr><td>7782-50-S</td><td>1017</td></tr></table>\n\nNIOSH Pocket Guide\nChlorine ☑\n\nNFPA 704\n<table><tr><td>Diamond</td><td>Hazard</td><td>Value</td><td>Description</td></tr><tr><td>0</td><td>Health</td><td>4</td><td>Can be lethal.</td></tr></table>\n\nDOT Hazard Label\nPoison Gas\nOxidizer\nCorrosive\n\nUSCG CHRIS Code\n1 CLX\n\nInternational Chem Safety Card\nCHLORINE ☑",
+  "review_status": "pending"
+}

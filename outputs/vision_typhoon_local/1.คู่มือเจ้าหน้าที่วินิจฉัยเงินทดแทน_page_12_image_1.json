@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/f30aab73-42a2-4919-b152-9b60f282d992/scratchpad/docx_images/1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_12_image_1.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "สบหญง ใจดี\n\nกองทุนเงินทดแทน\ne-service wcf\nข้อมูลส่วนตัว\nบันทึกข้อมูลและอัปโหลดเอกสาร\nประวัติการแจ้งประสบอันตราย\nเปลี่ยนรหัสผ่าน\nติดต่อ\n\n# อัพโหลดเอกสารโรงพยาบาล\n\nเลขที่ประสบอันตราย : 10106300001\nชื่อ-นามสกุล : นายสุระชัย\nวันที่ประสบอันตราย : 18 พฤษภาคม 2563\nจำนวนวันที่ Admit : 1 วัน\nวันที่รับผู้ป่วย *: 18/05/2563\nวันที่จำหน่ายผู้ป่วย *: 18/05/2563\n\n## Upload file เอกสารที่ขอเพิ่มเติม *\n\n<figure>\nAn icon depicting a document with an image of a person on it, labeled \"images\" and indicating that the files should be jpg, gif, png, or tif.\n</figure>\n\nPDF\nรองรับไฟล์นามสกุล pdf\n\nหรือ Choose Files No file chosen\n\nลากไฟล์และวางที่นี่\n\n☑ เวชระเบียน ☐ ใบรับรองแพทย์\n\nยกเลิก Preview\n\n5 ECPS202000205 21006300030 นายพิชัย 6026300 ยกเลิก\n6 ECPS201900006 12006200637 x นายถกสวัทย์ 1101400 อัฟโหลดเอกสาร Upload เอกสาร ดูรายละเอียด\n\n<figure>\nA blue button with the text \"Upload เอกสาร\" and a green button with the text \"ดูรายละเอียด\".\n</figure>\n\nCopyright © 2020 สำนักงานประกันสังคม version : 1.0.0\nข้อตกลงและเงื่อนไขการใช้บริการ",
+  "review_status": "pending"
+}

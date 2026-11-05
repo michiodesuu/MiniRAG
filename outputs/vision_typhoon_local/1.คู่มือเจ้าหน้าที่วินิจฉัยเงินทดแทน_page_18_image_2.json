@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/f30aab73-42a2-4919-b152-9b60f282d992/scratchpad/docx_images/1.คู่มือเจ้าหน้าที่วินิจฉัยเงินทดแทน_page_18_image_2.png",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Upload BookBank\n\nUpload หน้าบัญชีธนาคาร (Book Bank) * Choose File No file chosen\n\nยกเลิก Preview\n\n<table><tr><td>ลำดับ</td><td>ECPS CODE</td><td>เลขที่ประสบอันตราย</td><td>สถานะ</td><td>ชื่อ-นามสกุล</td><td>เลขประจำตัวประชาชน</td></tr><tr><td>1</td><td>ECPS202000212</td><td>10106300001</td><td>อนุมัติ</td><td>นายสุระชัย</td><td>124030</td></tr><tr><td>2</td><td>ECPS202000211</td><td>-</td><td>รอรับแจ้ง</td><td>นายหนึ่ง</td><td>116030</td></tr><tr><td>3</td><td>ECPS201900124</td><td>-</td><td>รอรับแจ้ง</td><td>นายไชยราช</td><td>147010</td></tr><tr><td>4</td><td>ECPS201900103</td><td>-</td><td>รอรับแจ้ง</td><td>นายหนึ่ง</td><td>116030</td></tr></table>\n\nคุณจะต้องการอัปโหลดเอกสารนี้ไปที่: Upload Book Bank ดูรายละเอียด\nคุณจะต้องการอัพเดตรายละเอียด ดูรายละเอียด",
+  "review_status": "pending"
+}

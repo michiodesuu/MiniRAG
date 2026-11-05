@@ -1,0 +1,15 @@
+{
+  "image": "/private/tmp/claude-501/-Users-michio-Downloads-2nd-2026-MiniRAG/0f15f23e-3c39-45b4-bb53-ad13490bb1d3/scratchpad/chem_images/คู่มือการปฎิบัติงานการตอบโต้เหตุฉุกเฉินจากอุบัติภัยสารเคมี_page_16_image_2.jpeg",
+  "model": "scb10x/typhoon-ocr1.5-3b",
+  "prompt_file": "prompts/thai_document_ocr.txt",
+  "settings": {
+    "backend": "ollama",
+    "num_ctx": 8192,
+    "temperature": 0,
+    "easyocr_hint": false,
+    "tesseract_hint": false,
+    "upscale_min_side": 0
+  },
+  "text": "Thai Meteorological Department Automatic Weather System\n\nTMD AWS\n\nTime: 2023/05/13 06:42\nDate: 13 พฤษภาคม 2023 / เสาร์สุดท้าย 24:00:24\n\nTemperature [°C]: 31.5\nHumidity [%]: 87\nWind Direction (deg): 298\nWind Speed (km/h): 13.4\nPrecipitation (mm): 0.0\nPressure (hPa): 1006.2\nVisibility (m/s): 20000",
+  "review_status": "pending"
+}
