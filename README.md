@@ -1,4 +1,4 @@
-# rag-ingestion-poc
+# MiniRAG
 
 Extract accurate text from Thai PDF and Word (.docx) documents with embedded
 screenshots, for RAG ingestion. The documents' own text is used directly
